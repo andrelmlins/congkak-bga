@@ -1,0 +1,28 @@
+body {
+  background-image: url(img/background.png);
+  background-size: auto;
+}
+
+.congkak-box {
+  display: flex;
+  gap: 20px;
+  padding: 12px;
+  position: relative;
+  flex-direction: column;
+  aspect-ratio: 2/1;
+  align-items: center;
+  justify-content: center;
+}
+@media only screen and (max-width: 740px) {
+  .congkak-box {
+    aspect-ratio: 1/1;
+  }
+}
+.congkak-box .congkak-table {
+  width: 100%;
+  aspect-ratio: 1472/342;
+  background-image: url(img/table.png);
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: 0;
+}

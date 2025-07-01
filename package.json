@@ -1,0 +1,19 @@
+{
+  "name": "congkak",
+  "version": "1.0.0",
+  "description": "",
+  "main": "congkak.js",
+  "scripts": {
+    "build": "tsc && sass --no-source-map src/sass/congkak.scss congkak.css"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  },
+  "dependencies": {
+    "sass": "^1.81.0",
+    "bga-animations": "andrelmlins/bga-animations#main",
+    "bga-zoom": "thoun/bga-zoom#1.0.4"
+  }
+}

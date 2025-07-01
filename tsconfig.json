@@ -1,0 +1,30 @@
+{
+  "rootDir": ".",
+  "compilerOptions": {
+    "target": "es5",
+    "module": "none",
+    "lib": ["dom", "esnext"],
+    "sourceMap": false,
+    "outFile": "congkak.js"
+  },
+  "files": [
+    "src/framework.d.ts",
+    "src/congkak.d.ts",
+    "src/format.strings.ts",
+    "src/congkak.ts",
+    "src/define.ts",
+    "src/utils.ts",
+    "src/animation.ts",
+    "node_modules/bga-zoom/src/zoom-manager.ts",
+    "node_modules/bga-animations/src/framework.d.ts",
+    "node_modules/bga-animations/src/animations.ts",
+    "node_modules/bga-animations/src/animations/attach-with-animation.ts",
+    "node_modules/bga-animations/src/animations/cumulated-animations.ts",
+    "node_modules/bga-animations/src/animations/pause-animation.ts",
+    "node_modules/bga-animations/src/animations/show-screen-center-animation.ts",
+    "node_modules/bga-animations/src/animations/slide-animation.ts",
+    "node_modules/bga-animations/src/animations/slide-to-animation.ts",
+    "node_modules/bga-animations/src/animations-utils.ts",
+    "node_modules/bga-animations/src/animation-manager.ts"
+  ]
+}

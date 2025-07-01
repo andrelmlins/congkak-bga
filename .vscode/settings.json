@@ -1,0 +1,5 @@
+{
+  "intelephense.environment.includePaths": ["/Users/andrelmlins/Documents/games/bga-sharedcode"],
+  "intelephense.diagnostics.undefinedProperties": false,
+  "prettier.printWidth": 120
+}
