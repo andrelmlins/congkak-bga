@@ -12,6 +12,7 @@
     "src/congkak.d.ts",
     "src/format.strings.ts",
     "src/congkak.ts",
+    "src/constants.ts",
     "src/define.ts",
     "src/utils.ts",
     "src/animation.ts",

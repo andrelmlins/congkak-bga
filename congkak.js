@@ -12,6 +12,17 @@ var Congkak = /** @class */ (function () {
     function Congkak() {
     }
     Congkak.prototype.setup = function (gamedatas) {
+        var grid = document.getElementById('congkak-grid');
+        for (var i = 7; i >= 1; i--) {
+            grid.insertAdjacentHTML('beforeend', "<div id=\"congkak-kampong-top-".concat(i, "\" class=\"congkak-kampong\"></div>"));
+        }
+        for (var i = 1; i <= 7; i++) {
+            grid.insertAdjacentHTML('beforeend', "<div id=\"congkak-kampong-bottom-".concat(i, "\" class=\"congkak-kampong\"></div>"));
+        }
+        var container = document.getElementById('congkak-kampong-top-1');
+        for (var i = 0; i < 15; i++) {
+            container.insertAdjacentHTML('beforeend', "<div class=\"congkak-seed\"></div>");
+        }
         this.setupNotifications();
     };
     Congkak.prototype.bgaFormatText = function (log, args) {
@@ -42,6 +53,28 @@ var Congkak = /** @class */ (function () {
     };
     return Congkak;
 }());
+var positions = [
+    { x: 0.0, y: 0.0 },
+    { x: 0.2, y: 0.0 },
+    { x: -0.2, y: 0.0 },
+    { x: 0.0, y: 0.2 },
+    { x: 0.0, y: -0.2 },
+    { x: 0.141, y: 0.141 },
+    { x: -0.141, y: 0.141 },
+    { x: 0.141, y: -0.141 },
+    { x: -0.141, y: -0.141 },
+    { x: 0.346, y: 0.0 },
+    { x: -0.346, y: 0.0 },
+    { x: 0.0, y: 0.346 },
+    { x: 0.0, y: -0.346 },
+    { x: 0.245, y: 0.245 },
+    { x: -0.245, y: 0.245 },
+    { x: 0.245, y: -0.245 },
+    { x: -0.245, y: -0.245 },
+    { x: 0.4, y: -0.2 },
+    { x: -0.4, y: 0.2 },
+    { x: 0.2, y: -0.4 },
+];
 define(['dojo', 'dojo/_base/declare', 'ebg/core/gamegui', 'ebg/counter', 'ebg/zone', 'ebg/stock'], function (dojo, declare) {
     return declare('bgagame.congkak', ebg.core.gamegui, new Congkak());
 });

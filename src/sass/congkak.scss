@@ -1,3 +1,6 @@
+@use 'sass:list';
+@use './constants.scss' as *;
+
 body {
   background-image: url(img/background.png);
   background-size: auto;
@@ -24,5 +27,40 @@ body {
     background-repeat: no-repeat;
     background-size: 100%;
     background-position: 0;
+    position: relative;
+
+    & .congkak-grid {
+      position: absolute;
+      width: 58.3%;
+      height: 71%;
+      margin-left: 21.3%;
+      margin-top: 1.6%;
+      display: grid;
+      grid-template-areas: 'a a a a a a a';
+      grid-gap: 7% 1.3%;
+    }
+
+    & .congkak-kampong {
+      position: relative;
+
+      & .congkak-seed {
+        width: 15%;
+        aspect-ratio: 70/53;
+        background-image: url(img/seed.png);
+        background-repeat: no-repeat;
+        background-size: 100%;
+        background-position: 0;
+        position: absolute;
+
+        @for $i from 1 through list.length($positions) {
+          &:nth-child(#{$i}) {
+            $pos: list.nth($positions, $i);
+            left: list.nth($pos, 1);
+            top: list.nth($pos, 2);
+            transform: translate(-50%, -50%);
+          }
+        }
+      }
+    }
   }
 }
