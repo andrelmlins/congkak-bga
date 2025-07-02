@@ -13,4 +13,5 @@ interface CongkakGamedatas {
   players: Record<string, Player>;
   playerorder: (string | number)[];
   playerColors: Record<string, string>;
+  houseList: Record<string, { rumah: number; kampong: Record<string, number> }>;
 }

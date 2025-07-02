@@ -10,20 +10,41 @@ var FormatStrings = /** @class */ (function () {
 }());
 var Congkak = /** @class */ (function () {
     function Congkak() {
+        this.counters = {};
     }
     Congkak.prototype.setup = function (gamedatas) {
+        this.setupHouses();
+        this.setupNotifications();
+    };
+    Congkak.prototype.setupHouses = function () {
+        var _a;
+        var table = document.getElementById('congkak-table');
         var grid = document.getElementById('congkak-grid');
+        this.counters = (_a = {}, _a[this.gamedatas.playerPosition[0]] = {}, _a[this.gamedatas.playerPosition[1]] = {}, _a);
         for (var i = 7; i >= 1; i--) {
-            grid.insertAdjacentHTML('beforeend', "<div id=\"congkak-kampong-top-".concat(i, "\" class=\"congkak-kampong\"></div>"));
+            grid.insertAdjacentHTML('beforeend', "\n          <div id=\"congkak-".concat(this.gamedatas.playerPosition[1], "-kampong-").concat(i, "\" class=\"congkak-kampong\">\n            <span id=\"congkak-").concat(this.gamedatas.playerPosition[1], "-kampong-").concat(i, "-counter\" class=\"congkak-counter top\"></span>\n          </div>\n        "));
         }
         for (var i = 1; i <= 7; i++) {
-            grid.insertAdjacentHTML('beforeend', "<div id=\"congkak-kampong-bottom-".concat(i, "\" class=\"congkak-kampong\"></div>"));
+            grid.insertAdjacentHTML('beforeend', "\n          <div id=\"congkak-".concat(this.gamedatas.playerPosition[0], "-kampong-").concat(i, "\" class=\"congkak-kampong\">\n            <span id=\"congkak-").concat(this.gamedatas.playerPosition[0], "-kampong-").concat(i, "-counter\" class=\"congkak-counter bottom\"></span>\n          </div>\n        "));
         }
-        var container = document.getElementById('congkak-kampong-top-1');
-        for (var i = 0; i < 15; i++) {
-            container.insertAdjacentHTML('beforeend', "<div class=\"congkak-seed\"></div>");
+        table.insertAdjacentHTML('beforeend', "\n        <div id=\"congkak-".concat(this.gamedatas.playerPosition[0], "-rumah\" class=\"congkak-rumah\">\n          <span id=\"congkak-").concat(this.gamedatas.playerPosition[0], "-rumah-counter\" class=\"congkak-counter left\"></span>\n        </div>\n      "));
+        table.insertAdjacentHTML('beforeend', "\n        <div id=\"congkak-".concat(this.gamedatas.playerPosition[1], "-rumah\" class=\"congkak-rumah\">\n          <span id=\"congkak-").concat(this.gamedatas.playerPosition[1], "-rumah-counter\" class=\"congkak-counter right\"></span>\n        </div>\n      "));
+        for (var playerId in this.gamedatas.houseList) {
+            var playerHouses = this.gamedatas.houseList[playerId];
+            for (var position in playerHouses.kampong) {
+                this.setSeeds("kampong-".concat(position), playerId, playerHouses.kampong[position]);
+            }
+            this.setSeeds('rumah', playerId, playerHouses.rumah);
         }
-        this.setupNotifications();
+    };
+    Congkak.prototype.setSeeds = function (house, playerId, seeds) {
+        this.counters[playerId][house] = new ebg.counter();
+        this.counters[playerId][house].create("congkak-".concat(playerId, "-").concat(house, "-counter"));
+        this.counters[playerId][house].setValue(seeds);
+        var box = document.getElementById("congkak-".concat(playerId, "-").concat(house));
+        for (var i = 0; i < seeds; i++) {
+            box.insertAdjacentHTML('beforeend', "<div class=\"congkak-seed\"></div>");
+        }
     };
     Congkak.prototype.bgaFormatText = function (log, args) {
         try {
