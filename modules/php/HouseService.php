@@ -26,6 +26,18 @@ class HouseService extends \APP_GameClass
         }
     }
 
+    public function update($playerId, $location, int $seeds)
+    {
+        $sql = "UPDATE `house` SET house_seeds = %s WHERE house_location = '%s' AND house_player = '%s'";
+        $this->game->DbQuery(sprintf($sql, $seeds, $location, $playerId));
+    }
+
+    public function updateInc($playerId, $location, int $seeds)
+    {
+        $sql = "UPDATE `house` SET house_seeds = house_seeds + %s WHERE house_location = '%s' AND house_player = '%s'";
+        $this->game->DbQuery(sprintf($sql, $seeds, $location, $playerId));
+    }
+
     public function list()
     {
         $sql = "SELECT * FROM house";
@@ -52,27 +64,45 @@ class HouseService extends \APP_GameClass
 
     public function sequence($playerId)
     {
-        $players = $this->game->loadPlayersBasicInfos();
-        $anotherPlayerId = null;
-
-        foreach ($players as $player) {
-            if ($player['player_id'] != $playerId) {
-                $anotherPlayerId = $player['player_id'];
-            }
-        }
+        $anotherPlayerId = $this->game->playerService->getOpponnetId($playerId);
 
         $result = [];
 
-        for ($i = 7; $i >= 0; $i--) {
-            $result[] = ['playerId' => $playerId, 'location' => "kampong_{$i}"];
+        for ($i = 7; $i > 0; $i--) {
+            $result[] = ['playerId' => strval($playerId), 'location' => "kampong_{$i}"];
         }
-        $result[] = ['playerId' => $playerId, 'location' => 'rumah'];
+        $result[] = ['playerId' => strval($playerId), 'location' => 'rumah'];
 
-        for ($i = 1; $i <= 7; $i++) {
+        for ($i = 7; $i > 0; $i--) {
             $result[] = ['playerId' => $anotherPlayerId, 'location' => "kampong_{$i}"];
         }
         $result[] = ['playerId' => $anotherPlayerId, 'location' => 'rumah'];
 
         return $result;
+    }
+
+    public function getNextHouse($currentPlayerId, $playerId, $house)
+    {
+        $sequence = $this->sequence($currentPlayerId);
+        $position = array_search(['playerId' => $playerId, 'location' => $house], $sequence) + 1;
+
+        if ($position == count($sequence)) {
+            $position = 0;
+        }
+
+        $item = $sequence[$position];
+
+        if ($item['location'] == 'rumah' && $item['playerId'] != $currentPlayerId) {
+            $position += 1;
+
+            if ($position == count($sequence)) {
+                $position = 0;
+            }
+
+            $item = $sequence[$position];
+        }
+
+
+        return $item;
     }
 }

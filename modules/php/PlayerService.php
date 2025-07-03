@@ -11,6 +11,21 @@ class PlayerService extends \APP_GameClass
         $this->game = $game;
     }
 
+    public function getOpponnetId($playerId)
+    {
+        $players = $this->game->loadPlayersBasicInfos();
+
+        $opponentPlayerId = null;
+
+        foreach ($players as $player) {
+            if ($player['player_id'] != $playerId) {
+                $opponentPlayerId = $player['player_id'];
+            }
+        }
+
+        return $opponentPlayerId;
+    }
+
     public function getPlayerOrder($currentPlayerId)
     {
         $result = $this->game->getCollectionFromDb("SELECT player_id id, player_no position FROM player ORDER BY player_no");

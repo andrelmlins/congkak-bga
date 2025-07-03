@@ -10,16 +10,24 @@ declare const playSound;
 class Congkak implements CongkakGame {
   gamedatas: CongkakGamedatas;
 
+  games: CongkakGames;
+
   scoreCtrl: Record<string, Counter>;
 
   animationManager: AnimationManager;
 
   counters: Record<string, Record<string, Counter>> = {};
 
-  constructor() {}
+  constructor() {
+    this.games = {
+      sowing: new Sowing(this),
+    };
+  }
 
   public setup(gamedatas: CongkakGamedatas) {
     this.setupHouses();
+
+    this.animationManager = new AnimationManager(this);
 
     this.setupNotifications();
   }
@@ -34,8 +42,8 @@ class Congkak implements CongkakGame {
       grid.insertAdjacentHTML(
         'beforeend',
         `
-          <div id="congkak-${this.gamedatas.playerPosition[1]}-kampong-${i}" class="congkak-kampong">
-            <span id="congkak-${this.gamedatas.playerPosition[1]}-kampong-${i}-counter" class="congkak-counter top"></span>
+          <div id="congkak-${this.gamedatas.playerPosition[1]}-kampong_${i}" class="congkak-kampong">
+            <span id="congkak-${this.gamedatas.playerPosition[1]}-kampong_${i}-counter" class="congkak-counter top"></span>
           </div>
         `
       );
@@ -45,8 +53,8 @@ class Congkak implements CongkakGame {
       grid.insertAdjacentHTML(
         'beforeend',
         `
-          <div id="congkak-${this.gamedatas.playerPosition[0]}-kampong-${i}" class="congkak-kampong">
-            <span id="congkak-${this.gamedatas.playerPosition[0]}-kampong-${i}-counter" class="congkak-counter bottom"></span>
+          <div id="congkak-${this.gamedatas.playerPosition[0]}-kampong_${i}" class="congkak-kampong">
+            <span id="congkak-${this.gamedatas.playerPosition[0]}-kampong_${i}-counter" class="congkak-counter bottom"></span>
           </div>
         `
       );
@@ -74,7 +82,7 @@ class Congkak implements CongkakGame {
       const playerHouses = this.gamedatas.houseList[playerId];
 
       for (let position in playerHouses.kampong) {
-        this.setSeeds(`kampong-${position}`, playerId, playerHouses.kampong[position]);
+        this.setSeeds(`kampong_${position}`, playerId, playerHouses.kampong[position]);
       }
       this.setSeeds('rumah', playerId, playerHouses.rumah);
     }
@@ -109,18 +117,32 @@ class Congkak implements CongkakGame {
   }
 
   public onEnteringState(stateName: string, notif: Notif<any>) {
-    //
+    for (let gameName in this.games) {
+      this.games[gameName].onEnteringState(stateName, notif);
+    }
   }
 
   public onLeavingState(stateName: string) {
-    //
+    for (let gameName in this.games) {
+      this.games[gameName].onLeavingState(stateName);
+    }
   }
 
   public onUpdateActionButtons(stateName: string, notif: any) {
-    //
+    if ((this as any).isCurrentPlayerActive()) {
+      for (let gameName in this.games) {
+        this.games[gameName].onUpdateActionButtons(stateName, notif);
+      }
+    } else {
+      for (let gameName in this.games) {
+        this.games[gameName].onUpdateActionButtonsWithoutActive?.call(this.games[gameName], stateName, notif);
+      }
+    }
   }
 
   public setupNotifications() {
-    //
+    for (let gameName in this.games) {
+      this.games[gameName].setupNotifications();
+    }
   }
 }

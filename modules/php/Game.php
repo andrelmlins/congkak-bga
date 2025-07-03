@@ -30,85 +30,52 @@ class Game extends \Table
 
     public PlayerService $playerService;
 
+    public StepService $stepService;
+
     public function __construct()
     {
         parent::__construct();
 
         $this->initGameStateLabels([]);
 
+        Messages::initMessages();
         $this->startConstants();
 
         $this->houseService = new HouseService($this);
 
         $this->playerService = new PlayerService($this);
+
+        $this->stepService = new StepService($this);
     }
 
-    /**
-     * Player action, example content.
-     *
-     * In this scenario, each time a player plays a card, this method will be called. This method is called directly
-     * by the action trigger on the front side with `bgaPerformAction`.
-     *
-     * @throws BgaUserException
-     */
-    public function actPlayCard(int $card_id): void
+    public function argPlayersSeeding()
     {
-        // Retrieve the active player ID.
-        $player_id = (int)$this->getActivePlayerId();
-
-        // check input values
-        $args = $this->argPlayerTurn();
-        $playableCardsIds = $args['playableCardsIds'];
-        if (!in_array($card_id, $playableCardsIds)) {
-            throw new \BgaUserException('Invalid card choice');
-        }
-
-        // Add your game logic to play a card here.
-        $card_name = self::$CARD_TYPES[$card_id]['card_name'];
-
-        // Notify all players about the card played.
-        $this->notify->all("cardPlayed", clienttranslate('${player_name} plays ${card_name}'), [
-            "player_id" => $player_id,
-            "player_name" => $this->getActivePlayerName(), // remove this line if you uncomment notification decorator
-            "card_name" => $card_name, // remove this line if you uncomment notification decorator
-            "card_id" => $card_id,
-            "i18n" => ['card_name'], // remove this line if you uncomment notification decorator
-        ]);
-
-        // at the end of the action, move to the next state
-        $this->gamestate->nextState("playCard");
+        return $this->stepService->argPlayersSeeding();
     }
 
-    public function actPass(): void
+    public function argPlayerSeeding()
     {
-        // Retrieve the active player ID.
-        $player_id = (int)$this->getActivePlayerId();
-
-        // Notify all players about the choice to pass.
-        $this->notify->all("pass", clienttranslate('${player_name} passes'), [
-            "player_id" => $player_id,
-            "player_name" => $this->getActivePlayerName(), // remove this line if you uncomment notification decorator
-        ]);
-
-        // at the end of the action, move to the next state
-        $this->gamestate->nextState("pass");
+        return $this->stepService->argPlayerSeeding();
     }
 
-    /**
-     * Game state arguments, example content.
-     *
-     * This method returns some additional information that is very specific to the `playerTurn` game state.
-     *
-     * @return array
-     * @see ./states.inc.php
-     */
-    public function argPlayerTurn(): array
+    public function actPlayersSeeding(string $playerId, int $house)
     {
-        // Get some values from the current game situation from the database.
+        $this->stepService->actPlayersSeeding($playerId, $house);
+    }
 
-        return [
-            "playableCardsIds" => [1, 2],
-        ];
+    public function stStartGame()
+    {
+        $this->gamestate->nextState('playersSeeding');
+    }
+
+    public function stAllPlayers()
+    {
+        $this->gamestate->setAllPlayersMultiactive();
+    }
+
+    public function stNextMultiplayers()
+    {
+        $this->stepService->stNextMultiplayers();
     }
 
     /**
@@ -192,11 +159,6 @@ class Game extends \Table
         return $result;
     }
 
-    /**
-     * Returns the game name.
-     *
-     * IMPORTANT: Please do not modify.
-     */
     protected function getGameName()
     {
         return "congkak";

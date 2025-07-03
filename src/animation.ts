@@ -28,14 +28,6 @@ class BgaLocalAnimation {
 
   public call(handle: (node: HTMLElement) => void, handlePreAnim?: (node: HTMLElement) => void): Promise<void> {
     return new Promise(async (resolve, _) => {
-      if (!this.isUsed()) {
-        handlePreAnim?.call(null);
-        handle(this.origin);
-        resolve();
-
-        return;
-      }
-
       let animation = new BgaSlideAnimation({
         element: this.origin,
         duration: this.duration,
@@ -55,9 +47,5 @@ class BgaLocalAnimation {
       handle(this.origin);
       resolve();
     });
-  }
-
-  private isUsed() {
-    return (this.game as any).getGameUserPreference(100) == 1;
   }
 }
