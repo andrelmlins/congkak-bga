@@ -48,4 +48,18 @@ class PlayerService extends \APP_GameClass
 
         return $resultPlayerIds;
     }
+
+    function updateScore($playerId)
+    {
+        $seeds = $this->game->houseService->list();
+        $score = $seeds[$playerId]['rumah'];
+
+        $sql = "UPDATE player SET player_score = %s WHERE player_id = '%s'";
+        $this->game->DbQuery(sprintf($sql, $score, $playerId));
+
+        $this->game->notifyAllPlayers('score', '', [
+            'score' => $score,
+            'playerId' => $playerId,
+        ]);
+    }
 }

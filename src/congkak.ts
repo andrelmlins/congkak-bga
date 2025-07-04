@@ -78,6 +78,18 @@ class Congkak implements CongkakGame {
       `
     );
 
+    const currentPlayer = this.gamedatas.players[this.gamedatas.playerPosition[0]];
+    table.insertAdjacentHTML(
+      'beforeend',
+      `<span style="color: #${currentPlayer.color}" class="congkak-player bottom">${currentPlayer.name}</span>`
+    );
+
+    const opponentPlayer = this.gamedatas.players[this.gamedatas.playerPosition[1]];
+    table.insertAdjacentHTML(
+      'beforeend',
+      `<span style="color: #${opponentPlayer.color}" class="congkak-player top">${opponentPlayer.name}</span>`
+    );
+
     for (let playerId in this.gamedatas.houseList) {
       const playerHouses = this.gamedatas.houseList[playerId];
 
@@ -144,5 +156,11 @@ class Congkak implements CongkakGame {
     for (let gameName in this.games) {
       this.games[gameName].setupNotifications();
     }
+
+    dojo.subscribe('score', this, (value) => this.scoreNotif(value));
+  }
+
+  private async scoreNotif(notif: Notif<ScoreNotif>) {
+    this.scoreCtrl[notif.args.playerId].toValue(notif.args.score);
   }
 }

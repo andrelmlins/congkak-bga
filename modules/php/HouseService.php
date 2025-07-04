@@ -61,7 +61,6 @@ class HouseService extends \APP_GameClass
         return $result;
     }
 
-
     public function sequence($playerId)
     {
         $anotherPlayerId = $this->game->playerService->getOpponnetId($playerId);
@@ -102,7 +101,23 @@ class HouseService extends \APP_GameClass
             $item = $sequence[$position];
         }
 
-
         return $item;
+    }
+
+    public function isGameEnd()
+    {
+        $isGameEnd = false;
+        $players = $this->game->loadPlayersBasicInfos();
+
+        foreach ($players as $player) {
+            $sql = "SELECT SUM(house_seeds) seeds FROM house WHERE house_location != 'rumah' AND house_player = '%s'";
+            $item = $this->game->getObjectFromDB(sprintf($sql, $player['player_id']));
+
+            if ($item['seeds'] == 0) {
+                $isGameEnd = true;
+            }
+        }
+
+        return $isGameEnd;
     }
 }

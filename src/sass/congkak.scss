@@ -29,6 +29,28 @@ body {
     background-position: 0;
     position: relative;
 
+    & .congkak-player {
+      border-radius: 4px;
+      padding: 4px 6px;
+      font-size: 1.2em;
+      font-weight: 600;
+      text-align: center;
+      position: absolute;
+      background-color: white;
+
+      &.top {
+        top: -30%;
+        left: 50%;
+        transform: translate(-50%, 0%);
+      }
+
+      &.bottom {
+        bottom: -15%;
+        left: 50%;
+        transform: translate(-50%, 0%);
+      }
+    }
+
     & .congkak-grid {
       position: absolute;
       width: 58.5%;
@@ -90,7 +112,7 @@ body {
       background-size: 100%;
       background-position: 0;
       position: absolute;
-      filter: drop-shadow(0 1px 0px rgba(0, 0, 0, 0.55)) drop-shadow(0 0.5px 0px rgba(0, 0, 0, 0.65));
+      // filter: drop-shadow(0 1px 0px rgba(0, 0, 0, 0.55)) drop-shadow(0 0.5px 0px rgba(0, 0, 0, 0.65));
 
       @for $i from 1 through list.length($positions) {
         &:nth-child(#{$i + 1}) {
@@ -113,6 +135,7 @@ body {
       justify-content: center;
       aspect-ratio: 1/1;
       font-size: 0.9em;
+      z-index: 20;
 
       &.top {
         top: calc(1.5em / 2 * -1);

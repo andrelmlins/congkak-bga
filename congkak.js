@@ -8,6 +8,42 @@ var FormatStrings = /** @class */ (function () {
     };
     return FormatStrings;
 }());
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
+var __generator = (this && this.__generator) || function (thisArg, body) {
+    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
+    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
+    function verb(n) { return function (v) { return step([n, v]); }; }
+    function step(op) {
+        if (f) throw new TypeError("Generator is already executing.");
+        while (g && (g = 0, op[0] && (_ = 0)), _) try {
+            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
+            if (y = 0, t) op = [op[0] & 2, t.value];
+            switch (op[0]) {
+                case 0: case 1: t = op; break;
+                case 4: _.label++; return { value: op[1], done: false };
+                case 5: _.label++; y = op[1]; op = [0]; continue;
+                case 7: op = _.ops.pop(); _.trys.pop(); continue;
+                default:
+                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
+                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
+                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
+                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
+                    if (t[2]) _.ops.pop();
+                    _.trys.pop(); continue;
+            }
+            op = body.call(thisArg, _);
+        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
+        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
+    }
+};
 var Congkak = /** @class */ (function () {
     function Congkak() {
         this.counters = {};
@@ -33,6 +69,10 @@ var Congkak = /** @class */ (function () {
         }
         table.insertAdjacentHTML('beforeend', "\n        <div id=\"congkak-".concat(this.gamedatas.playerPosition[0], "-rumah\" class=\"congkak-rumah\">\n          <span id=\"congkak-").concat(this.gamedatas.playerPosition[0], "-rumah-counter\" class=\"congkak-counter left\"></span>\n        </div>\n      "));
         table.insertAdjacentHTML('beforeend', "\n        <div id=\"congkak-".concat(this.gamedatas.playerPosition[1], "-rumah\" class=\"congkak-rumah\">\n          <span id=\"congkak-").concat(this.gamedatas.playerPosition[1], "-rumah-counter\" class=\"congkak-counter right\"></span>\n        </div>\n      "));
+        var currentPlayer = this.gamedatas.players[this.gamedatas.playerPosition[0]];
+        table.insertAdjacentHTML('beforeend', "<span style=\"color: #".concat(currentPlayer.color, "\" class=\"congkak-player bottom\">").concat(currentPlayer.name, "</span>"));
+        var opponentPlayer = this.gamedatas.players[this.gamedatas.playerPosition[1]];
+        table.insertAdjacentHTML('beforeend', "<span style=\"color: #".concat(opponentPlayer.color, "\" class=\"congkak-player top\">").concat(opponentPlayer.name, "</span>"));
         for (var playerId in this.gamedatas.houseList) {
             var playerHouses = this.gamedatas.houseList[playerId];
             for (var position in playerHouses.kampong) {
@@ -88,9 +128,19 @@ var Congkak = /** @class */ (function () {
         }
     };
     Congkak.prototype.setupNotifications = function () {
+        var _this = this;
         for (var gameName in this.games) {
             this.games[gameName].setupNotifications();
         }
+        dojo.subscribe('score', this, function (value) { return _this.scoreNotif(value); });
+    };
+    Congkak.prototype.scoreNotif = function (notif) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                this.scoreCtrl[notif.args.playerId].toValue(notif.args.score);
+                return [2 /*return*/];
+            });
+        });
     };
     return Congkak;
 }());
@@ -98,42 +148,6 @@ define(['dojo', 'dojo/_base/declare', 'ebg/core/gamegui', 'ebg/counter', 'ebg/zo
     return declare('bgagame.congkak', ebg.core.gamegui, new Congkak());
 });
 var delayTime = function (time) { return new Promise(function (resolve) { return setTimeout(function () { return resolve(); }, time); }); };
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
-var __generator = (this && this.__generator) || function (thisArg, body) {
-    var _ = { label: 0, sent: function() { if (t[0] & 1) throw t[1]; return t[1]; }, trys: [], ops: [] }, f, y, t, g = Object.create((typeof Iterator === "function" ? Iterator : Object).prototype);
-    return g.next = verb(0), g["throw"] = verb(1), g["return"] = verb(2), typeof Symbol === "function" && (g[Symbol.iterator] = function() { return this; }), g;
-    function verb(n) { return function (v) { return step([n, v]); }; }
-    function step(op) {
-        if (f) throw new TypeError("Generator is already executing.");
-        while (g && (g = 0, op[0] && (_ = 0)), _) try {
-            if (f = 1, y && (t = op[0] & 2 ? y["return"] : op[0] ? y["throw"] || ((t = y["return"]) && t.call(y), 0) : y.next) && !(t = t.call(y, op[1])).done) return t;
-            if (y = 0, t) op = [op[0] & 2, t.value];
-            switch (op[0]) {
-                case 0: case 1: t = op; break;
-                case 4: _.label++; return { value: op[1], done: false };
-                case 5: _.label++; y = op[1]; op = [0]; continue;
-                case 7: op = _.ops.pop(); _.trys.pop(); continue;
-                default:
-                    if (!(t = _.trys, t = t.length > 0 && t[t.length - 1]) && (op[0] === 6 || op[0] === 2)) { _ = 0; continue; }
-                    if (op[0] === 3 && (!t || (op[1] > t[0] && op[1] < t[3]))) { _.label = op[1]; break; }
-                    if (op[0] === 6 && _.label < t[1]) { _.label = t[1]; t = op; break; }
-                    if (t && _.label < t[2]) { _.label = t[2]; _.ops.push(op); break; }
-                    if (t[2]) _.ops.pop();
-                    _.trys.pop(); continue;
-            }
-            op = body.call(thisArg, _);
-        } catch (e) { op = [6, e]; y = 0; } finally { f = t = 0; }
-        if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
-    }
-};
 var BgaLocalAnimation = /** @class */ (function () {
     function BgaLocalAnimation(game) {
         this.game = game;
@@ -194,17 +208,27 @@ var Sowing = /** @class */ (function () {
         //
     };
     Sowing.prototype.onEnteringState = function (stateName, notif) {
-        //
+        if (stateName === 'playerSeeding' && this.game.isCurrentPlayerActive()) {
+            this.setSelectedHouses(notif.args.location);
+        }
     };
     Sowing.prototype.onLeavingState = function (stateName) {
         if (stateName === 'playersSeeding') {
+            this.removeSelecteds();
+        }
+        else if (stateName === 'playerSeeding') {
             this.removeSelecteds();
         }
     };
     Sowing.prototype.onUpdateActionButtons = function (stateName, args) {
         var _this = this;
         if (stateName === 'playersSeeding') {
+            this.removeSelecteds();
             this.setSelectedHouses(args.locations[this.game.getCurrentPlayerId()]);
+            this.game.addActionButton('sowAction', _('Sow'), function () { return _this.onSowMulti(); });
+            document.getElementById('sowAction').classList.add('disabled');
+        }
+        else if (stateName === 'playerSeeding') {
             this.game.addActionButton('sowAction', _('Sow'), function () { return _this.onSow(); });
             document.getElementById('sowAction').classList.add('disabled');
         }
@@ -217,6 +241,8 @@ var Sowing = /** @class */ (function () {
     Sowing.prototype.setupNotifications = function () {
         var _this = this;
         dojo.subscribe('playersSeeding', this, function (notif) { return _this.playersSeedingNotif(notif); });
+        dojo.subscribe('moveAllToRumah', this, function (notif) { return _this.moveAllToRumahNotif(notif); });
+        dojo.subscribe('moveRemainingSeeds', this, function (notif) { return _this.moveRemainingSeedsNotif(notif); });
     };
     Sowing.prototype.setSelectedHouses = function (location) {
         var _this = this;
@@ -267,10 +293,18 @@ var Sowing = /** @class */ (function () {
             document.getElementById('sowAction').classList.add('disabled');
         }
     };
-    Sowing.prototype.onSow = function () {
+    Sowing.prototype.onSowMulti = function () {
         var array = this.elementSelected.id.split('-');
         var _a = this.elementSelected.id.split('_'), _ = _a[0], house = _a[1];
         this.game.bgaPerformAction('actPlayersSeeding', {
+            playerId: array[1],
+            house: parseInt(house),
+        }, { lock: false });
+    };
+    Sowing.prototype.onSow = function () {
+        var array = this.elementSelected.id.split('-');
+        var _a = this.elementSelected.id.split('_'), _ = _a[0], house = _a[1];
+        this.game.bgaPerformAction('actPlayerSeeding', {
             playerId: array[1],
             house: parseInt(house),
         });
@@ -282,6 +316,7 @@ var Sowing = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
+                        console.log(notif);
                         seeds = {};
                         for (playerId in notif.args.initialHouse) {
                             house = notif.args.initialHouse[playerId];
@@ -295,16 +330,18 @@ var Sowing = /** @class */ (function () {
                         if (!(i < notif.args.maxSeeds)) return [3 /*break*/, 4];
                         _loop_2 = function (playerId) {
                             var movement = notif.args.movements[playerId][i];
+                            if (!movement)
+                                return "continue";
                             var initialHouse = notif.args.initialHouse[playerId];
                             var seed = seeds[playerId][i];
                             var destination = document.getElementById("congkak-".concat(movement.playerId, "-").concat(movement.location));
                             var animation = new BgaLocalAnimation(this_2.game);
                             animation.setOptions(seed, destination, 800);
                             animation
-                                .call(function (node) { return true; })
+                                .call(function (_) { return true; })
                                 .then(function () {
-                                _this.game.counters[playerId][movement.location].incValue(1);
-                                _this.game.counters[playerId][initialHouse.location].incValue(-1);
+                                _this.game.counters[movement.playerId][movement.location].incValue(1);
+                                _this.game.counters[initialHouse.playerId][initialHouse.location].incValue(-1);
                             });
                         };
                         this_2 = this;
@@ -320,6 +357,58 @@ var Sowing = /** @class */ (function () {
                         return [3 /*break*/, 1];
                     case 4: return [2 /*return*/];
                 }
+            });
+        });
+    };
+    Sowing.prototype.moveAllToRumahNotif = function (notif) {
+        return __awaiter(this, void 0, void 0, function () {
+            var seeds, opponentSeeds, destination;
+            var _this = this;
+            return __generator(this, function (_a) {
+                seeds = document
+                    .getElementById("congkak-".concat(notif.args.playerId, "-").concat(notif.args.location))
+                    .querySelectorAll('.congkak-seed');
+                opponentSeeds = document
+                    .getElementById("congkak-".concat(notif.args.opponentPlayerId, "-").concat(notif.args.opponentLocation))
+                    .querySelectorAll('.congkak-seed');
+                destination = document.getElementById("congkak-".concat(notif.args.playerId, "-rumah"));
+                seeds.forEach(function (item) {
+                    var animation = new BgaLocalAnimation(_this.game);
+                    animation.setOptions(item, destination, 800);
+                    animation.call(function (_) { return true; });
+                });
+                opponentSeeds.forEach(function (item) {
+                    var animation = new BgaLocalAnimation(_this.game);
+                    animation.setOptions(item, destination, 800);
+                    animation.call(function (_) { return true; });
+                });
+                this.game.counters[notif.args.playerId]['rumah'].incValue(seeds.length);
+                this.game.counters[notif.args.playerId][notif.args.location].incValue(seeds.length * -1);
+                this.game.counters[notif.args.playerId]['rumah'].incValue(opponentSeeds.length);
+                this.game.counters[notif.args.opponentPlayerId][notif.args.opponentLocation].incValue(opponentSeeds.length * -1);
+                return [2 /*return*/];
+            });
+        });
+    };
+    Sowing.prototype.moveRemainingSeedsNotif = function (notif) {
+        return __awaiter(this, void 0, void 0, function () {
+            var destination, i, seeds;
+            var _this = this;
+            return __generator(this, function (_a) {
+                destination = document.getElementById("congkak-".concat(notif.args.playerId, "-rumah"));
+                for (i = 1; i <= 7; i++) {
+                    seeds = document
+                        .getElementById("congkak-".concat(notif.args.playerId, "-kampong_").concat(i, "}"))
+                        .querySelectorAll('.congkak-seed');
+                    seeds.forEach(function (item) {
+                        var animation = new BgaLocalAnimation(_this.game);
+                        animation.setOptions(item, destination, 800);
+                        animation.call(function (_) { return true; });
+                    });
+                    this.game.counters[notif.args.playerId]['rumah'].incValue(seeds.length);
+                    this.game.counters[notif.args.playerId]["kampong_".concat(i, "}")].incValue(seeds.length * -1);
+                }
+                return [2 /*return*/];
             });
         });
     };

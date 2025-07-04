@@ -12,19 +12,28 @@ class Sowing implements Game {
   }
 
   public onEnteringState(stateName: string, notif: Notif<PlayerSeedingState>) {
-    //
+    if (stateName === 'playerSeeding' && (this.game as any).isCurrentPlayerActive()) {
+      this.setSelectedHouses(notif.args.location);
+    }
   }
 
   public onLeavingState(stateName: string) {
     if (stateName === 'playersSeeding') {
       this.removeSelecteds();
+    } else if (stateName === 'playerSeeding') {
+      this.removeSelecteds();
     }
   }
 
-  public onUpdateActionButtons(stateName: string, args: PlayerSeedingState) {
+  public onUpdateActionButtons(stateName: string, args: PlayersSeedingState) {
     if (stateName === 'playersSeeding') {
+      this.removeSelecteds();
       this.setSelectedHouses(args.locations[(this.game as any).getCurrentPlayerId()]);
 
+      (this.game as any).addActionButton('sowAction', _('Sow'), () => this.onSowMulti());
+
+      document.getElementById('sowAction').classList.add('disabled');
+    } else if (stateName === 'playerSeeding') {
       (this.game as any).addActionButton('sowAction', _('Sow'), () => this.onSow());
 
       document.getElementById('sowAction').classList.add('disabled');
@@ -39,6 +48,8 @@ class Sowing implements Game {
 
   public setupNotifications() {
     dojo.subscribe('playersSeeding', this, (notif) => this.playersSeedingNotif(notif));
+    dojo.subscribe('moveAllToRumah', this, (notif) => this.moveAllToRumahNotif(notif));
+    dojo.subscribe('moveRemainingSeeds', this, (notif) => this.moveRemainingSeedsNotif(notif));
   }
 
   public setSelectedHouses(location: { location: string; playerId: string }) {
@@ -94,17 +105,32 @@ class Sowing implements Game {
     }
   }
 
+  public onSowMulti() {
+    const array = this.elementSelected.id.split('-');
+    const [_, house] = this.elementSelected.id.split('_');
+
+    (this.game as any).bgaPerformAction(
+      'actPlayersSeeding',
+      {
+        playerId: array[1],
+        house: parseInt(house),
+      },
+      { lock: false }
+    );
+  }
+
   public onSow() {
     const array = this.elementSelected.id.split('-');
     const [_, house] = this.elementSelected.id.split('_');
 
-    (this.game as any).bgaPerformAction('actPlayersSeeding', {
+    (this.game as any).bgaPerformAction('actPlayerSeeding', {
       playerId: array[1],
       house: parseInt(house),
     });
   }
 
-  public async playersSeedingNotif(notif: Notif<PlayersSeeding>) {
+  public async playersSeedingNotif(notif: Notif<PlayersSeedingNotif>) {
+    console.log(notif);
     const seeds: Record<string, NodeListOf<HTMLElement>> = {};
 
     for (let playerId in notif.args.initialHouse) {
@@ -118,6 +144,8 @@ class Sowing implements Game {
     for (let i = 0; i < notif.args.maxSeeds; i++) {
       for (const playerId in notif.args.movements) {
         const movement = notif.args.movements[playerId][i];
+        if (!movement) continue;
+
         const initialHouse = notif.args.initialHouse[playerId];
 
         const seed = seeds[playerId][i];
@@ -127,14 +155,64 @@ class Sowing implements Game {
         animation.setOptions(seed, destination, 800);
 
         animation
-          .call((node) => true)
+          .call((_) => true)
           .then(() => {
-            this.game.counters[playerId][movement.location].incValue(1);
-            this.game.counters[playerId][initialHouse.location].incValue(-1);
+            this.game.counters[movement.playerId][movement.location].incValue(1);
+            this.game.counters[initialHouse.playerId][initialHouse.location].incValue(-1);
           });
       }
 
       await delayTime(300);
+    }
+  }
+
+  public async moveAllToRumahNotif(notif: Notif<MoveAllToRumahNotif>) {
+    const seeds = document
+      .getElementById(`congkak-${notif.args.playerId}-${notif.args.location}`)
+      .querySelectorAll<HTMLElement>('.congkak-seed');
+    const opponentSeeds = document
+      .getElementById(`congkak-${notif.args.opponentPlayerId}-${notif.args.opponentLocation}`)
+      .querySelectorAll<HTMLElement>('.congkak-seed');
+    const destination = document.getElementById(`congkak-${notif.args.playerId}-rumah`);
+
+    seeds.forEach((item) => {
+      const animation = new BgaLocalAnimation(this.game);
+      animation.setOptions(item, destination, 800);
+
+      animation.call((_) => true);
+    });
+
+    opponentSeeds.forEach((item) => {
+      const animation = new BgaLocalAnimation(this.game);
+      animation.setOptions(item, destination, 800);
+
+      animation.call((_) => true);
+    });
+
+    this.game.counters[notif.args.playerId]['rumah'].incValue(seeds.length);
+    this.game.counters[notif.args.playerId][notif.args.location].incValue(seeds.length * -1);
+
+    this.game.counters[notif.args.playerId]['rumah'].incValue(opponentSeeds.length);
+    this.game.counters[notif.args.opponentPlayerId][notif.args.opponentLocation].incValue(opponentSeeds.length * -1);
+  }
+
+  public async moveRemainingSeedsNotif(notif: Notif<MoveRemainingSeedsNotif>) {
+    const destination = document.getElementById(`congkak-${notif.args.playerId}-rumah`);
+
+    for (let i = 1; i <= 7; i++) {
+      const seeds = document
+        .getElementById(`congkak-${notif.args.playerId}-kampong_${i}}`)
+        .querySelectorAll<HTMLElement>('.congkak-seed');
+
+      seeds.forEach((item) => {
+        const animation = new BgaLocalAnimation(this.game);
+        animation.setOptions(item, destination, 800);
+
+        animation.call((_) => true);
+      });
+
+      this.game.counters[notif.args.playerId]['rumah'].incValue(seeds.length);
+      this.game.counters[notif.args.playerId][`kampong_${i}}`].incValue(seeds.length * -1);
     }
   }
 }

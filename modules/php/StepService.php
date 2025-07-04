@@ -21,19 +21,130 @@ class StepService extends \APP_GameClass
 
         $total = $houses[$playerId]['kampong'][$houseNumber] + $houses[$opponentPlayerId]['kampong'][$opponentHouseNumber];
 
-        $sql = "UPDATE `house` SET house_seeds = '%s' WHERE house_location = '%s' AND house_player = %s";
-        $this->game->DbQuery(sprintf($sql, $total, 'rumah', $playerId));
+        $this->game->houseService->updateInc($playerId, 'rumah', $total);
+        $this->game->houseService->update($playerId, "kampong_{$houseNumber}", 0);
+        $this->game->houseService->update($opponentPlayerId, "kampong_{$opponentHouseNumber}", 0);
 
-        $sql = "UPDATE `house` SET house_seeds = 0 WHERE house_location = '%s' AND house_player = %s";
-        $this->game->DbQuery(sprintf($sql, "kampong_{$houseNumber}", $playerId));
+        $this->game->notifyAllPlayers('moveAllToRumah', Messages::$EndSeeding, [
+            'player_name' => $this->game->getPlayerNameById($playerId),
+            'location' => $houseLocation,
+            'playerId' => $playerId,
+            'opponentLocation' => "kampong_{$opponentHouseNumber}",
+            'opponentPlayerId' => $opponentPlayerId
+        ]);
+        $this->game->notifyAllPlayers('simplePause', '', ['time' => 1000]);
+    }
 
-        $sql = "UPDATE `house` SET house_seeds = 0 WHERE house_location = '%s' AND house_player != %s";
-        $this->game->DbQuery(sprintf($sql, "kampong_{$opponentHouseNumber}", $playerId));
+    public function seeding($maxSeeds, $initialHouse)
+    {
+        foreach ($initialHouse as $house) {
+            $this->game->houseService->update($house['playerId'], $house['location'], 0);
+        }
+
+        $movements = [];
+        $finalHouse = $initialHouse;
+
+        for ($i = 0; $i < $maxSeeds; $i++) {
+            foreach ($finalHouse as $playerId => $house) {
+                if ($house['seeds'] == 0) continue;
+
+                $nextHouse = $this->game->houseService->getNextHouse($playerId, $house['playerId'], $house['location']);
+
+                if (!array_key_exists($playerId, $movements)) {
+                    $movements[$playerId] = [];
+                }
+
+                $movements[$playerId][] = $nextHouse;
+
+                $this->game->houseService->updateInc($nextHouse['playerId'], $nextHouse['location'], 1);
+
+                $finalHouse[$playerId] = [
+                    'location' => $nextHouse['location'],
+                    'playerId' => $nextHouse['playerId'],
+                    'seeds' => $house['seeds'] - 1
+                ];
+            }
+        }
+
+        return [$finalHouse, $movements];
+    }
+
+    public function finishSeeding($house, $playerId)
+    {
+        $newHouses = $this->game->houseService->list();
+
+        $location = '';
+        $locationPlayer = '';
+        $active = false;
+
+        if ($house['location'] == 'rumah') {
+            $location = 'initial';
+            $active = true;
+
+            $this->game->notifyAllPlayers('endSeedingRumah', Messages::$EndSeedingRumah, [
+                'player_name' => $this->game->getPlayerNameById($playerId)
+            ]);
+        } else {
+            $houseNumber = intval(str_replace('kampong_', '', $house['location']));
+            $seeds = $newHouses[$house['playerId']]['kampong'][$houseNumber];
+
+            if ($seeds > 1) {
+                $location = $house['location'];
+                $locationPlayer = $house['playerId'];
+                $active = true;
+
+                $this->game->notifyAllPlayers('endSeedingWithSeeds', Messages::$EndSeedingWithSeeds, [
+                    'player_name' => $this->game->getPlayerNameById($playerId)
+                ]);
+            } else if ($house['playerId'] == $playerId) {
+                $this->moveAllToRumah($playerId, $house['location']);
+            } else {
+                $this->game->notifyAllPlayers('endSeedingInOpponent', Messages::$EndSeedingInOpponent, [
+                    'player_name' => $this->game->getPlayerNameById($playerId)
+                ]);
+            }
+        }
+
+        return [
+            ['location' => $location, 'playerId' => $locationPlayer],
+            $active
+        ];
+    }
+
+    public function moveRemainingSeeds()
+    {
+        $houses = $this->game->houseService->list();
+
+        foreach ($houses as $playerId => $house) {
+            $total = 0;
+
+            foreach ($house['kampong'] as $number => $seeds) {
+                $total += $seeds;
+
+                $this->game->houseService->update($playerId, "kampong_{$number}", 0);
+            }
+
+            if ($total > 0) {
+                $this->game->houseService->updateInc($playerId, 'rumah', $total);
+                $this->game->playerService->updateScore($playerId);
+
+                $this->game->notifyAllPlayers('moveRemainingSeeds', Messages::$MoveRemainingSeeds, [
+                    'player_name' => $this->game->getPlayerNameById($playerId),
+                    'playerId' => $playerId,
+                ]);
+                $this->game->notifyAllPlayers('simplePause', '', ['time' => 1000]);
+            }
+        }
     }
 
     public function argPlayerSeeding()
     {
-        return [];
+        return [
+            'location' => [
+                'location' => $this->game->globals->get("seeding:next:house") ?? 'initial',
+                'playerId' => $this->game->globals->get("seeding:next:player")
+            ]
+        ];
     }
 
     public function argPlayersSeeding()
@@ -50,6 +161,54 @@ class StepService extends \APP_GameClass
         }
 
         return ['locations' => $result];
+    }
+
+    public function actPlayerSeeding(string $playerId, int $house)
+    {
+        $activePlayerId = $this->game->getActivePlayerId();
+
+        $houses = $this->game->houseService->list();
+
+        if ($houses[$playerId]['kampong'][$house] == 0) {
+            throw new \BgaUserException(Messages::$InvalidAction, 9000);
+        }
+
+        $initialHouse = [
+            $activePlayerId => [
+                'location' => "kampong_{$house}",
+                'playerId' => $playerId,
+                'seeds' => $houses[$playerId]['kampong'][$house]
+            ]
+        ];
+
+        $maxSeeds = $houses[$playerId]['kampong'][$house];
+
+        list($housePerPlayer, $movements) = $this->seeding($maxSeeds, $initialHouse);
+
+        $this->game->notifyAllPlayers('playersSeeding', Messages::$PlayerSeeding, [
+            'player_name' => $this->game->getPlayerNameById($playerId),
+            'movements' => $movements,
+            'initialHouse' => $initialHouse,
+            'maxSeeds' => $maxSeeds,
+        ]);
+        $this->game->notifyAllPlayers('simplePause', '', ['time' => 1000 + ($maxSeeds * 300)]);
+
+        list($location, $active) = $this->finishSeeding($housePerPlayer[$activePlayerId], $activePlayerId);
+
+        $this->game->playerService->updateScore($activePlayerId);
+
+        $this->game->globals->delete("seeding:next:house");
+        $this->game->globals->delete("seeding:next:player");
+
+        if ($active) {
+            $this->game->globals->set("seeding:next:house", $location['location']);
+            $this->game->globals->set("seeding:next:player", $location['playerId']);
+
+            $this->game->giveExtraTime($activePlayerId);
+            $this->game->gamestate->nextState('playerSeeding');
+        } else {
+            $this->game->gamestate->nextState('nextPlayer');
+        }
     }
 
     public function actPlayersSeeding(string $playerId, int $house)
@@ -75,8 +234,6 @@ class StepService extends \APP_GameClass
 
         $maxSeeds = 0;
 
-        $housePerPlayer = [];
-        $movements = [];
         $initialHouse = [];
 
         foreach ($players as $player) {
@@ -85,53 +242,27 @@ class StepService extends \APP_GameClass
             $house = $this->game->globals->get("seeding:house:{$playerId}");
             $playerLocation = $this->game->globals->get("seeding:player:{$playerId}");
 
-            $housePerPlayer[$playerId] = [
+            $initialHouse[$playerId] = [
                 'location' => "kampong_{$house}",
                 'playerId' => $playerLocation,
                 'seeds' => $houses[$playerLocation]['kampong'][$house]
             ];
-            $initialHouse[$playerId] = [
-                'location' => "kampong_{$house}",
-                'playerId' => $playerLocation,
-            ];
-            $movements[$playerId] = [];
 
             if ($houses[$playerLocation]['kampong'][$house] > $maxSeeds) {
                 $maxSeeds = $houses[$playerLocation]['kampong'][$house];
             }
         }
 
-        foreach ($housePerPlayer as $house) {
-            $this->game->houseService->update($house['playerId'], $house['location'], 0);
-        }
-
-        for ($i = 0; $i < $maxSeeds; $i++) {
-            foreach ($housePerPlayer as $playerId => $house) {
-                if ($house['seeds'] == 0) continue;
-
-                $nextHouse = $this->game->houseService->getNextHouse($playerId, $house['playerId'], $house['location']);
-
-                $movements[$playerId][] = $nextHouse;
-
-                $this->game->houseService->updateInc($nextHouse['playerId'], $nextHouse['location'], 1);
-
-                $housePerPlayer[$playerId] = [
-                    'location' => $nextHouse['location'],
-                    'playerId' => $nextHouse['playerId'],
-                    'seeds' => $house['seeds'] - 1
-                ];
-            }
-        }
-
-        $newHouses = $this->game->houseService->list();
-        $actives = [];
+        list($housePerPlayer, $movements) = $this->seeding($maxSeeds, $initialHouse);
 
         $this->game->notifyAllPlayers('playersSeeding', Messages::$PlayersSeeding, [
             'movements' => $movements,
             'initialHouse' => $initialHouse,
             'maxSeeds' => $maxSeeds,
         ]);
-        $this->game->notifyAllPlayers('simplePause', '', ['time' => 500 + ($maxSeeds * 300)]);
+        $this->game->notifyAllPlayers('simplePause', '', ['time' => 1000 + ($maxSeeds * 300)]);
+
+        $actives = [];
 
         foreach ($housePerPlayer as $playerId => $house) {
             $this->game->giveExtraTime($playerId);
@@ -140,40 +271,18 @@ class StepService extends \APP_GameClass
             $this->game->globals->delete("seeding:house:{$playerId}");
             $this->game->globals->delete("seeding:player:{$playerId}");
 
-            if ($house['location'] == 'rumah') {
-                $this->game->globals->set("seeding:next:house:{$playerId}", 'initial');
+            list($location, $active) = $this->finishSeeding($house, $playerId);
+
+            if ($active) {
                 $actives[] = $playerId;
-
-                $this->game->notifyAllPlayers('endSeedingRumah', Messages::$EndSeedingRumah, [
-                    'player_name' => $this->game->getPlayerNameById($playerId)
-                ]);
-            } else {
-                $houseNumber = intval(str_replace('kampong_', '', $house['location']));
-                $seeds = $newHouses[$house['playerId']]['kampong'][$houseNumber];
-
-                if ($seeds > 1) {
-                    $this->game->globals->set("seeding:next:house:{$playerId}", $house['location']);
-                    $this->game->globals->set("seeding:next:player:{$playerId}", $house['playerId']);
-                    $actives[] = $playerId;
-
-                    $this->game->notifyAllPlayers('endSeedingWithSeeds', Messages::$EndSeedingWithSeeds, [
-                        'player_name' => $this->game->getPlayerNameById($playerId)
-                    ]);
-                } else if ($house['playerId'] == $playerId) {
-                    $this->game->notifyAllPlayers('endSeedingWithoutMyHouse', Messages::$EndSeeding, [
-                        'player_name' => $this->game->getPlayerNameById($playerId),
-                        'house' => $house,
-                    ]);
-                    $this->game->notifyAllPlayers('simplePause', '', ['time' => 1000]);
-
-                    $this->moveAllToRumah($playerId, $house['location']);
-                } else {
-                    $this->game->notifyAllPlayers('endSeedingWithout', Messages::$EndSeedingInOpponent, [
-                        'player_name' => $this->game->getPlayerNameById($playerId)
-                    ]);
-                }
             }
+
+            $this->game->globals->set("seeding:next:house:{$playerId}", $location['location']);
+            $this->game->globals->set("seeding:next:player:{$playerId}", $location['playerId']);
+
+            $this->game->playerService->updateScore($playerId);
         }
+
 
         if (count($actives) == 1) {
             $this->game->gamestate->changeActivePlayer($actives[0]);
@@ -185,5 +294,21 @@ class StepService extends \APP_GameClass
         } else {
             $this->game->gamestate->nextState('playersSeeding');
         }
+    }
+
+    public function stNextPlayer()
+    {
+        $playerId = $this->game->getActivePlayerId();
+        $this->game->giveExtraTime($playerId);
+
+        if ($this->game->houseService->isGameEnd()) {
+            $this->moveRemainingSeeds();
+
+            return $this->game->gamestate->nextState("gameEnd");
+        }
+
+        $this->game->localActiveNextPlayer();
+
+        $this->game->gamestate->nextState("playerSeeding");
     }
 }

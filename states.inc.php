@@ -50,7 +50,7 @@ $machinestates = [
         "type" => "activeplayer",
         "args" => "argPlayerSeeding",
         "possibleactions" => ["actPlayerSeeding"],
-        "transitions" => ["nextPlayer" => 21]
+        "transitions" => ["nextPlayer" => 21, "playerSeeding" => 11]
     ],
 
     20 => [
@@ -59,7 +59,7 @@ $machinestates = [
         "type" => "game",
         "updateGameProgression" => true,
         "action" => "stNextMultiplayers",
-        "transitions" => ["playersSeeding" => 10, "playerSeeding" => 11, "endGame" => 99]
+        "transitions" => ["playersSeeding" => 10, "playerSeeding" => 11]
     ],
 
     21 => [
@@ -68,7 +68,7 @@ $machinestates = [
         "type" => "game",
         "action" => "stNextPlayer",
         "updateGameProgression" => true,
-        "transitions" => ["playerSeeding" => 11, "endGame" => 99]
+        "transitions" => ["playerSeeding" => 11, "gameEnd" => 99]
     ],
 
     99 => [
