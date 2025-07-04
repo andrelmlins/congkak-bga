@@ -130,7 +130,6 @@ class Sowing implements Game {
   }
 
   public async playersSeedingNotif(notif: Notif<PlayersSeedingNotif>) {
-    console.log(notif);
     const seeds: Record<string, NodeListOf<HTMLElement>> = {};
 
     for (let playerId in notif.args.initialHouse) {
@@ -201,7 +200,7 @@ class Sowing implements Game {
 
     for (let i = 1; i <= 7; i++) {
       const seeds = document
-        .getElementById(`congkak-${notif.args.playerId}-kampong_${i}}`)
+        .getElementById(`congkak-${notif.args.playerId}-kampong_${i}`)
         .querySelectorAll<HTMLElement>('.congkak-seed');
 
       seeds.forEach((item) => {
@@ -212,7 +211,7 @@ class Sowing implements Game {
       });
 
       this.game.counters[notif.args.playerId]['rumah'].incValue(seeds.length);
-      this.game.counters[notif.args.playerId][`kampong_${i}}`].incValue(seeds.length * -1);
+      this.game.counters[notif.args.playerId][`kampong_${i}`].incValue(seeds.length * -1);
     }
   }
 }

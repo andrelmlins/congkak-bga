@@ -104,6 +104,14 @@ class HouseService extends \APP_GameClass
         return $item;
     }
 
+    public function countAllSeedsInKampong()
+    {
+        $sql = "SELECT SUM(house_seeds) seeds FROM house WHERE house_location != 'rumah'";
+        $item = $this->game->getObjectFromDB($sql);
+
+        return intval($item['seeds']);
+    }
+
     public function isGameEnd()
     {
         $isGameEnd = false;
@@ -113,7 +121,7 @@ class HouseService extends \APP_GameClass
             $sql = "SELECT SUM(house_seeds) seeds FROM house WHERE house_location != 'rumah' AND house_player = '%s'";
             $item = $this->game->getObjectFromDB(sprintf($sql, $player['player_id']));
 
-            if ($item['seeds'] == 0) {
+            if (intval($item['seeds']) == 0) {
                 $isGameEnd = true;
             }
         }

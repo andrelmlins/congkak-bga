@@ -1,1 +1,29 @@
-{}
+{
+  "player": {
+    "seedsStorehouse": {
+      "id": 10,
+      "name": "Seeds in storehouse at the end of the game",
+      "type": "int"
+    },
+    "sowings": {
+      "id": 11,
+      "name": "Sowings",
+      "type": "int"
+    },
+    "seedsMyHouse": {
+      "id": 12,
+      "name": "Seeds captured when finished sowing in their own empty space",
+      "type": "int"
+    },
+    "sowingsOpponentHouse": {
+      "id": 13,
+      "name": "Sowings completed at the opponent's house",
+      "type": "int"
+    },
+    "seedsGameEnd": {
+      "id": 14,
+      "name": "Number of seeds moved due to game end",
+      "type": "int"
+    }
+  }
+}

@@ -50,7 +50,7 @@ $machinestates = [
         "type" => "activeplayer",
         "args" => "argPlayerSeeding",
         "possibleactions" => ["actPlayerSeeding"],
-        "transitions" => ["nextPlayer" => 21, "playerSeeding" => 11]
+        "transitions" => ["nextPlayer" => 21, "playerSeeding" => 11, "gameEnd" => 99]
     ],
 
     20 => [

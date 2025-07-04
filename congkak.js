@@ -316,7 +316,6 @@ var Sowing = /** @class */ (function () {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
-                        console.log(notif);
                         seeds = {};
                         for (playerId in notif.args.initialHouse) {
                             house = notif.args.initialHouse[playerId];
@@ -398,7 +397,7 @@ var Sowing = /** @class */ (function () {
                 destination = document.getElementById("congkak-".concat(notif.args.playerId, "-rumah"));
                 for (i = 1; i <= 7; i++) {
                     seeds = document
-                        .getElementById("congkak-".concat(notif.args.playerId, "-kampong_").concat(i, "}"))
+                        .getElementById("congkak-".concat(notif.args.playerId, "-kampong_").concat(i))
                         .querySelectorAll('.congkak-seed');
                     seeds.forEach(function (item) {
                         var animation = new BgaLocalAnimation(_this.game);
@@ -406,7 +405,7 @@ var Sowing = /** @class */ (function () {
                         animation.call(function (_) { return true; });
                     });
                     this.game.counters[notif.args.playerId]['rumah'].incValue(seeds.length);
-                    this.game.counters[notif.args.playerId]["kampong_".concat(i, "}")].incValue(seeds.length * -1);
+                    this.game.counters[notif.args.playerId]["kampong_".concat(i)].incValue(seeds.length * -1);
                 }
                 return [2 /*return*/];
             });

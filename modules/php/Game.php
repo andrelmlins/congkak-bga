@@ -32,6 +32,8 @@ class Game extends \Table
 
     public StepService $stepService;
 
+    public StatsService $statsService;
+
     public function __construct()
     {
         parent::__construct();
@@ -46,6 +48,8 @@ class Game extends \Table
         $this->playerService = new PlayerService($this);
 
         $this->stepService = new StepService($this);
+
+        $this->statsService = new StatsService($this);
     }
 
     public function argPlayersSeeding()
@@ -88,21 +92,9 @@ class Game extends \Table
         $this->stepService->stNextPlayer();
     }
 
-    /**
-     * Compute and return the current game progression.
-     *
-     * The number returned must be an integer between 0 and 100.
-     *
-     * This method is called each time we are in a game state with the "updateGameProgression" property set to true.
-     *
-     * @return int
-     * @see ./states.inc.php
-     */
     public function getGameProgression()
     {
-        // TODO: compute and return the game progression
-
-        return 0;
+        return ($this->houseService->countAllSeedsInKampong() * 100) / 98;
     }
 
     /**
@@ -180,6 +172,7 @@ class Game extends \Table
         $this->reattributeColorsBasedOnPreferences($players, $gameinfos["player_colors"]);
         $this->reloadPlayersBasicInfos();
 
+        $this->statsService->setup($players);
         $this->houseService->create();
 
         $this->activeNextPlayer();

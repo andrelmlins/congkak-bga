@@ -61,5 +61,7 @@ class PlayerService extends \APP_GameClass
             'score' => $score,
             'playerId' => $playerId,
         ]);
+
+        $this->game->statsService->setSeedsStorehouse($score, $playerId);
     }
 }

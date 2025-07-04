@@ -25,6 +25,8 @@ class StepService extends \APP_GameClass
         $this->game->houseService->update($playerId, "kampong_{$houseNumber}", 0);
         $this->game->houseService->update($opponentPlayerId, "kampong_{$opponentHouseNumber}", 0);
 
+        $this->game->statsService->incSeedsMyHouse($total, $playerId);
+
         $this->game->notifyAllPlayers('moveAllToRumah', Messages::$EndSeeding, [
             'player_name' => $this->game->getPlayerNameById($playerId),
             'location' => $houseLocation,
@@ -99,6 +101,8 @@ class StepService extends \APP_GameClass
             } else if ($house['playerId'] == $playerId) {
                 $this->moveAllToRumah($playerId, $house['location']);
             } else {
+                $this->game->statsService->incSowingsOpponentHouse($playerId);
+
                 $this->game->notifyAllPlayers('endSeedingInOpponent', Messages::$EndSeedingInOpponent, [
                     'player_name' => $this->game->getPlayerNameById($playerId)
                 ]);
@@ -127,6 +131,7 @@ class StepService extends \APP_GameClass
             if ($total > 0) {
                 $this->game->houseService->updateInc($playerId, 'rumah', $total);
                 $this->game->playerService->updateScore($playerId);
+                $this->game->statsService->setSeedsGameEnd($total, $playerId);
 
                 $this->game->notifyAllPlayers('moveRemainingSeeds', Messages::$MoveRemainingSeeds, [
                     'player_name' => $this->game->getPlayerNameById($playerId),
@@ -196,6 +201,7 @@ class StepService extends \APP_GameClass
         list($location, $active) = $this->finishSeeding($housePerPlayer[$activePlayerId], $activePlayerId);
 
         $this->game->playerService->updateScore($activePlayerId);
+        $this->game->statsService->incSowings($activePlayerId);
 
         $this->game->globals->delete("seeding:next:house");
         $this->game->globals->delete("seeding:next:player");
@@ -203,6 +209,12 @@ class StepService extends \APP_GameClass
         if ($active) {
             $this->game->globals->set("seeding:next:house", $location['location']);
             $this->game->globals->set("seeding:next:player", $location['playerId']);
+
+            if ($this->game->houseService->isGameEnd()) {
+                $this->moveRemainingSeeds();
+
+                // return $this->game->gamestate->nextState("gameEnd");
+            }
 
             $this->game->giveExtraTime($activePlayerId);
             $this->game->gamestate->nextState('playerSeeding');
@@ -281,6 +293,7 @@ class StepService extends \APP_GameClass
             $this->game->globals->set("seeding:next:player:{$playerId}", $location['playerId']);
 
             $this->game->playerService->updateScore($playerId);
+            $this->game->statsService->incSowings($playerId);
         }
 
 
