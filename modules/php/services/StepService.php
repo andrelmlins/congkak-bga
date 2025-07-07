@@ -1,6 +1,9 @@
 <?php
 
-namespace Bga\Games\congkak;
+namespace Bga\Games\congkak\services;
+
+use Bga\Games\congkak\entities\Messages;
+use Bga\Games\congkak\Game;
 
 class StepService extends \APP_GameClass
 {

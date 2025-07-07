@@ -20,6 +20,13 @@ declare(strict_types=1);
 
 namespace Bga\Games\congkak;
 
+use Bga\Games\congkak\entities\Messages;
+use Bga\Games\congkak\services\HouseService;
+use Bga\Games\congkak\services\PlayerService;
+use Bga\Games\congkak\services\StatsService;
+use Bga\Games\congkak\services\StepService;
+use Bga\Games\congkak\services\OptionsService;
+
 require_once(APP_GAMEMODULE_PATH . "module/table/table.game.php");
 
 class Game extends \Table
@@ -34,11 +41,19 @@ class Game extends \Table
 
     public StatsService $statsService;
 
+    public OptionsService $optionsService;
+
     public function __construct()
     {
         parent::__construct();
 
-        $this->initGameStateLabels([]);
+        $this->initGameStateLabels([
+            "gameMode" => 100,
+            "numberOfRounds" => 101,
+            "houseBurnt" => 102,
+            "victoryMode" => 103,
+            "automaticSeeding" => 110,
+        ]);
 
         Messages::initMessages();
         $this->startConstants();
@@ -50,6 +65,8 @@ class Game extends \Table
         $this->stepService = new StepService($this);
 
         $this->statsService = new StatsService($this);
+
+        $this->optionsService = new OptionsService($this);
     }
 
     public function argPlayersSeeding()

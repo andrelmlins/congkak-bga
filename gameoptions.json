@@ -1,1 +1,112 @@
-{}
+{
+  "100": {
+    "name": "Game mode",
+    "values": {
+      "1": {
+        "name": "Single round"
+      },
+      "2": {
+        "name": "Fixed rounds",
+        "nobeginner": true
+      },
+      "3": {
+        "name": "Total burn",
+        "nobeginner": true
+      }
+    },
+    "startcondition": {
+      "3": [
+        {
+          "type": "otheroption",
+          "id": 102,
+          "value": [2],
+          "message": "This mode can be infinite if not played together with the burned house mode."
+        }
+      ]
+    },
+    "default": 1
+  },
+  "101": {
+    "name": "Number of rounds",
+    "values": {
+      "3": {
+        "name": "Three rounds"
+      },
+      "5": {
+        "name": "Five rounds",
+        "nobeginner": true
+      },
+      "7": {
+        "name": "Seven rounds",
+        "nobeginner": true
+      }
+    },
+    "displaycondition": [
+      {
+        "type": "otheroption",
+        "id": 100,
+        "value": [2]
+      }
+    ],
+    "default": 3
+  },
+  "103": {
+    "name": "Victory mode",
+    "values": {
+      "1": {
+        "name": "Number of rounds"
+      },
+      "2": {
+        "name": "Number of seeds in the last round",
+        "nobeginner": true
+      },
+      "3": {
+        "name": "Number of houses burned",
+        "nobeginner": true
+      }
+    },
+    "displaycondition": [
+      {
+        "type": "otheroption",
+        "id": 100,
+        "value": [2]
+      }
+    ],
+    "default": 1
+  },
+  "102": {
+    "name": "House burnt",
+    "values": {
+      "1": {
+        "name": "Off",
+        "tmdisplay": ""
+      },
+      "2": {
+        "name": "On",
+        "tmdisplay": ""
+      }
+    },
+    "displaycondition": [
+      {
+        "type": "otheroption",
+        "id": 100,
+        "value": [2, 3]
+      }
+    ],
+    "default": 2
+  },
+  "110": {
+    "name": "Automatic seeding",
+    "values": {
+      "1": {
+        "name": "Off",
+        "tmdisplay": ""
+      },
+      "2": {
+        "name": "On",
+        "tmdisplay": ""
+      }
+    },
+    "default": 2
+  }
+}

@@ -1,6 +1,6 @@
 <?php
 
-namespace Bga\Games\congkak;
+namespace Bga\Games\congkak\entities;
 
 class Messages
 {
