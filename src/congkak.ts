@@ -39,44 +39,15 @@ class Congkak implements CongkakGame {
     this.counters = { [this.gamedatas.playerPosition[0]]: {}, [this.gamedatas.playerPosition[1]]: {} };
 
     for (let i = 7; i >= 1; i--) {
-      grid.insertAdjacentHTML(
-        'beforeend',
-        `
-          <div id="congkak-${this.gamedatas.playerPosition[1]}-kampong_${i}" class="congkak-kampong">
-            <span id="congkak-${this.gamedatas.playerPosition[1]}-kampong_${i}-counter" class="congkak-counter top"></span>
-          </div>
-        `
-      );
+      grid.insertAdjacentHTML('beforeend', this.formatHouse(this.gamedatas.playerPosition[1], `kampong_${i}`));
     }
 
     for (let i = 1; i <= 7; i++) {
-      grid.insertAdjacentHTML(
-        'beforeend',
-        `
-          <div id="congkak-${this.gamedatas.playerPosition[0]}-kampong_${i}" class="congkak-kampong">
-            <span id="congkak-${this.gamedatas.playerPosition[0]}-kampong_${i}-counter" class="congkak-counter bottom"></span>
-          </div>
-        `
-      );
+      grid.insertAdjacentHTML('beforeend', this.formatHouse(this.gamedatas.playerPosition[0], `kampong_${i}`));
     }
 
-    table.insertAdjacentHTML(
-      'beforeend',
-      `
-        <div id="congkak-${this.gamedatas.playerPosition[0]}-rumah" class="congkak-rumah">
-          <span id="congkak-${this.gamedatas.playerPosition[0]}-rumah-counter" class="congkak-counter left"></span>
-        </div>
-      `
-    );
-
-    table.insertAdjacentHTML(
-      'beforeend',
-      `
-        <div id="congkak-${this.gamedatas.playerPosition[1]}-rumah" class="congkak-rumah">
-          <span id="congkak-${this.gamedatas.playerPosition[1]}-rumah-counter" class="congkak-counter right"></span>
-        </div>
-      `
-    );
+    table.insertAdjacentHTML('beforeend', this.formatHouse(this.gamedatas.playerPosition[0], 'rumah'));
+    table.insertAdjacentHTML('beforeend', this.formatHouse(this.gamedatas.playerPosition[1], 'rumah'));
 
     const currentPlayer = this.gamedatas.players[this.gamedatas.playerPosition[0]];
     table.insertAdjacentHTML(
@@ -110,6 +81,17 @@ class Congkak implements CongkakGame {
     for (let i = 0; i < seeds; i++) {
       box.insertAdjacentHTML('beforeend', `<div class="congkak-seed"></div>`);
     }
+  }
+
+  public formatHouse(playerId: string, house: string) {
+    const locked = this.gamedatas.houseListLockeds[playerId][house] ?? false;
+    const className = `congkak-${house == 'rumah' ? 'rumah' : 'kampong'} ${locked ? 'locked' : ''}`;
+
+    return `
+      <div id="congkak-${playerId}-${house}" class="${className}">
+        <span id="congkak-${playerId}-${house}-counter" class="congkak-counter top"></span>
+      </div>
+    `;
   }
 
   public bgaFormatText(log, args) {

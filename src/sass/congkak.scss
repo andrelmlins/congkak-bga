@@ -85,6 +85,18 @@ body {
         background-color: #e5393550;
         border: 2px solid #e53935;
       }
+
+      &.locked {
+        background-color: #ffffff50;
+        border-radius: 100%;
+        transition: 0.2s all;
+
+        & .congkak-counter {
+          color: white;
+          background-color: #acacac;
+          transition: 0.2s all;
+        }
+      }
     }
 
     .congkak-rumah {
@@ -112,7 +124,7 @@ body {
       background-size: 100%;
       background-position: 0;
       position: absolute;
-      // filter: drop-shadow(0 1px 0px rgba(0, 0, 0, 0.55)) drop-shadow(0 0.5px 0px rgba(0, 0, 0, 0.65));
+      filter: drop-shadow(0 1px 0px rgba(0, 0, 0, 0.55)) drop-shadow(0 0.5px 0px rgba(0, 0, 0, 0.65));
 
       @for $i from 1 through list.length($positions) {
         &:nth-child(#{$i + 1}) {

@@ -50,6 +50,8 @@ class Sowing implements Game {
     dojo.subscribe('playersSeeding', this, (notif) => this.playersSeedingNotif(notif));
     dojo.subscribe('moveAllToRumah', this, (notif) => this.moveAllToRumahNotif(notif));
     dojo.subscribe('moveRemainingSeeds', this, (notif) => this.moveRemainingSeedsNotif(notif));
+    dojo.subscribe('moveStorehouseSeeds', this, (notif) => this.moveStorehouseSeedsNotif(notif));
+    dojo.subscribe('lockedHouses', this, (notif) => this.lockedHousesNotif(notif));
   }
 
   public setSelectedHouses(location: { location: string; playerId: string }) {
@@ -213,5 +215,36 @@ class Sowing implements Game {
       this.game.counters[notif.args.playerId]['rumah'].incValue(seeds.length);
       this.game.counters[notif.args.playerId][`kampong_${i}`].incValue(seeds.length * -1);
     }
+  }
+
+  public async moveStorehouseSeedsNotif(notif: Notif<MoveStorehouseSeedsNotif>) {
+    const seeds = document
+      .getElementById(`congkak-${notif.args.playerId}-rumah`)
+      .querySelectorAll<HTMLElement>('.congkak-seed');
+
+    let seedsCount = 0;
+
+    for (let house in notif.args.movements) {
+      for (let i = 0; i < notif.args.movements[house]; i++) {
+        const destination = document.getElementById(`congkak-${notif.args.playerId}-${house}`);
+
+        const animation = new BgaLocalAnimation(this.game);
+        animation.setOptions(seeds.item(seedsCount), destination, 800);
+        animation.call((_) => true);
+
+        seedsCount += 1;
+      }
+
+      await delayTime(800);
+
+      this.game.counters[notif.args.playerId][house].incValue(notif.args.movements[house]);
+      this.game.counters[notif.args.playerId]['rumah'].incValue(notif.args.movements[house] * -1);
+    }
+  }
+
+  public async lockedHousesNotif(notif: Notif<LockedHousesNotif>) {
+    notif.args.lockeds.map((item) =>
+      document.getElementById(`congkak-${notif.args.playerId}-${item}`).classList.add('locked')
+    );
   }
 }

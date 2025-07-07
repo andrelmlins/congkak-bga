@@ -72,9 +72,9 @@ class Game extends \Table
         $this->stepService->actPlayerSeeding($playerId, $house);
     }
 
-    public function stStartGame()
+    public function stNewRound()
     {
-        $this->gamestate->nextState('playersSeeding');
+        $this->stepService->stNewRound();
     }
 
     public function stAllPlayers()
@@ -138,6 +138,7 @@ class Game extends \Table
         $result["houseList"] = $this->houseService->list();
         $result["playerPosition"] = $this->playerService->getPlayerOrder($currentPlayerId);
         $result["opponentPlayerId"] = $this->playerService->getOpponnetId($currentPlayerId);
+        $result["houseListLockeds"] = $this->houseService->listLockeds();
 
         return $result;
     }

@@ -62,13 +62,13 @@ var Congkak = /** @class */ (function () {
         var grid = document.getElementById('congkak-grid');
         this.counters = (_a = {}, _a[this.gamedatas.playerPosition[0]] = {}, _a[this.gamedatas.playerPosition[1]] = {}, _a);
         for (var i = 7; i >= 1; i--) {
-            grid.insertAdjacentHTML('beforeend', "\n          <div id=\"congkak-".concat(this.gamedatas.playerPosition[1], "-kampong_").concat(i, "\" class=\"congkak-kampong\">\n            <span id=\"congkak-").concat(this.gamedatas.playerPosition[1], "-kampong_").concat(i, "-counter\" class=\"congkak-counter top\"></span>\n          </div>\n        "));
+            grid.insertAdjacentHTML('beforeend', this.formatHouse(this.gamedatas.playerPosition[1], "kampong_".concat(i)));
         }
         for (var i = 1; i <= 7; i++) {
-            grid.insertAdjacentHTML('beforeend', "\n          <div id=\"congkak-".concat(this.gamedatas.playerPosition[0], "-kampong_").concat(i, "\" class=\"congkak-kampong\">\n            <span id=\"congkak-").concat(this.gamedatas.playerPosition[0], "-kampong_").concat(i, "-counter\" class=\"congkak-counter bottom\"></span>\n          </div>\n        "));
+            grid.insertAdjacentHTML('beforeend', this.formatHouse(this.gamedatas.playerPosition[0], "kampong_".concat(i)));
         }
-        table.insertAdjacentHTML('beforeend', "\n        <div id=\"congkak-".concat(this.gamedatas.playerPosition[0], "-rumah\" class=\"congkak-rumah\">\n          <span id=\"congkak-").concat(this.gamedatas.playerPosition[0], "-rumah-counter\" class=\"congkak-counter left\"></span>\n        </div>\n      "));
-        table.insertAdjacentHTML('beforeend', "\n        <div id=\"congkak-".concat(this.gamedatas.playerPosition[1], "-rumah\" class=\"congkak-rumah\">\n          <span id=\"congkak-").concat(this.gamedatas.playerPosition[1], "-rumah-counter\" class=\"congkak-counter right\"></span>\n        </div>\n      "));
+        table.insertAdjacentHTML('beforeend', this.formatHouse(this.gamedatas.playerPosition[0], 'rumah'));
+        table.insertAdjacentHTML('beforeend', this.formatHouse(this.gamedatas.playerPosition[1], 'rumah'));
         var currentPlayer = this.gamedatas.players[this.gamedatas.playerPosition[0]];
         table.insertAdjacentHTML('beforeend', "<span style=\"color: #".concat(currentPlayer.color, "\" class=\"congkak-player bottom\">").concat(currentPlayer.name, "</span>"));
         var opponentPlayer = this.gamedatas.players[this.gamedatas.playerPosition[1]];
@@ -89,6 +89,12 @@ var Congkak = /** @class */ (function () {
         for (var i = 0; i < seeds; i++) {
             box.insertAdjacentHTML('beforeend', "<div class=\"congkak-seed\"></div>");
         }
+    };
+    Congkak.prototype.formatHouse = function (playerId, house) {
+        var _a;
+        var locked = (_a = this.gamedatas.houseListLockeds[playerId][house]) !== null && _a !== void 0 ? _a : false;
+        var className = "congkak-".concat(house == 'rumah' ? 'rumah' : 'kampong', " ").concat(locked ? 'locked' : '');
+        return "\n      <div id=\"congkak-".concat(playerId, "-").concat(house, "\" class=\"").concat(className, "\">\n        <span id=\"congkak-").concat(playerId, "-").concat(house, "-counter\" class=\"congkak-counter top\"></span>\n      </div>\n    ");
     };
     Congkak.prototype.bgaFormatText = function (log, args) {
         try {
@@ -243,6 +249,8 @@ var Sowing = /** @class */ (function () {
         dojo.subscribe('playersSeeding', this, function (notif) { return _this.playersSeedingNotif(notif); });
         dojo.subscribe('moveAllToRumah', this, function (notif) { return _this.moveAllToRumahNotif(notif); });
         dojo.subscribe('moveRemainingSeeds', this, function (notif) { return _this.moveRemainingSeedsNotif(notif); });
+        dojo.subscribe('moveStorehouseSeeds', this, function (notif) { return _this.moveStorehouseSeedsNotif(notif); });
+        dojo.subscribe('lockedHouses', this, function (notif) { return _this.lockedHousesNotif(notif); });
     };
     Sowing.prototype.setSelectedHouses = function (location) {
         var _this = this;
@@ -407,6 +415,58 @@ var Sowing = /** @class */ (function () {
                     this.game.counters[notif.args.playerId]['rumah'].incValue(seeds.length);
                     this.game.counters[notif.args.playerId]["kampong_".concat(i)].incValue(seeds.length * -1);
                 }
+                return [2 /*return*/];
+            });
+        });
+    };
+    Sowing.prototype.moveStorehouseSeedsNotif = function (notif) {
+        return __awaiter(this, void 0, void 0, function () {
+            var seeds, seedsCount, _a, _b, _c, _i, house, i, destination, animation;
+            return __generator(this, function (_d) {
+                switch (_d.label) {
+                    case 0:
+                        seeds = document
+                            .getElementById("congkak-".concat(notif.args.playerId, "-rumah"))
+                            .querySelectorAll('.congkak-seed');
+                        seedsCount = 0;
+                        _a = notif.args.movements;
+                        _b = [];
+                        for (_c in _a)
+                            _b.push(_c);
+                        _i = 0;
+                        _d.label = 1;
+                    case 1:
+                        if (!(_i < _b.length)) return [3 /*break*/, 4];
+                        _c = _b[_i];
+                        if (!(_c in _a)) return [3 /*break*/, 3];
+                        house = _c;
+                        for (i = 0; i < notif.args.movements[house]; i++) {
+                            destination = document.getElementById("congkak-".concat(notif.args.playerId, "-").concat(house));
+                            animation = new BgaLocalAnimation(this.game);
+                            animation.setOptions(seeds.item(seedsCount), destination, 800);
+                            animation.call(function (_) { return true; });
+                            seedsCount += 1;
+                        }
+                        return [4 /*yield*/, delayTime(800)];
+                    case 2:
+                        _d.sent();
+                        this.game.counters[notif.args.playerId][house].incValue(notif.args.movements[house]);
+                        this.game.counters[notif.args.playerId]['rumah'].incValue(notif.args.movements[house] * -1);
+                        _d.label = 3;
+                    case 3:
+                        _i++;
+                        return [3 /*break*/, 1];
+                    case 4: return [2 /*return*/];
+                }
+            });
+        });
+    };
+    Sowing.prototype.lockedHousesNotif = function (notif) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                notif.args.lockeds.map(function (item) {
+                    return document.getElementById("congkak-".concat(notif.args.playerId, "-").concat(item)).classList.add('locked');
+                });
                 return [2 /*return*/];
             });
         });

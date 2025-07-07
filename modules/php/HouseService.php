@@ -26,6 +26,14 @@ class HouseService extends \APP_GameClass
         }
     }
 
+    public function isLocked($playerId, $location)
+    {
+        $sql = "SELECT house_locked FROM house WHERE house_location = '%s' AND house_player = '%s'";
+        $item = $this->game->getObjectFromDB(sprintf($sql, $location, $playerId));
+
+        return $item['house_locked'] == '1';
+    }
+
     public function update($playerId, $location, int $seeds)
     {
         $sql = "UPDATE `house` SET house_seeds = %s WHERE house_location = '%s' AND house_player = '%s'";
@@ -36,6 +44,12 @@ class HouseService extends \APP_GameClass
     {
         $sql = "UPDATE `house` SET house_seeds = house_seeds + %s WHERE house_location = '%s' AND house_player = '%s'";
         $this->game->DbQuery(sprintf($sql, $seeds, $location, $playerId));
+    }
+
+    public function locked($playerId, $location)
+    {
+        $sql = "UPDATE `house` SET house_locked = 1 WHERE house_location = '%s' AND house_player = '%s'";
+        $this->game->DbQuery(sprintf($sql, $location, $playerId));
     }
 
     public function list()
@@ -55,6 +69,26 @@ class HouseService extends \APP_GameClass
             } else {
                 $position = intval(str_replace('kampong_', '', $item['house_location']));
                 $result[$item['house_player']]['kampong'][$position] = intval($item['house_seeds']);
+            }
+        }
+
+        return $result;
+    }
+
+    public function listLockeds()
+    {
+        $sql = "SELECT * FROM house";
+        $list = $this->game->getObjectListFromDB($sql);
+
+        $result = [];
+
+        foreach ($list as $item) {
+            if (!array_key_exists($item['house_player'], $result)) {
+                $result[$item['house_player']] = [];
+            }
+
+            if ($item['house_location'] != 'rumah') {
+                $result[$item['house_player']][$item['house_location']] = $item['house_locked'] == '1';
             }
         }
 
@@ -85,23 +119,30 @@ class HouseService extends \APP_GameClass
         $sequence = $this->sequence($currentPlayerId);
         $position = array_search(['playerId' => $playerId, 'location' => $house], $sequence) + 1;
 
-        if ($position == count($sequence)) {
-            $position = 0;
-        }
+        $result = false;
 
-        $item = $sequence[$position];
-
-        if ($item['location'] == 'rumah' && $item['playerId'] != $currentPlayerId) {
-            $position += 1;
-
+        while (!$result) {
             if ($position == count($sequence)) {
                 $position = 0;
+                continue;
             }
 
             $item = $sequence[$position];
+
+            if ($item['location'] == 'rumah' && $item['playerId'] != $currentPlayerId) {
+                $position += 1;
+                continue;
+            }
+
+            if ($this->isLocked($item['playerId'], $item['location'])) {
+                $position += 1;
+                continue;
+            }
+
+            $result = true;
         }
 
-        return $item;
+        return $sequence[$position];
     }
 
     public function countAllSeedsInKampong()
@@ -112,9 +153,9 @@ class HouseService extends \APP_GameClass
         return intval($item['seeds']);
     }
 
-    public function isGameEnd()
+    public function isNewRound()
     {
-        $isGameEnd = false;
+        $isNewRound = false;
         $players = $this->game->loadPlayersBasicInfos();
 
         foreach ($players as $player) {
@@ -122,10 +163,51 @@ class HouseService extends \APP_GameClass
             $item = $this->game->getObjectFromDB(sprintf($sql, $player['player_id']));
 
             if (intval($item['seeds']) == 0) {
+                $isNewRound = true;
+            }
+        }
+
+        return $isNewRound;
+    }
+
+    public function isGameEnd()
+    {
+        $isGameEnd = false;
+        $players = $this->game->loadPlayersBasicInfos();
+
+        foreach ($players as $player) {
+            $sql = "SELECT * FROM house WHERE house_location != 'rumah' AND house_player = '%s' AND house_locked = 1";
+            $listLockeds = $this->game->getObjectListFromDB(sprintf($sql, $player['player_id']));
+
+            $sql = "SELECT SUM(house_seeds) seeds FROM house WHERE house_player = '%s'";
+            $item = $this->game->getObjectFromDB(sprintf($sql, $player['player_id']));
+
+            if (intval($listLockeds) == 7 || $item['seeds'] == 0) {
                 $isGameEnd = true;
             }
         }
 
         return $isGameEnd;
+    }
+
+    public function lowestSeededPlayer()
+    {
+        $count = 1000;
+        $playerId = null;
+        $players = $this->game->loadPlayersBasicInfos();
+
+        foreach ($players as $player) {
+            $sql = "SELECT SUM(house_seeds) seeds FROM house WHERE house_player = '%s'";
+            $item = $this->game->getObjectFromDB(sprintf($sql, $player['player_id']));
+
+            if ($item['seeds'] < $count) {
+                $playerId = $player['player_id'];
+                $count = $item['seeds'];
+            } else if ($item['seeds'] == $count && $player['player_no'] == 1) {
+                $playerId = $player['player_id'];
+            }
+        }
+
+        return $playerId;
     }
 }

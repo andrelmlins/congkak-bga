@@ -12,6 +12,9 @@ class Messages
     static string $EndSeedingRumah = '';
     static string $EndSeedingInOpponent = '';
     static string $MoveRemainingSeeds = '';
+    static string $NewRound = '';
+    static string $MoveStorehouseSeeds = '';
+    static string $LockedHouses = '';
 
     static function initMessages()
     {
@@ -23,5 +26,8 @@ class Messages
         Messages::$EndSeedingRumah = clienttranslate('${player_name} finishes sowing in his storehouse and goes to play again.');
         Messages::$EndSeedingInOpponent = clienttranslate('${player_name} ends the sowing on a seedless house on his opponent\'s side');
         Messages::$MoveRemainingSeeds = clienttranslate('${player_name} moves his remaining seeds to storehouse');
+        Messages::$NewRound = clienttranslate('A new round has begun');
+        Messages::$MoveStorehouseSeeds = clienttranslate('${player_name} moves his seeds from the storehouse');
+        Messages::$LockedHouses = clienttranslate('${player_name} had ${count} houses burned down');
     }
 }

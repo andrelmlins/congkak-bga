@@ -19,6 +19,7 @@ interface CongkakGamedatas {
   playerColors: Record<string, string>;
   houseList: Record<string, { rumah: number; kampong: Record<string, number> }>;
   opponentPlayerId: string;
+  houseListLockeds: Record<string, Record<string, boolean>>;
 }
 
 interface CongkakGames {
@@ -53,4 +54,14 @@ interface ScoreNotif {
 
 interface MoveRemainingSeedsNotif {
   playerId: string;
+}
+
+interface MoveStorehouseSeedsNotif {
+  playerId: string;
+  movements: Record<string, number>;
+}
+
+interface LockedHousesNotif {
+  playerId: string;
+  lockeds: string[];
 }
