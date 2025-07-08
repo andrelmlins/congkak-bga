@@ -12,3 +12,5 @@ CREATE TABLE IF NOT EXISTS `house` (
     `house_locked` TINYINT unsigned NOT NULL DEFAULT 0,
     PRIMARY KEY (`house_location`, `house_player`)
 ) ENGINE = InnoDB DEFAULT CHARSET = utf8 AUTO_INCREMENT = 1;
+ALTER TABLE `player`
+ADD `player_round_wins` int(10) unsigned NOT NULL DEFAULT 0;

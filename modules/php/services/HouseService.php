@@ -172,6 +172,15 @@ class HouseService extends \APP_GameClass
         return $isNewRound;
     }
 
+    public function isRoundGameEnd()
+    {
+        $roundSettings = $this->game->optionsService->getRoundSettings();
+
+        if (is_null($roundSettings['total'])) return false;
+
+        return $roundSettings['current'] == $roundSettings['total'];
+    }
+
     public function isGameEnd()
     {
         $isGameEnd = false;
@@ -181,10 +190,7 @@ class HouseService extends \APP_GameClass
             $sql = "SELECT * FROM house WHERE house_location != 'rumah' AND house_player = '%s' AND house_locked = 1";
             $listLockeds = $this->game->getObjectListFromDB(sprintf($sql, $player['player_id']));
 
-            $sql = "SELECT SUM(house_seeds) seeds FROM house WHERE house_player = '%s'";
-            $item = $this->game->getObjectFromDB(sprintf($sql, $player['player_id']));
-
-            if (intval($listLockeds) == 7 || $item['seeds'] == 0) {
+            if (intval($listLockeds) == 7) {
                 $isGameEnd = true;
             }
         }

@@ -19,8 +19,8 @@
         {
           "type": "otheroption",
           "id": 102,
-          "value": [2],
-          "message": "This mode can be infinite if not played together with the burned house mode."
+          "value": 2,
+          "message": "This mode should only be used in conjunction with House burnt mode."
         }
       ]
     },
@@ -64,6 +64,16 @@
         "name": "Number of houses burned",
         "nobeginner": true
       }
+    },
+    "startcondition": {
+      "3": [
+        {
+          "type": "otheroption",
+          "id": 102,
+          "value": 2,
+          "message": "This mode should only be used in conjunction with House burnt mode."
+        }
+      ]
     },
     "displaycondition": [
       {

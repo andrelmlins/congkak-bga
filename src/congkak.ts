@@ -18,6 +18,8 @@ class Congkak implements CongkakGame {
 
   counters: Record<string, Record<string, Counter>> = {};
 
+  roundCounter: Counter;
+
   constructor() {
     this.games = {
       sowing: new Sowing(this),
@@ -69,6 +71,15 @@ class Congkak implements CongkakGame {
       }
       this.setSeeds('rumah', playerId, playerHouses.rumah);
     }
+
+    document.getElementById('congkak-round-box').insertAdjacentText('afterbegin', _('Round: '));
+    document.getElementById('congkak-round-total').innerHTML = `${
+      this.gamedatas.roundDetails.total ?? '<i class="material-symbols-outlined">&#xEB3D;</i>'
+    }`;
+
+    this.roundCounter = new ebg.counter();
+    this.roundCounter.create('congkak-round-current');
+    this.roundCounter.setValue(this.gamedatas.roundDetails.current);
   }
 
   public setSeeds(house: string, playerId: string, seeds: number) {
@@ -140,9 +151,14 @@ class Congkak implements CongkakGame {
     }
 
     dojo.subscribe('score', this, (value) => this.scoreNotif(value));
+    dojo.subscribe('newRound', this, (value) => this.newRoundNotif(value));
   }
 
   private async scoreNotif(notif: Notif<ScoreNotif>) {
     this.scoreCtrl[notif.args.playerId].toValue(notif.args.score);
+  }
+
+  private async newRoundNotif(notif: Notif<NewRoundNotif>) {
+    this.roundCounter.toValue(notif.args.round);
   }
 }

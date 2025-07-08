@@ -15,6 +15,7 @@ class Messages
     static string $NewRound = '';
     static string $MoveStorehouseSeeds = '';
     static string $LockedHouses = '';
+    static string $WinRound = '';
 
     static function initMessages()
     {
@@ -29,5 +30,6 @@ class Messages
         Messages::$NewRound = clienttranslate('A new round has begun');
         Messages::$MoveStorehouseSeeds = clienttranslate('${player_name} moves his seeds from the storehouse');
         Messages::$LockedHouses = clienttranslate('${player_name} had ${count} houses burned down');
+        Messages::$WinRound = clienttranslate('${player_name} won the round');
     }
 }

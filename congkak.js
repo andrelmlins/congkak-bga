@@ -58,6 +58,7 @@ var Congkak = /** @class */ (function () {
     };
     Congkak.prototype.setupHouses = function () {
         var _a;
+        var _b;
         var table = document.getElementById('congkak-table');
         var grid = document.getElementById('congkak-grid');
         this.counters = (_a = {}, _a[this.gamedatas.playerPosition[0]] = {}, _a[this.gamedatas.playerPosition[1]] = {}, _a);
@@ -80,6 +81,11 @@ var Congkak = /** @class */ (function () {
             }
             this.setSeeds('rumah', playerId, playerHouses.rumah);
         }
+        document.getElementById('congkak-round-box').insertAdjacentText('afterbegin', _('Round: '));
+        document.getElementById('congkak-round-total').innerHTML = "".concat((_b = this.gamedatas.roundDetails.total) !== null && _b !== void 0 ? _b : '<i class="material-symbols-outlined">&#xEB3D;</i>');
+        this.roundCounter = new ebg.counter();
+        this.roundCounter.create('congkak-round-current');
+        this.roundCounter.setValue(this.gamedatas.roundDetails.current);
     };
     Congkak.prototype.setSeeds = function (house, playerId, seeds) {
         this.counters[playerId][house] = new ebg.counter();
@@ -139,11 +145,20 @@ var Congkak = /** @class */ (function () {
             this.games[gameName].setupNotifications();
         }
         dojo.subscribe('score', this, function (value) { return _this.scoreNotif(value); });
+        dojo.subscribe('newRound', this, function (value) { return _this.newRoundNotif(value); });
     };
     Congkak.prototype.scoreNotif = function (notif) {
         return __awaiter(this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 this.scoreCtrl[notif.args.playerId].toValue(notif.args.score);
+                return [2 /*return*/];
+            });
+        });
+    };
+    Congkak.prototype.newRoundNotif = function (notif) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                this.roundCounter.toValue(notif.args.round);
                 return [2 /*return*/];
             });
         });
@@ -421,7 +436,7 @@ var Sowing = /** @class */ (function () {
     };
     Sowing.prototype.moveStorehouseSeedsNotif = function (notif) {
         return __awaiter(this, void 0, void 0, function () {
-            var seeds, seedsCount, _a, _b, _c, _i, house, i, destination, animation;
+            var seeds, seedsCount, _a, _b, _c, _i, house, i, destination, animation, i, destination, animation;
             return __generator(this, function (_d) {
                 switch (_d.label) {
                     case 0:
@@ -456,7 +471,16 @@ var Sowing = /** @class */ (function () {
                     case 3:
                         _i++;
                         return [3 /*break*/, 1];
-                    case 4: return [2 /*return*/];
+                    case 4:
+                        for (i = 0; i < notif.args.outwardMovementsCount; i++) {
+                            destination = document.getElementById("overall_player_board_".concat(notif.args.playerId));
+                            animation = new BgaLocalAnimation(this.game);
+                            animation.setOptions(seeds.item(seedsCount), destination, 800);
+                            animation.call(function (node) { return dojo.destroy(node); });
+                            seedsCount += 1;
+                        }
+                        this.game.counters[notif.args.playerId]['rumah'].incValue(notif.args.outwardMovementsCount * -1);
+                        return [2 /*return*/];
                 }
             });
         });

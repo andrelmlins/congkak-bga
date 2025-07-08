@@ -26,6 +26,7 @@ use Bga\Games\congkak\services\PlayerService;
 use Bga\Games\congkak\services\StatsService;
 use Bga\Games\congkak\services\StepService;
 use Bga\Games\congkak\services\OptionsService;
+use Bga\Games\congkak\services\SeedingService;
 
 require_once(APP_GAMEMODULE_PATH . "module/table/table.game.php");
 
@@ -42,6 +43,8 @@ class Game extends \Table
     public StatsService $statsService;
 
     public OptionsService $optionsService;
+
+    public SeedingService $seedingService;
 
     public function __construct()
     {
@@ -67,26 +70,28 @@ class Game extends \Table
         $this->statsService = new StatsService($this);
 
         $this->optionsService = new OptionsService($this);
+
+        $this->seedingService = new SeedingService($this);
     }
 
     public function argPlayersSeeding()
     {
-        return $this->stepService->argPlayersSeeding();
+        return $this->seedingService->argPlayersSeeding();
     }
 
     public function argPlayerSeeding()
     {
-        return $this->stepService->argPlayerSeeding();
+        return $this->seedingService->argPlayerSeeding();
     }
 
     public function actPlayersSeeding(string $playerId, int $house)
     {
-        $this->stepService->actPlayersSeeding($playerId, $house);
+        $this->seedingService->actPlayersSeeding($playerId, $house, null);
     }
 
     public function actPlayerSeeding(string $playerId, int $house)
     {
-        $this->stepService->actPlayerSeeding($playerId, $house);
+        $this->seedingService->actPlayerSeeding($playerId, $house);
     }
 
     public function stNewRound()
@@ -94,9 +99,9 @@ class Game extends \Table
         $this->stepService->stNewRound();
     }
 
-    public function stAllPlayers()
+    public function stPlayersSeeding()
     {
-        $this->gamestate->setAllPlayersMultiactive();
+        $this->seedingService->stPlayersSeeding();
     }
 
     public function stNextMultiplayers()
@@ -107,6 +112,11 @@ class Game extends \Table
     public function stNextPlayer(): void
     {
         $this->stepService->stNextPlayer();
+    }
+
+    public function stPlayerSeeding()
+    {
+        $this->seedingService->stPlayerSeeding();
     }
 
     public function getGameProgression()
@@ -156,6 +166,7 @@ class Game extends \Table
         $result["playerPosition"] = $this->playerService->getPlayerOrder($currentPlayerId);
         $result["opponentPlayerId"] = $this->playerService->getOpponnetId($currentPlayerId);
         $result["houseListLockeds"] = $this->houseService->listLockeds();
+        $result["roundDetails"] = $this->optionsService->getRoundSettings();
 
         return $result;
     }

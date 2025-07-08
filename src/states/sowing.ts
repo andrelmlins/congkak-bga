@@ -240,6 +240,17 @@ class Sowing implements Game {
       this.game.counters[notif.args.playerId][house].incValue(notif.args.movements[house]);
       this.game.counters[notif.args.playerId]['rumah'].incValue(notif.args.movements[house] * -1);
     }
+
+    for (let i = 0; i < notif.args.outwardMovementsCount; i++) {
+      const destination = document.getElementById(`overall_player_board_${notif.args.playerId}`);
+
+      const animation = new BgaLocalAnimation(this.game);
+      animation.setOptions(seeds.item(seedsCount), destination, 800);
+      animation.call((node) => dojo.destroy(node));
+
+      seedsCount += 1;
+    }
+    this.game.counters[notif.args.playerId]['rumah'].incValue(notif.args.outwardMovementsCount * -1);
   }
 
   public async lockedHousesNotif(notif: Notif<LockedHousesNotif>) {

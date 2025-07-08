@@ -20,6 +20,7 @@ interface CongkakGamedatas {
   houseList: Record<string, { rumah: number; kampong: Record<string, number> }>;
   opponentPlayerId: string;
   houseListLockeds: Record<string, Record<string, boolean>>;
+  roundDetails: { current: number; total: number | null };
 }
 
 interface CongkakGames {
@@ -52,6 +53,10 @@ interface ScoreNotif {
   playerId: string;
 }
 
+interface NewRoundNotif {
+  round: number;
+}
+
 interface MoveRemainingSeedsNotif {
   playerId: string;
 }
@@ -59,6 +64,7 @@ interface MoveRemainingSeedsNotif {
 interface MoveStorehouseSeedsNotif {
   playerId: string;
   movements: Record<string, number>;
+  outwardMovementsCount: number;
 }
 
 interface LockedHousesNotif {

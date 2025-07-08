@@ -24,9 +24,13 @@ class StatsService
         }
     }
 
-    public function setSeedsStorehouse($count, $playerId)
+    public function setSeedsStorehouse()
     {
-        $this->game->incStat($count, 'seedsStorehouse', $playerId);
+        $houses = $this->game->houseService->list();
+
+        foreach ($houses as $playerId => $house) {
+            $this->game->setStat($house['rumah'], 'seedsStorehouse', $playerId);
+        }
     }
 
     public function incSowings($playerId)

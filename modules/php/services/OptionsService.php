@@ -36,9 +36,9 @@ class OptionsService extends \APP_GameClass
         return $this->game->getGameStateValue('gameMode') != 1 && $this->game->getGameStateValue('houseBurnt') == 2;
     }
 
-    public function isAutomaticSeeding()
+    public function isAutomaticSeeding($playerId)
     {
-        return $this->game->getGameStateValue('automaticSeeding') == 2;
+        return $this->game->getGameStateValue('automaticSeeding') == 2 || $this->game->userPreferences->get(intval($playerId), 100) == 1;
     }
 
     public function getVictoryMode()
@@ -47,11 +47,11 @@ class OptionsService extends \APP_GameClass
 
         if ($victoryMode == 1) {
             return VictoryMode::NumberOfRounds;
-        } else if ($victoryMode == 2) {
-            return VictoryMode::NumberOfSeeds;
+        } else if ($victoryMode == 3) {
+            return VictoryMode::NumberHousesBurned;
         }
 
-        return VictoryMode::NumberHousesBurned;
+        return VictoryMode::NumberOfSeeds;
     }
 
     public function getGameMode()

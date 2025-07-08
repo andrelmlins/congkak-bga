@@ -37,7 +37,7 @@ $machinestates = [
         "description" => clienttranslate('Waiting for other players to perform their action'),
         "descriptionmyturn" => clienttranslate('${you} must select a house to sow'),
         "type" => "multipleactiveplayer",
-        "action" => "stAllPlayers",
+        "action" => "stPlayersSeeding",
         "args" => "argPlayersSeeding",
         "possibleactions" => ["actPlayersSeeding"],
         "transitions" => ["nextMultiplayers" => 20]
@@ -48,6 +48,7 @@ $machinestates = [
         "description" => clienttranslate('${actplayer} must select a house to sow'),
         "descriptionmyturn" => clienttranslate('${you} must select a house to sow'),
         "type" => "activeplayer",
+        "action" => "stPlayerSeeding",
         "args" => "argPlayerSeeding",
         "possibleactions" => ["actPlayerSeeding"],
         "transitions" => ["nextPlayer" => 21, "playerSeeding" => 11, "newRound" => 2]
