@@ -14,7 +14,7 @@ $gameinfos = [
     'game_name' => "Congkak",
 
     // Game publisher (use empty string if there is no publisher)
-    'publisher' => '',
+    'publisher' => 'Public Domain',
 
     // Url of game publisher website
     'publisher_website' => '',

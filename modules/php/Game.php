@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Bga\Games\congkak;
 
+use Bga\Games\congkak\entities\GameMode;
 use Bga\Games\congkak\entities\Messages;
 use Bga\Games\congkak\services\HouseService;
 use Bga\Games\congkak\services\PlayerService;
@@ -27,6 +28,7 @@ use Bga\Games\congkak\services\StatsService;
 use Bga\Games\congkak\services\StepService;
 use Bga\Games\congkak\services\OptionsService;
 use Bga\Games\congkak\services\SeedingService;
+use Bga\Games\congkak\services\ZombieService;
 
 require_once(APP_GAMEMODULE_PATH . "module/table/table.game.php");
 
@@ -121,7 +123,22 @@ class Game extends \Table
 
     public function getGameProgression()
     {
-        return ($this->houseService->countAllSeedsInKampong() * 100) / 98;
+        $gameMode = $this->optionsService->getGameMode();
+        $roundSettings = $this->optionsService->getRoundSettings();
+
+        if ($gameMode != GameMode::TotalBurn) {
+            $total = 98;
+            $current = $total - $this->houseService->countAllSeedsInKampong();
+            $percentBase = (1 / $roundSettings['total']) * 100;
+            $percentCurrent = (($roundSettings['current'] - 1) / $roundSettings['total']) * 100;
+
+            return round($percentCurrent + (($percentBase * $current) / $total));
+        } else {
+            $total = 7;
+            $current = $this->houseService->countMaxLockeds();
+
+            return round((100 * $current) / $total);
+        }
     }
 
     /**
@@ -207,43 +224,9 @@ class Game extends \Table
         $this->activeNextPlayer();
     }
 
-    /**
-     * This method is called each time it is the turn of a player who has quit the game (= "zombie" player).
-     * You can do whatever you want in order to make sure the turn of this player ends appropriately
-     * (ex: pass).
-     *
-     * Important: your zombie code will be called when the player leaves the game. This action is triggered
-     * from the main site and propagated to the gameserver from a server, not from a browser.
-     * As a consequence, there is no current player associated to this action. In your zombieTurn function,
-     * you must _never_ use `getCurrentPlayerId()` or `getCurrentPlayerName()`, otherwise it will fail with a
-     * "Not logged" error message.
-     *
-     * @param array{ type: string, name: string } $state
-     * @param int $active_player
-     * @return void
-     * @throws feException if the zombie mode is not supported at this game state.
-     */
-    protected function zombieTurn(array $state, int $active_player): void
+    protected function zombieTurn(array $state, int $activePlayerId): void
     {
-        $state_name = $state["name"];
-
-        if ($state["type"] === "activeplayer") {
-            switch ($state_name) {
-                default: {
-                        $this->gamestate->nextState("zombiePass");
-                        break;
-                    }
-            }
-
-            return;
-        }
-
-        // Make sure player is in a non-blocking status for role turn.
-        if ($state["type"] === "multipleactiveplayer") {
-            $this->gamestate->setPlayerNonMultiactive($active_player, '');
-            return;
-        }
-
-        throw new \feException("Zombie mode not supported at this game state: \"{$state_name}\".");
+        $service = new ZombieService($this);
+        $service->run($state, $activePlayerId);
     }
 }

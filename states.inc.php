@@ -29,6 +29,7 @@ $machinestates = [
         "description" => '',
         "type" => "game",
         "action" => "stNewRound",
+        "updateGameProgression" => true,
         "transitions" => ["playersSeeding" => 10, "playerSeeding" => 11, "gameEnd" => 99]
     ],
 
@@ -51,6 +52,7 @@ $machinestates = [
         "action" => "stPlayerSeeding",
         "args" => "argPlayerSeeding",
         "possibleactions" => ["actPlayerSeeding"],
+        "updateGameProgression" => true,
         "transitions" => ["nextPlayer" => 21, "playerSeeding" => 11, "newRound" => 2]
     ],
 

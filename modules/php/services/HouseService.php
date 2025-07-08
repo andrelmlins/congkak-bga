@@ -155,6 +155,24 @@ class HouseService extends \APP_GameClass
         return intval($item['seeds']);
     }
 
+    public function countMaxLockeds()
+    {
+        $sql = "SELECT SUM(house_locked) lockeds, house_player FROM house GROUP BY house_player";
+        $list = $this->game->getObjectListFromDB($sql);
+
+        $max = 0;
+
+        foreach ($list as $item) {
+            $lockeds = intval($item['lockeds']);
+
+            if ($lockeds > $max) {
+                $max = $lockeds;
+            }
+        }
+
+        return $max;
+    }
+
     public function isNewRound()
     {
         $isNewRound = false;
