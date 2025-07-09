@@ -11,6 +11,7 @@ class Messages
     static string $EndSeedingWithSeeds = '';
     static string $EndSeedingRumah = '';
     static string $EndSeedingInOpponent = '';
+    static string $EndSeedingSamePosition = '';
     static string $MoveRemainingSeeds = '';
     static string $NewRound = '';
     static string $MoveStorehouseSeeds = '';
@@ -26,6 +27,7 @@ class Messages
         Messages::$EndSeedingWithSeeds = clienttranslate('${player_name} finishes sowing in a house with seeds and goes to play again with those seeds');
         Messages::$EndSeedingRumah = clienttranslate('${player_name} finishes sowing in his storehouse and goes to play again.');
         Messages::$EndSeedingInOpponent = clienttranslate('${player_name} ends the sowing on a seedless house on his opponent\'s side');
+        Messages::$EndSeedingSamePosition = clienttranslate('Players finished seeding in the same hole, one player will be randomly chosen to play');
         Messages::$MoveRemainingSeeds = clienttranslate('${player_name} moves his remaining seeds to storehouse');
         Messages::$NewRound = clienttranslate('A new round has begun');
         Messages::$MoveStorehouseSeeds = clienttranslate('${player_name} moves his seeds from the storehouse');

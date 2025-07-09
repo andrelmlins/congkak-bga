@@ -25,47 +25,23 @@ class ZombieService
         }
     }
 
-    public function playerSeeding($activePlayerId)
+    public function playerSeeding()
     {
-        $location = $this->game->argPlayerSeeding()['location'];
+        $locations = $this->game->argPlayerSeeding()['locations'];
 
-        if ($location['location'] != 'initial') {
-            $playerId = $location['playerId'];
-            $houseNumber = intval(str_replace('kampong_', '', $location['location']));
+        $playerId = $locations[0]['playerId'];
+        $houseNumber = intval(str_replace('kampong_', '', $locations[0]['location']));
 
-            $this->game->seedingService->actPlayerSeeding($playerId, $houseNumber);
-        } else {
-            $houses = $this->game->houseService->list();
-
-            for ($i = 1; $i <= 7; $i++) {
-                if ($houses[$activePlayerId]['kampong'][$i] > 0) {
-                    $this->game->seedingService->actPlayerSeeding($activePlayerId, $i);
-
-                    break;
-                }
-            }
-        }
+        $this->game->seedingService->actPlayerSeeding($playerId, $houseNumber);
     }
 
     public function playersSeeding($activePlayerId)
     {
-        $location = $this->game->seedingService->argPlayersSeeding()['locations'][$activePlayerId];
+        $locations = $this->game->seedingService->argPlayersSeeding()['locations'][$activePlayerId];
 
-        if ($location['location'] != 'initial') {
-            $playerId = $location['playerId'];
-            $houseNumber = intval(str_replace('kampong_', '', $location['location']));
+        $playerId = $locations[0]['playerId'];
+        $houseNumber = intval(str_replace('kampong_', '', $locations[0]['location']));
 
-            $this->game->seedingService->actPlayersSeeding($playerId, $houseNumber, $activePlayerId);
-        } else {
-            $houses = $this->game->houseService->list();
-
-            for ($i = 1; $i <= 7; $i++) {
-                if ($houses[$activePlayerId]['kampong'][$i] > 0) {
-                    $this->game->seedingService->actPlayersSeeding($activePlayerId, $i, $activePlayerId);
-
-                    break;
-                }
-            }
-        }
+        $this->game->seedingService->actPlayersSeeding($playerId, $houseNumber, $activePlayerId);
     }
 }

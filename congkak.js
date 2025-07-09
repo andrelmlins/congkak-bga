@@ -230,7 +230,7 @@ var Sowing = /** @class */ (function () {
     };
     Sowing.prototype.onEnteringState = function (stateName, notif) {
         if (stateName === 'playerSeeding' && this.game.isCurrentPlayerActive()) {
-            this.setSelectedHouses(notif.args.location);
+            this.setSelectedHouses(notif.args.locations);
         }
     };
     Sowing.prototype.onLeavingState = function (stateName) {
@@ -267,29 +267,13 @@ var Sowing = /** @class */ (function () {
         dojo.subscribe('moveStorehouseSeeds', this, function (notif) { return _this.moveStorehouseSeedsNotif(notif); });
         dojo.subscribe('lockedHouses', this, function (notif) { return _this.lockedHousesNotif(notif); });
     };
-    Sowing.prototype.setSelectedHouses = function (location) {
+    Sowing.prototype.setSelectedHouses = function (locations) {
         var _this = this;
-        if (location.location === 'initial') {
-            var playerId = this.game.getCurrentPlayerId();
-            var _loop_1 = function (i) {
-                var element = document.getElementById("congkak-".concat(playerId, "-kampong_").concat(i));
-                if (element.querySelectorAll('.congkak-seed').length > 0) {
-                    element.classList.add('selectable');
-                    this_1.handlers.push(dojo.connect(element, 'onclick', this_1, function () { return _this.onClick(element); }));
-                }
-            };
-            var this_1 = this;
-            for (var i = 1; i <= 7; i++) {
-                _loop_1(i);
-            }
-        }
-        else {
-            var element_1 = document.getElementById("congkak-".concat(location.playerId, "-").concat(location.location));
-            if (element_1.querySelectorAll('.congkak-seed').length > 0) {
-                element_1.classList.add('selectable');
-                this.handlers.push(dojo.connect(element_1, 'onclick', this, function () { return _this.onClick(element_1); }));
-            }
-        }
+        locations.forEach(function (location) {
+            var element = document.getElementById("congkak-".concat(location.playerId, "-").concat(location.location));
+            element.classList.add('selectable');
+            _this.handlers.push(dojo.connect(element, 'onclick', _this, function () { return _this.onClick(element); }));
+        });
     };
     Sowing.prototype.removeSelecteds = function () {
         var table = document.getElementById('congkak-table');
@@ -334,7 +318,7 @@ var Sowing = /** @class */ (function () {
     };
     Sowing.prototype.playersSeedingNotif = function (notif) {
         return __awaiter(this, void 0, void 0, function () {
-            var seeds, playerId, house, i, _loop_2, this_2, playerId;
+            var seeds, playerId, house, i, _loop_1, this_1, playerId;
             var _this = this;
             return __generator(this, function (_a) {
                 switch (_a.label) {
@@ -350,14 +334,14 @@ var Sowing = /** @class */ (function () {
                         _a.label = 1;
                     case 1:
                         if (!(i < notif.args.maxSeeds)) return [3 /*break*/, 4];
-                        _loop_2 = function (playerId) {
+                        _loop_1 = function (playerId) {
                             var movement = notif.args.movements[playerId][i];
                             if (!movement)
                                 return "continue";
                             var initialHouse = notif.args.initialHouse[playerId];
                             var seed = seeds[playerId][i];
                             var destination = document.getElementById("congkak-".concat(movement.playerId, "-").concat(movement.location));
-                            var animation = new BgaLocalAnimation(this_2.game);
+                            var animation = new BgaLocalAnimation(this_1.game);
                             animation.setOptions(seed, destination, 800);
                             animation
                                 .call(function (_) { return true; })
@@ -366,9 +350,9 @@ var Sowing = /** @class */ (function () {
                                 _this.game.counters[initialHouse.playerId][initialHouse.location].incValue(-1);
                             });
                         };
-                        this_2 = this;
+                        this_1 = this;
                         for (playerId in notif.args.movements) {
-                            _loop_2(playerId);
+                            _loop_1(playerId);
                         }
                         return [4 /*yield*/, delayTime(300)];
                     case 2:
@@ -1233,7 +1217,7 @@ var AnimationManager = /** @class */ (function () {
             return __generator(this, function (_a) {
                 promise = new Promise(function (success) {
                     var promises = [];
-                    var _loop_3 = function (i) {
+                    var _loop_2 = function (i) {
                         setTimeout(function () {
                             promises.push(_this.play(animations[i]));
                             if (i == animations.length - 1) {
@@ -1244,7 +1228,7 @@ var AnimationManager = /** @class */ (function () {
                         }, i * delay);
                     };
                     for (var i = 0; i < animations.length; i++) {
-                        _loop_3(i);
+                        _loop_2(i);
                     }
                 });
                 return [2 /*return*/, promise];

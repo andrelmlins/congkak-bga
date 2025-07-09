@@ -62,6 +62,16 @@ body {
   grid-template-areas: "a a a a a a a";
   grid-gap: 6% 1%;
 }
+.congkak-box .congkak-table .congkak-seed {
+  width: 20%;
+  aspect-ratio: 70/53;
+  background-image: url(img/seed.png);
+  background-repeat: no-repeat;
+  background-size: 100%;
+  background-position: 0;
+  position: absolute;
+  filter: drop-shadow(0 1px 0px rgba(0, 0, 0, 0.55)) drop-shadow(0 0.5px 0px rgba(0, 0, 0, 0.65));
+}
 .congkak-box .congkak-table .congkak-kampong {
   position: relative;
 }
@@ -94,6 +104,246 @@ body {
   background-color: #acacac;
   transition: 0.2s all;
 }
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(2) {
+  left: 59%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(3) {
+  left: 54.5%;
+  top: 57.7942286341%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(4) {
+  left: 45.5%;
+  top: 57.7942286341%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(5) {
+  left: 41%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(6) {
+  left: 45.5%;
+  top: 42.2057713659%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(7) {
+  left: 54.5%;
+  top: 42.2057713659%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(8) {
+  left: 68%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(9) {
+  left: 62.7279220614%;
+  top: 62.7279220614%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(10) {
+  left: 50%;
+  top: 68%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(11) {
+  left: 37.2720779386%;
+  top: 62.7279220614%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(12) {
+  left: 32%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(13) {
+  left: 37.2720779386%;
+  top: 37.2720779386%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(14) {
+  left: 50%;
+  top: 32%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(15) {
+  left: 62.7279220614%;
+  top: 37.2720779386%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(16) {
+  left: 77%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(17) {
+  left: 74.3261594334%;
+  top: 61.7148609562%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(18) {
+  left: 66.8342246502%;
+  top: 71.1094500266%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(19) {
+  left: 56.0080652168%;
+  top: 76.3230536289%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(20) {
+  left: 43.9919347832%;
+  top: 76.3230536289%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(21) {
+  left: 33.1657753498%;
+  top: 71.1094500266%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(22) {
+  left: 25.6738405666%;
+  top: 61.7148609562%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(23) {
+  left: 23%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(24) {
+  left: 25.6738405666%;
+  top: 38.2851390438%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(25) {
+  left: 33.1657753498%;
+  top: 28.8905499734%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(26) {
+  left: 43.9919347832%;
+  top: 23.6769463711%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(27) {
+  left: 56.0080652168%;
+  top: 23.6769463711%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(28) {
+  left: 66.8342246502%;
+  top: 28.8905499734%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(29) {
+  left: 74.3261594334%;
+  top: 38.2851390438%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(30) {
+  left: 86%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(31) {
+  left: 82.4348792445%;
+  top: 65.6198146082%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(32) {
+  left: 72.4456328669%;
+  top: 78.1459333688%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(33) {
+  left: 58.0107536224%;
+  top: 85.0974048385%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(34) {
+  left: 41.9892463776%;
+  top: 85.0974048385%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(35) {
+  left: 27.5543671331%;
+  top: 78.1459333688%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(36) {
+  left: 17.5651207555%;
+  top: 65.6198146082%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(37) {
+  left: 14%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(38) {
+  left: 17.5651207555%;
+  top: 34.3801853918%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(39) {
+  left: 27.5543671331%;
+  top: 21.8540666312%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(40) {
+  left: 41.9892463776%;
+  top: 14.9025951615%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(41) {
+  left: 58.0107536224%;
+  top: 14.9025951615%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(42) {
+  left: 72.4456328669%;
+  top: 21.8540666312%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(43) {
+  left: 82.4348792445%;
+  top: 34.3801853918%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(44) {
+  left: 95%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(45) {
+  left: 72.5%;
+  top: 88.9711431703%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(46) {
+  left: 27.5%;
+  top: 88.9711431703%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(47) {
+  left: 5%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(48) {
+  left: 27.5%;
+  top: 11.0288568297%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(49) {
+  left: 72.5%;
+  top: 11.0288568297%;
+  transform: translate(-50%, -50%);
+}
 .congkak-box .congkak-table .congkak-rumah {
   width: 9.8%;
   height: 58%;
@@ -108,264 +358,494 @@ body {
   top: 13%;
   right: 9.8%;
 }
-.congkak-box .congkak-table .congkak-seed {
-  width: 15%;
-  aspect-ratio: 70/53;
-  background-image: url(img/seed.png);
-  background-repeat: no-repeat;
-  background-size: 100%;
-  background-position: 0;
-  position: absolute;
-  filter: drop-shadow(0 1px 0px rgba(0, 0, 0, 0.55)) drop-shadow(0 0.5px 0px rgba(0, 0, 0, 0.65));
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(2) {
+  left: 55.5%;
+  top: 50%;
+  transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(2) {
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(3) {
+  left: 52.75%;
+  top: 54.7631397208%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(4) {
+  left: 47.25%;
+  top: 54.7631397208%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(5) {
+  left: 44.5%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(6) {
+  left: 47.25%;
+  top: 45.2368602792%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(7) {
+  left: 52.75%;
+  top: 45.2368602792%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(8) {
+  left: 61%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(9) {
+  left: 57.7781745931%;
+  top: 57.7781745931%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(10) {
   left: 50%;
+  top: 61%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(11) {
+  left: 42.2218254069%;
+  top: 57.7781745931%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(12) {
+  left: 39%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(3) {
-  left: 66%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(13) {
+  left: 42.2218254069%;
+  top: 42.2218254069%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(14) {
+  left: 50%;
+  top: 39%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(15) {
+  left: 57.7781745931%;
+  top: 42.2218254069%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(16) {
+  left: 66.5%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(4) {
-  left: 58%;
-  top: 63.86%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(17) {
+  left: 63.3487804072%;
+  top: 59.6984566628%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(5) {
-  left: 42%;
-  top: 63.86%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(18) {
+  left: 55.0987804072%;
+  top: 65.6924325189%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(6) {
-  left: 34%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(19) {
+  left: 44.9012195928%;
+  top: 65.6924325189%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(20) {
+  left: 36.6512195928%;
+  top: 59.6984566628%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(21) {
+  left: 33.5%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(7) {
-  left: 42%;
-  top: 36.14%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(22) {
+  left: 36.6512195928%;
+  top: 40.3015433372%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(8) {
-  left: 58%;
-  top: 36.14%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(23) {
+  left: 44.9012195928%;
+  top: 34.3075674811%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(9) {
-  left: 74%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(24) {
+  left: 55.0987804072%;
+  top: 34.3075674811%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(25) {
+  left: 63.3487804072%;
+  top: 40.3015433372%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(26) {
+  left: 72%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(10) {
-  left: 68.15%;
-  top: 66.71%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(27) {
+  left: 69.0525588833%;
+  top: 61%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(11) {
-  left: 56.73%;
-  top: 77.15%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(28) {
+  left: 61%;
+  top: 69.0525588833%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(12) {
-  left: 42.09%;
-  top: 77.15%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(29) {
+  left: 50%;
+  top: 72%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(13) {
-  left: 30.67%;
-  top: 66.71%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(30) {
+  left: 39%;
+  top: 69.0525588833%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(14) {
-  left: 24.82%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(31) {
+  left: 30.9474411167%;
+  top: 61%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(32) {
+  left: 28%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(15) {
-  left: 30.67%;
-  top: 33.29%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(33) {
+  left: 30.9474411167%;
+  top: 39%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(16) {
-  left: 42.09%;
-  top: 22.85%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(34) {
+  left: 39%;
+  top: 30.9474411167%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(17) {
-  left: 56.73%;
-  top: 22.85%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(35) {
+  left: 50%;
+  top: 28%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(18) {
-  left: 68.15%;
-  top: 33.29%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(36) {
+  left: 61%;
+  top: 30.9474411167%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(19) {
-  left: 81%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(37) {
+  left: 69.0525588833%;
+  top: 39%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(38) {
+  left: 77.5%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(20) {
-  left: 76.03%;
-  top: 63.97%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(39) {
+  left: 74.7766438673%;
+  top: 61.9318028257%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(21) {
-  left: 65.93%;
-  top: 74.07%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(40) {
+  left: 67.1459695511%;
+  top: 71.5003657679%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(22) {
-  left: 52%;
-  top: 79%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(41) {
+  left: 56.1193256838%;
+  top: 76.810517585%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(23) {
-  left: 38.07%;
-  top: 74.07%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(42) {
+  left: 43.8806743162%;
+  top: 76.810517585%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(24) {
-  left: 27.97%;
-  top: 63.97%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(43) {
+  left: 32.8540304489%;
+  top: 71.5003657679%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(25) {
-  left: 23%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(44) {
+  left: 25.2233561327%;
+  top: 61.9318028257%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(45) {
+  left: 22.5%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(26) {
-  left: 27.97%;
-  top: 36.03%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(46) {
+  left: 25.2233561327%;
+  top: 38.0681971743%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(27) {
-  left: 38.07%;
-  top: 25.93%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(47) {
+  left: 32.8540304489%;
+  top: 28.4996342321%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(28) {
-  left: 52%;
-  top: 21%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(48) {
+  left: 43.8806743162%;
+  top: 23.189482415%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(29) {
-  left: 65.93%;
-  top: 25.93%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(49) {
+  left: 56.1193256838%;
+  top: 23.189482415%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(30) {
-  left: 76.03%;
-  top: 36.03%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(50) {
+  left: 67.1459695511%;
+  top: 28.4996342321%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(31) {
-  left: 60%;
-  top: 69%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(51) {
+  left: 74.7766438673%;
+  top: 38.0681971743%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(32) {
-  left: 40%;
-  top: 69%;
-  transform: translate(-50%, -50%);
-}
-.congkak-box .congkak-table .congkak-seed:nth-child(33) {
-  left: 88%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(52) {
+  left: 83%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(34) {
-  left: 83.05%;
-  top: 64.64%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(53) {
+  left: 80.4880245729%;
+  top: 62.628553268%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(35) {
-  left: 72.32%;
-  top: 75.37%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(54) {
+  left: 73.3345237792%;
+  top: 73.3345237792%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(36) {
-  left: 58%;
-  top: 81%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(55) {
+  left: 62.628553268%;
+  top: 80.4880245729%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(37) {
-  left: 42%;
-  top: 81%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(56) {
+  left: 50%;
+  top: 83%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(38) {
-  left: 27.68%;
-  top: 75.37%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(57) {
+  left: 37.371446732%;
+  top: 80.4880245729%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(39) {
-  left: 16.95%;
-  top: 64.64%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(58) {
+  left: 26.6654762208%;
+  top: 73.3345237792%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(40) {
-  left: 12%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(59) {
+  left: 19.5119754271%;
+  top: 62.628553268%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(60) {
+  left: 17%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(41) {
-  left: 16.95%;
-  top: 35.36%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(61) {
+  left: 19.5119754271%;
+  top: 37.371446732%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(42) {
-  left: 27.68%;
-  top: 24.63%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(62) {
+  left: 26.6654762208%;
+  top: 26.6654762208%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(43) {
-  left: 42%;
-  top: 19%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(63) {
+  left: 37.371446732%;
+  top: 19.5119754271%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(44) {
-  left: 58%;
-  top: 19%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(64) {
+  left: 50%;
+  top: 17%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(45) {
-  left: 72.32%;
-  top: 24.63%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(65) {
+  left: 62.628553268%;
+  top: 19.5119754271%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(46) {
-  left: 83.05%;
-  top: 35.36%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(66) {
+  left: 73.3345237792%;
+  top: 26.6654762208%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(47) {
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(67) {
+  left: 80.4880245729%;
+  top: 37.371446732%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(68) {
+  left: 88.5%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(69) {
+  left: 86.1781659003%;
+  top: 63.167775518%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(70) {
+  left: 79.4927110601%;
+  top: 74.7473229729%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(71) {
+  left: 69.25%;
+  top: 83.3419780457%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(72) {
+  left: 56.6854548402%;
+  top: 87.915098491%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(73) {
+  left: 43.3145451598%;
+  top: 87.915098491%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(74) {
+  left: 30.75%;
+  top: 83.3419780457%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(75) {
+  left: 20.5072889399%;
+  top: 74.7473229729%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(76) {
+  left: 13.8218340997%;
+  top: 63.167775518%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(77) {
+  left: 11.5%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(78) {
+  left: 13.8218340997%;
+  top: 36.832224482%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(79) {
+  left: 20.5072889399%;
+  top: 25.2526770271%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(80) {
+  left: 30.75%;
+  top: 16.6580219543%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(81) {
+  left: 43.3145451598%;
+  top: 12.084901509%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(82) {
+  left: 56.6854548402%;
+  top: 12.084901509%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(83) {
+  left: 69.25%;
+  top: 16.6580219543%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(84) {
+  left: 79.4927110601%;
+  top: 25.2526770271%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(85) {
+  left: 86.1781659003%;
+  top: 36.832224482%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(86) {
   left: 94%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(48) {
-  left: 50%;
-  top: 94%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(87) {
+  left: 89.6426301877%;
+  top: 69.0908845212%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(49) {
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(88) {
+  left: 77.4335512818%;
+  top: 84.4005852286%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(89) {
+  left: 59.7909210941%;
+  top: 92.896828136%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(90) {
+  left: 40.2090789059%;
+  top: 92.896828136%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(91) {
+  left: 22.5664487182%;
+  top: 84.4005852286%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(92) {
+  left: 10.3573698123%;
+  top: 69.0908845212%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(93) {
   left: 6%;
   top: 50%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(50) {
-  left: 50%;
-  top: 6%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(94) {
+  left: 10.3573698123%;
+  top: 30.9091154788%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-seed:nth-child(51) {
-  left: 76%;
-  top: 76%;
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(95) {
+  left: 22.5664487182%;
+  top: 15.5994147714%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(96) {
+  left: 40.2090789059%;
+  top: 7.103171864%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(97) {
+  left: 59.7909210941%;
+  top: 7.103171864%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(98) {
+  left: 77.4335512818%;
+  top: 15.5994147714%;
+  transform: translate(-50%, -50%);
+}
+.congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(99) {
+  left: 89.6426301877%;
+  top: 30.9091154788%;
   transform: translate(-50%, -50%);
 }
 .congkak-box .congkak-table .congkak-counter {

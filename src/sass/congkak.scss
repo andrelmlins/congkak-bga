@@ -70,6 +70,17 @@ body {
       grid-gap: 6% 1%;
     }
 
+    & .congkak-seed {
+      width: 20%;
+      aspect-ratio: 70/53;
+      background-image: url(img/seed.png);
+      background-repeat: no-repeat;
+      background-size: 100%;
+      background-position: 0;
+      position: absolute;
+      filter: drop-shadow(0 1px 0px rgba(0, 0, 0, 0.55)) drop-shadow(0 0.5px 0px rgba(0, 0, 0, 0.65));
+    }
+
     & .congkak-kampong {
       position: relative;
 
@@ -105,6 +116,17 @@ body {
           transition: 0.2s all;
         }
       }
+
+      & .congkak-seed {
+        @for $i from 1 through list.length($positions) {
+          &:nth-child(#{$i + 1}) {
+            $pos: list.nth($positions, $i);
+            left: list.nth($pos, 1);
+            top: list.nth($pos, 2);
+            transform: translate(-50%, -50%);
+          }
+        }
+      }
     }
 
     .congkak-rumah {
@@ -122,24 +144,15 @@ body {
         top: 13%;
         right: 9.8%;
       }
-    }
 
-    & .congkak-seed {
-      width: 15%;
-      aspect-ratio: 70/53;
-      background-image: url(img/seed.png);
-      background-repeat: no-repeat;
-      background-size: 100%;
-      background-position: 0;
-      position: absolute;
-      filter: drop-shadow(0 1px 0px rgba(0, 0, 0, 0.55)) drop-shadow(0 0.5px 0px rgba(0, 0, 0, 0.65));
-
-      @for $i from 1 through list.length($positions) {
-        &:nth-child(#{$i + 1}) {
-          $pos: list.nth($positions, $i);
-          left: list.nth($pos, 1);
-          top: list.nth($pos, 2);
-          transform: translate(-50%, -50%);
+      & .congkak-seed {
+        @for $i from 1 through list.length($rumahpositions) {
+          &:nth-child(#{$i + 1}) {
+            $pos: list.nth($rumahpositions, $i);
+            left: list.nth($pos, 1);
+            top: list.nth($pos, 2);
+            transform: translate(-50%, -50%);
+          }
         }
       }
     }

@@ -13,7 +13,7 @@ class Sowing implements Game {
 
   public onEnteringState(stateName: string, notif: Notif<PlayerSeedingState>) {
     if (stateName === 'playerSeeding' && (this.game as any).isCurrentPlayerActive()) {
-      this.setSelectedHouses(notif.args.location);
+      this.setSelectedHouses(notif.args.locations);
     }
   }
 
@@ -54,26 +54,13 @@ class Sowing implements Game {
     dojo.subscribe('lockedHouses', this, (notif) => this.lockedHousesNotif(notif));
   }
 
-  public setSelectedHouses(location: { location: string; playerId: string }) {
-    if (location.location === 'initial') {
-      const playerId = (this.game as any).getCurrentPlayerId();
-
-      for (let i = 1; i <= 7; i++) {
-        const element = document.getElementById(`congkak-${playerId}-kampong_${i}`);
-
-        if (element.querySelectorAll('.congkak-seed').length > 0) {
-          element.classList.add('selectable');
-          this.handlers.push(dojo.connect(element, 'onclick', this, () => this.onClick(element)));
-        }
-      }
-    } else {
+  public setSelectedHouses(locations: { location: string; playerId: string }[]) {
+    locations.forEach((location) => {
       const element = document.getElementById(`congkak-${location.playerId}-${location.location}`);
 
-      if (element.querySelectorAll('.congkak-seed').length > 0) {
-        element.classList.add('selectable');
-        this.handlers.push(dojo.connect(element, 'onclick', this, () => this.onClick(element)));
-      }
-    }
+      element.classList.add('selectable');
+      this.handlers.push(dojo.connect(element, 'onclick', this, () => this.onClick(element)));
+    });
   }
 
   public removeSelecteds() {

@@ -196,7 +196,10 @@ class HouseService extends \APP_GameClass
 
         if (is_null($roundSettings['total'])) return false;
 
-        return $roundSettings['current'] == $roundSettings['total'];
+        $sql = "SELECT MAX(player_round_wins) rounds FROM player";
+        $result = $this->game->getObjectFromDB($sql);
+
+        return $roundSettings['current'] == $roundSettings['total'] || intval($result['rounds']) > ($roundSettings['total'] / 2);
     }
 
     public function isGameEnd()

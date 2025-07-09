@@ -28,11 +28,11 @@ interface CongkakGames {
 }
 
 interface PlayersSeedingState {
-  locations: Record<string, { location: string; playerId: string }>;
+  locations: Record<string, { location: string; playerId: string }[]>;
 }
 
 interface PlayerSeedingState {
-  location: { location: string; playerId: string };
+  locations: { location: string; playerId: string }[];
 }
 
 interface PlayersSeedingNotif {

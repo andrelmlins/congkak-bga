@@ -96,13 +96,22 @@ class StepService extends \APP_GameClass
             $this->game->statsService->incSowings($playerId);
         }
 
-
         if (count($actives) == 1) {
             $this->game->gamestate->changeActivePlayer($actives[0]);
             $this->game->gamestate->nextState('playerSeeding');
         } else if (count($actives) == 0) {
             $result = $this->game->getObjectFromDB("SELECT player_id id FROM player WHERE player_no = 1");
             $this->game->gamestate->changeActivePlayer($result['id']);
+            $this->game->gamestate->nextState('playerSeeding');
+        } else if (
+            $this->game->seedingService->availableLocations($playerId) ==
+            $this->game->seedingService->availableLocations($this->game->playerService->getOpponnetId($playerId))
+        ) {
+            $result = $this->game->getObjectFromDB("SELECT player_id id FROM player WHERE player_no = 1");
+            $this->game->gamestate->changeActivePlayer($result['id']);
+
+            $this->game->notifyAllPlayers('endSeedingSamePosition', Messages::$EndSeedingSamePosition, []);
+
             $this->game->gamestate->nextState('playerSeeding');
         } else {
             $this->game->gamestate->nextState('playersSeeding');
