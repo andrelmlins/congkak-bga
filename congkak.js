@@ -93,7 +93,8 @@ var Congkak = /** @class */ (function () {
         this.counters[playerId][house].setValue(seeds);
         var box = document.getElementById("congkak-".concat(playerId, "-").concat(house));
         for (var i = 0; i < seeds; i++) {
-            box.insertAdjacentHTML('beforeend', "<div class=\"congkak-seed\"></div>");
+            var position = Math.floor(Math.random() * 4 + 1);
+            box.insertAdjacentHTML('beforeend', "<div class=\"congkak-seed\" position=\"".concat(position, "\"></div>"));
         }
     };
     Congkak.prototype.formatHouse = function (playerId, house) {

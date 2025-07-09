@@ -150,6 +150,7 @@ class StepService extends \APP_GameClass
         }
 
         if ($this->game->houseService->isRoundGameEnd()) {
+            $this->game->statsService->setAverageSeedsRound();
             return $this->game->gamestate->nextState('gameEnd');
         }
 
@@ -215,6 +216,7 @@ class StepService extends \APP_GameClass
         }
 
         if ($this->game->houseService->isGameEnd()) {
+            $this->game->statsService->setAverageSeedsRound();
             return $this->game->gamestate->nextState('gameEnd');
         }
 

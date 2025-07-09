@@ -90,7 +90,9 @@ class Congkak implements CongkakGame {
     const box = document.getElementById(`congkak-${playerId}-${house}`);
 
     for (let i = 0; i < seeds; i++) {
-      box.insertAdjacentHTML('beforeend', `<div class="congkak-seed"></div>`);
+      const position = Math.floor(Math.random() * 4 + 1);
+
+      box.insertAdjacentHTML('beforeend', `<div class="congkak-seed" position="${position}"></div>`);
     }
   }
 

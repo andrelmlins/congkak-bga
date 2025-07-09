@@ -101,6 +101,8 @@ class PlayerService extends \APP_GameClass
             $this->game->notifyAllPlayers('winRound', Messages::$WinRound, [
                 'player_name' => $this->game->getPlayerNameById($playerId)
             ]);
+
+            $this->game->statsService->incRoundsWon($playerId);
         }
     }
 }

@@ -24,6 +24,16 @@
       "id": 14,
       "name": "Number of seeds moved due to game end",
       "type": "int"
+    },
+    "roundsWon": {
+      "id": 15,
+      "name": "Rounds won",
+      "type": "int"
+    },
+    "averageSeedsRound": {
+      "id": 16,
+      "name": "Average number of seeds per round",
+      "type": "float"
     }
   }
 }

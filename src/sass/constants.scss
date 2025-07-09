@@ -1,11 +1,13 @@
 @use 'sass:math';
 @use 'sass:list';
 
-$items: 50;
-$center: 50%;
-$item-width: 20%;
-$aspect-ratio: math.div(70, 53);
 $pi: 3.141592653589793;
+$center: 50%;
+$max-radius: 48%;
+$item-width: 14%;
+$item-height: $item-width;
+$aspect-ratio: 1;
+$min-angle-gap: 10deg;
 
 @function deg-to-rad($deg) {
   @return $deg * math.div($pi, 180);
@@ -18,32 +20,58 @@ $pi: 3.141592653589793;
 }
 
 $positions: ();
-$layer-count: 5;
-$items-per-layer: (6, 8, 14, 14, 6);
-$max-radius: 45%;
+$target-items: 50;
+$current-count: 0;
+$layer: 1;
 
-@for $layer from 1 through $layer-count {
-  $r: math.div($layer * $max-radius, $layer-count);
-  $n: list.nth($items-per-layer, $layer);
-  @for $i from 0 through $n - 1 {
-    $angle: math.div($i * 360, $n);
-    $pos: position($r, $angle);
+@while $current-count < $target-items {
+  $radius: math.div($layer * $max-radius, 5);
+  $circumference: 2 * $pi * $radius;
+  $item-space: $item-width * 1.15;
+  $max-items-angle: math.floor(math.div(360deg, $min-angle-gap));
+  $max-items-circumference: math.floor(math.div($circumference, $item-space));
+  $items-in-layer: min($max-items-angle, $max-items-circumference);
+
+  @if $current-count + $items-in-layer > $target-items {
+    $items-in-layer: $target-items - $current-count;
+  }
+
+  @for $i from 0 through $items-in-layer - 1 {
+    $angle: math.div($i * 360, $items-in-layer);
+    $pos: position($radius, $angle);
     $positions: list.append($positions, $pos);
   }
+
+  $current-count: $current-count + $items-in-layer;
+  $layer: $layer + 1;
 }
 
 $rumahpositions: ();
-$items-per-layer: (6, 8, 10, 12, 14, 16, 18, 14);
-$layer-count: list.length($items-per-layer);
-$items: 98;
-$max-radius: 44%;
+$target-items: 98;
+$current-count: 0;
+$item-width: 10%;
+$item-height: $item-width;
+$layer: 1;
+$min-angle-gap: 6deg;
 
-@for $layer from 1 through $layer-count {
-  $r: math.div($layer * $max-radius, $layer-count);
-  $n: list.nth($items-per-layer, $layer);
-  @for $i from 0 through $n - 1 {
-    $angle: math.div($i * 360, $n);
-    $pos: position($r, $angle);
+@while $current-count < $target-items {
+  $radius: math.div($layer * $max-radius, 9);
+  $circumference: 2 * $pi * $radius;
+  $item-space: $item-width * 1.15;
+  $max-items-angle: math.floor(math.div(360deg, $min-angle-gap));
+  $max-items-circumference: math.floor(math.div($circumference, $item-space));
+  $items-in-layer: min($max-items-angle, $max-items-circumference);
+
+  @if $current-count + $items-in-layer > $target-items {
+    $items-in-layer: $target-items - $current-count;
+  }
+
+  @for $i from 0 through $items-in-layer - 1 {
+    $angle: math.div($i * 360, $items-in-layer);
+    $pos: position($radius, $angle);
     $rumahpositions: list.append($rumahpositions, $pos);
   }
+
+  $current-count: $current-count + $items-in-layer;
+  $layer: $layer + 1;
 }
