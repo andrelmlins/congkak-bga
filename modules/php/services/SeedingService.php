@@ -124,7 +124,7 @@ class SeedingService extends \APP_GameClass
             $location = $this->game->globals->get("seeding:next:house:{$playerId}");
             $locationPlayerId = $this->game->globals->get("seeding:next:player:{$playerId}");
 
-            return [['location' => $location, 'playerId' => $locationPlayerId]];
+            return [['location' => $location, 'playerId' => $locationPlayerId, 'isNext' => true]];
         }
 
         $opponentPlayerId = $this->game->playerService->getOpponnetId($playerId);
@@ -139,7 +139,7 @@ class SeedingService extends \APP_GameClass
             if ($opponentLocationPlayerId == $playerId && $opponentLocation == "kampong_{$i}") continue;
             if ($this->game->houseService->isLocked($playerId, "kampong_{$i}")) continue;
 
-            $result[] = ['location' => "kampong_{$i}", 'playerId' => $playerId];
+            $result[] = ['location' => "kampong_{$i}", 'playerId' => $playerId, 'isNext' => false];
         }
 
         return $result;
@@ -151,7 +151,7 @@ class SeedingService extends \APP_GameClass
             $location = $this->game->globals->get("seeding:next:house");
             $locationPlayerId = $this->game->globals->get("seeding:next:player");
 
-            return ['locations' => [['location' => $location, 'playerId' => $locationPlayerId]]];
+            return ['locations' => [['location' => $location, 'playerId' => $locationPlayerId, 'isNext' => true]]];
         }
 
         $activePlayerId = $this->game->getActivePlayerId();
@@ -161,7 +161,7 @@ class SeedingService extends \APP_GameClass
         for ($i = 1; $i <= 7; $i++) {
             if ($houses['kampong'][$i] == 0) continue;
 
-            $result[] = ['location' => "kampong_{$i}", 'playerId' => $activePlayerId];
+            $result[] = ['location' => "kampong_{$i}", 'playerId' => $activePlayerId, 'isNext' => false];
         }
 
         return ['locations' => $result];
@@ -259,7 +259,8 @@ class SeedingService extends \APP_GameClass
 
             if (
                 $this->game->optionsService->isAutomaticSeeding($player['player_id']) &&
-                count($locations) == 1
+                count($locations) == 1 &&
+                $locations[0]['isNext']
             ) {
                 $playerId = $locations[0]['playerId'];
                 $houseNumber = intval(str_replace('kampong_', '', $locations[0]['location']));
@@ -280,7 +281,7 @@ class SeedingService extends \APP_GameClass
         if ($this->game->optionsService->isAutomaticSeeding($activePlayerId)) {
             $locations = $this->argPlayerSeeding()['locations'];
 
-            if (count($locations) == 1) {
+            if (count($locations) == 1 && $locations[0]['isNext']) {
                 $playerId = $locations[0]['playerId'];
                 $houseNumber = intval(str_replace('kampong_', '', $locations[0]['location']));
 
