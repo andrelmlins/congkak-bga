@@ -203,7 +203,7 @@ class SeedingService extends \APP_GameClass
         list($housePerPlayer, $movements) = $this->seeding($maxSeeds, $initialHouse);
 
         $this->game->notifyAllPlayers('playersSeeding', Messages::$PlayerSeeding, [
-            'player_name' => $this->game->getPlayerNameById($playerId),
+            'player_name' => $this->game->getPlayerNameById($activePlayerId),
             'movements' => $movements,
             'initialHouse' => $initialHouse,
             'maxSeeds' => $maxSeeds,
