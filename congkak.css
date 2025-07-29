@@ -41,16 +41,23 @@ html {
   position: absolute;
   background-color: white;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+  display: flex;
 }
 .congkak-box .congkak-table .congkak-player.top {
-  top: -30%;
+  top: -47%;
   left: 50%;
   transform: translate(-50%, 0%);
+  flex-direction: column;
 }
 .congkak-box .congkak-table .congkak-player.bottom {
-  bottom: -15%;
+  bottom: -35%;
   left: 50%;
   transform: translate(-50%, 0%);
+  flex-direction: column-reverse;
+}
+.congkak-box .congkak-table .congkak-player i {
+  font-size: 2.5em;
+  line-height: 0.5em;
 }
 .congkak-box .congkak-table .congkak-grid {
   position: absolute;

@@ -71,9 +71,9 @@ var Congkak = /** @class */ (function () {
         table.insertAdjacentHTML('beforeend', this.formatHouse(this.gamedatas.playerPosition[0], 'rumah'));
         table.insertAdjacentHTML('beforeend', this.formatHouse(this.gamedatas.playerPosition[1], 'rumah'));
         var currentPlayer = this.gamedatas.players[this.gamedatas.playerPosition[0]];
-        table.insertAdjacentHTML('beforeend', "<span style=\"color: #".concat(currentPlayer.color, "\" class=\"congkak-player bottom\">").concat(currentPlayer.name, "</span>"));
+        table.insertAdjacentHTML('beforeend', "\n        <span style=\"color: #".concat(currentPlayer.color, "\" class=\"congkak-player bottom\">\n          <i class=\"fa fa-long-arrow-left\" aria-hidden=\"true\"></i>\n          ").concat(currentPlayer.name, "\n        </span>\n      "));
         var opponentPlayer = this.gamedatas.players[this.gamedatas.playerPosition[1]];
-        table.insertAdjacentHTML('beforeend', "<span style=\"color: #".concat(opponentPlayer.color, "\" class=\"congkak-player top\">").concat(opponentPlayer.name, "</span>"));
+        table.insertAdjacentHTML('beforeend', "\n        <span style=\"color: #".concat(opponentPlayer.color, "\" class=\"congkak-player top\">\n          <i class=\"fa fa-long-arrow-right\" aria-hidden=\"true\"></i>\n          ").concat(opponentPlayer.name, "\n        </span>\n      "));
         for (var playerId in this.gamedatas.houseList) {
             var playerHouses = this.gamedatas.houseList[playerId];
             for (var position in playerHouses.kampong) {

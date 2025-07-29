@@ -211,8 +211,16 @@ class HouseService extends \APP_GameClass
             $sql = "SELECT * FROM house WHERE house_location != 'rumah' AND house_player = '%s' AND house_locked = 1";
             $listLockeds = $this->game->getObjectListFromDB(sprintf($sql, $player['player_id']));
 
-            if (intval($listLockeds) == 7) {
+            if (count($listLockeds) == 7) {
                 $isGameEnd = true;
+            } else if (count($listLockeds) == 6) {
+                $sql = "SELECT SUM(house_seeds) seeds FROM house WHERE house_player = '%s' AND house_location != 'rumah'";
+                $item = $this->game->getObjectFromDB(sprintf($sql, $player['player_id']));
+
+                echo json_encode($item);
+                if (intval($item['seeds']) == 1) {
+                    $isGameEnd = true;
+                }
             }
         }
 

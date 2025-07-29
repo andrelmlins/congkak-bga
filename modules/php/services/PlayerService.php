@@ -70,7 +70,7 @@ class PlayerService extends \APP_GameClass
             $sql = "SELECT count(*) lockeds FROM house WHERE house_player = '%s' AND house_locked = '1'";
             $result = $this->game->getObjectFromDB(sprintf($sql, $playerId));
 
-            $score = intval($result['lockeds']);
+            $score = 7 - intval($result['lockeds']);
         }
 
         $sql = "UPDATE player SET player_score = %s WHERE player_id = '%s'";

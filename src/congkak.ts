@@ -54,13 +54,23 @@ class Congkak implements CongkakGame {
     const currentPlayer = this.gamedatas.players[this.gamedatas.playerPosition[0]];
     table.insertAdjacentHTML(
       'beforeend',
-      `<span style="color: #${currentPlayer.color}" class="congkak-player bottom">${currentPlayer.name}</span>`
+      `
+        <span style="color: #${currentPlayer.color}" class="congkak-player bottom">
+          <i class="fa fa-long-arrow-left" aria-hidden="true"></i>
+          ${currentPlayer.name}
+        </span>
+      `
     );
 
     const opponentPlayer = this.gamedatas.players[this.gamedatas.playerPosition[1]];
     table.insertAdjacentHTML(
       'beforeend',
-      `<span style="color: #${opponentPlayer.color}" class="congkak-player top">${opponentPlayer.name}</span>`
+      `
+        <span style="color: #${opponentPlayer.color}" class="congkak-player top">
+          <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+          ${opponentPlayer.name}
+        </span>
+      `
     );
 
     for (let playerId in this.gamedatas.houseList) {

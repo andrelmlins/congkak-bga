@@ -51,6 +51,10 @@ class OptionsService extends \APP_GameClass
             return VictoryMode::NumberHousesBurned;
         }
 
+        if ($this->getGameMode() == GameMode::TotalBurn) {
+            return VictoryMode::NumberHousesBurned;
+        }
+
         return VictoryMode::NumberOfSeeds;
     }
 
