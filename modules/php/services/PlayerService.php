@@ -6,7 +6,7 @@ use Bga\Games\congkak\entities\Messages;
 use Bga\Games\congkak\entities\VictoryMode;
 use Bga\Games\congkak\Game;
 
-class PlayerService extends \APP_GameClass
+class PlayerService
 {
     public Game $game;
 
@@ -73,10 +73,7 @@ class PlayerService extends \APP_GameClass
             $score = 7 - intval($result['lockeds']);
         }
 
-        $sql = "UPDATE player SET player_score = %s WHERE player_id = '%s'";
-        $this->game->DbQuery(sprintf($sql, $score, $playerId));
-
-        $this->game->notifyAllPlayers('score', '', ['score' => $score, 'playerId' => $playerId]);
+        $this->game->bga->playerScore->set((int) $playerId, $score);
     }
 
     function setRoundWin()

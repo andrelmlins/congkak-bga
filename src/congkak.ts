@@ -12,8 +12,6 @@ class Congkak implements CongkakGame {
 
   games: CongkakGames;
 
-  scoreCtrl: Record<string, Counter>;
-
   animationManager: AnimationManager;
 
   counters: Record<string, Record<string, Counter>> = {};
@@ -27,11 +25,28 @@ class Congkak implements CongkakGame {
   }
 
   public setup(gamedatas: CongkakGamedatas) {
+    this.setupGameArea();
     this.setupHouses();
 
     this.animationManager = new AnimationManager(this);
 
     this.setupNotifications();
+  }
+
+  public setupGameArea() {
+    (this as any).bga.gameArea.getElement().insertAdjacentHTML(
+      'beforeend',
+      `
+        <div id="congkak-box" class="congkak-box">
+          <div id="congkak-round-box" class="congkak-round-box">
+            <span id="congkak-round-current"></span> / <span id="congkak-round-total"></span>
+          </div>
+          <div id="congkak-table" class="congkak-table">
+            <div id="congkak-grid" class="congkak-grid"></div>
+          </div>
+        </div>
+      `
+    );
   }
 
   public setupHouses() {
@@ -162,12 +177,7 @@ class Congkak implements CongkakGame {
       this.games[gameName].setupNotifications();
     }
 
-    dojo.subscribe('score', this, (value) => this.scoreNotif(value));
     dojo.subscribe('newRound', this, (value) => this.newRoundNotif(value));
-  }
-
-  private async scoreNotif(notif: Notif<ScoreNotif>) {
-    this.scoreCtrl[notif.args.playerId].toValue(notif.args.score);
   }
 
   private async newRoundNotif(notif: Notif<NewRoundNotif>) {

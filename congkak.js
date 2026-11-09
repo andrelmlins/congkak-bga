@@ -52,9 +52,13 @@ var Congkak = /** @class */ (function () {
         };
     }
     Congkak.prototype.setup = function (gamedatas) {
+        this.setupGameArea();
         this.setupHouses();
         this.animationManager = new AnimationManager(this);
         this.setupNotifications();
+    };
+    Congkak.prototype.setupGameArea = function () {
+        this.bga.gameArea.getElement().insertAdjacentHTML('beforeend', "\n        <div id=\"congkak-box\" class=\"congkak-box\">\n          <div id=\"congkak-round-box\" class=\"congkak-round-box\">\n            <span id=\"congkak-round-current\"></span> / <span id=\"congkak-round-total\"></span>\n          </div>\n          <div id=\"congkak-table\" class=\"congkak-table\">\n            <div id=\"congkak-grid\" class=\"congkak-grid\"></div>\n          </div>\n        </div>\n      ");
     };
     Congkak.prototype.setupHouses = function () {
         var _a;
@@ -145,16 +149,7 @@ var Congkak = /** @class */ (function () {
         for (var gameName in this.games) {
             this.games[gameName].setupNotifications();
         }
-        dojo.subscribe('score', this, function (value) { return _this.scoreNotif(value); });
         dojo.subscribe('newRound', this, function (value) { return _this.newRoundNotif(value); });
-    };
-    Congkak.prototype.scoreNotif = function (notif) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                this.scoreCtrl[notif.args.playerId].toValue(notif.args.score);
-                return [2 /*return*/];
-            });
-        });
     };
     Congkak.prototype.newRoundNotif = function (notif) {
         return __awaiter(this, void 0, void 0, function () {
@@ -458,7 +453,7 @@ var Sowing = /** @class */ (function () {
                         return [3 /*break*/, 1];
                     case 4:
                         for (i = 0; i < notif.args.outwardMovementsCount; i++) {
-                            destination = document.getElementById("overall_player_board_".concat(notif.args.playerId));
+                            destination = this.game.bga.playerPanels.getElement(parseInt(notif.args.playerId));
                             animation = new BgaLocalAnimation(this.game);
                             animation.setOptions(seeds.item(seedsCount), destination, 800);
                             animation.call(function (node) { return dojo.destroy(node); });

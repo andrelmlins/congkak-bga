@@ -20,6 +20,7 @@ declare(strict_types=1);
 
 namespace Bga\Games\congkak;
 
+use Bga\GameFramework\Table;
 use Bga\Games\congkak\entities\GameMode;
 use Bga\Games\congkak\entities\Messages;
 use Bga\Games\congkak\services\HouseService;
@@ -30,9 +31,7 @@ use Bga\Games\congkak\services\OptionsService;
 use Bga\Games\congkak\services\SeedingService;
 use Bga\Games\congkak\services\ZombieService;
 
-require_once(APP_GAMEMODULE_PATH . "module/table/table.game.php");
-
-class Game extends \Table
+class Game extends Table
 {
     use Constants;
 
@@ -188,11 +187,6 @@ class Game extends \Table
         return $result;
     }
 
-    protected function getGameName()
-    {
-        return "congkak";
-    }
-
     protected function setupNewGame($players, $options = [])
     {
         $gameinfos = $this->getGameinfos();
@@ -208,7 +202,7 @@ class Game extends \Table
             ]);
         }
 
-        static::DbQuery(
+        $this->DbQuery(
             sprintf(
                 "INSERT INTO player (player_id, player_color, player_canal, player_name, player_avatar) VALUES %s",
                 implode(",", $query_values)
@@ -222,6 +216,8 @@ class Game extends \Table
         $this->houseService->create();
 
         $this->activeNextPlayer();
+
+        return 2;
     }
 
     protected function zombieTurn(array $state, int $activePlayerId): void

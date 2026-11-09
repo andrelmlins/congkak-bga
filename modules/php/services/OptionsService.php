@@ -6,7 +6,7 @@ use Bga\Games\congkak\entities\GameMode;
 use Bga\Games\congkak\entities\VictoryMode;
 use Bga\Games\congkak\Game;
 
-class OptionsService extends \APP_GameClass
+class OptionsService
 {
     public Game $game;
 

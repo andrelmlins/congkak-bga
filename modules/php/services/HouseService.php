@@ -4,7 +4,7 @@ namespace Bga\Games\congkak\services;
 
 use Bga\Games\congkak\Game;
 
-class HouseService extends \APP_GameClass
+class HouseService
 {
     public Game $game;
 

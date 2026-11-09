@@ -229,7 +229,7 @@ class Sowing implements Game {
     }
 
     for (let i = 0; i < notif.args.outwardMovementsCount; i++) {
-      const destination = document.getElementById(`overall_player_board_${notif.args.playerId}`);
+      const destination = (this.game as any).bga.playerPanels.getElement(parseInt(notif.args.playerId));
 
       const animation = new BgaLocalAnimation(this.game);
       animation.setOptions(seeds.item(seedsCount), destination, 800);

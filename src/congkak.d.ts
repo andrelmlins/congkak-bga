@@ -3,8 +3,6 @@ interface CongkakGame extends Game {
 
   games: CongkakGames;
 
-  scoreCtrl: Record<string, Counter>;
-
   animationManager: AnimationManager;
 
   counters: Record<string, Record<string, Counter>>;
@@ -46,11 +44,6 @@ interface MoveAllToRumahNotif {
   playerId: string;
   opponentLocation: string;
   opponentPlayerId: string;
-}
-
-interface ScoreNotif {
-  score: number;
-  playerId: string;
 }
 
 interface NewRoundNotif {

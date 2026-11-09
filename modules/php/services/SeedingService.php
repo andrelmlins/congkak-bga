@@ -5,7 +5,7 @@ namespace Bga\Games\congkak\services;
 use Bga\Games\congkak\entities\Messages;
 use Bga\Games\congkak\Game;
 
-class SeedingService extends \APP_GameClass
+class SeedingService
 {
     public Game $game;
 

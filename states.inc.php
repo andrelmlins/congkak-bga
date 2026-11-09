@@ -16,14 +16,6 @@
  */
 
 $machinestates = [
-    1 => array(
-        "name" => "gameSetup",
-        "description" => "",
-        "type" => "manager",
-        "action" => "stGameSetup",
-        "transitions" => ["" => 2]
-    ),
-
     2 => [
         "name" => "newRound",
         "description" => '',
@@ -72,14 +64,6 @@ $machinestates = [
         "action" => "stNextPlayer",
         "updateGameProgression" => true,
         "transitions" => ["playerSeeding" => 11, "newRound" => 2]
-    ],
-
-    99 => [
-        "name" => "gameEnd",
-        "description" => clienttranslate("End of game"),
-        "type" => "manager",
-        "action" => "stGameEnd",
-        "args" => "argGameEnd"
     ],
 
 ];
