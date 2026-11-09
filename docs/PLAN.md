@@ -1,0 +1,66 @@
+# Plano e notas
+
+Arquivo de trabalho interno. As regras ficam em [RULES.md](RULES.md), a arte em [ASSETS.md](ASSETS.md).
+
+## Estado
+
+- O jogo foi feito em julho de 2025 (15 commits, de 2025-07-01 a 2025-07-29), no scaffold **antigo** do BGA (`states.inc.php`, `Game.php` herdando de `\Table`, sem classes de estado). Os dois últimos commits citam números de bug (#177979, #175652).
+- O manual de regras original se perdeu. Em **2026-11-09** o [RULES.md](RULES.md) foi reconstituído a partir do código e de duas fontes da internet. Ele ainda **não foi revisado pelo André**: a seção 12 lista o que precisa da confirmação dele.
+- Em 2026-11-09 o André mandou o manual que ele próprio tinha montado ("Manual do Congkak, modo por rodadas", 3 páginas). **Não será guardado no repositório** (decisão dele): o `RULES.md` vai sendo atualizado e é ele a fonte. A comparação com o jogo está na seção 13 do RULES.md, e as diferenças A a I foram decididas no mesmo dia (J ficou para depois).
+- Os documentos desta pasta (`RULES.md`, `PLAN.md`, `ASSETS.md`) e o `CLAUDE.md` foram criados no mesmo dia, para seguir o esquema dos jogos mais recentes (trucomineiro, trucopaulista, buraco).
+
+## Não testado
+
+Nesta sessão **nada foi rodado**: não houve build, nem deploy, nem partida no Studio. O RULES.md vem só da leitura do código (`modules/php/services/`, `src/states/sowing.ts`) e das duas páginas da internet citadas nele. Pode haver caso que o código trata de um jeito que a leitura não pegou.
+
+O PDF de regras da IIUM (`centre.iium.edu.my`, tabela de regras de torneio) não pôde ser lido, então não foi usado.
+
+## Decisões
+
+Decisões de **2026-11-09**, depois de comparar o manual do André com o jogo (RULES.md, seção 13). Nenhuma mudou o código:
+
+- **Vale o jogo** nos pontos A (empate de rodada dá vitória aos dois), B (reabastecer até 7 por casa), C (sobras), E (a soma é "sementes na última rodada"), G (fim antecipado ao passar da metade das vitórias), H (captura com a oposta vazia) e I (ordem da mesa na abertura simultânea).
+- **F:** sem desempate no resultado geral.
+- **J:** variações opcionais do manual (reativar casas, banco de sementes, tempo, reinício completo, rodada extra) ficam para avaliar depois.
+- **D (queima total):** manter como está (7 casas queimadas, ou 6 e a sétima com 1 semente, sem comparar o depósito). Opções descartadas no RULES.md, seção 13.
+- **Sentido horário** confirmado pela pesquisa do André. **Casa queimada continua pulada** na semeadura (não confisca). **Ninguém joga de novo** na abertura: impossível na primeira (simulação dos 49 pares, nenhum caso), possível só nas rodadas simultâneas seguintes, onde o primeiro da mesa começa.
+- **Quem começa a rodada seguinte:** manter como está por enquanto (quem tem menos sementes no total depois do reabastecimento, em empate o primeiro da mesa). Pode voltar a ser discutido.
+- Nada mais em aberto na seção 12. A origem das imagens está registrada (geradas no ChatGPT, ASSETS.md).
+
+- Sentido horário da semeadura: escolha deliberada do projeto, não erro (ver seção 12 do RULES.md). Uma variante anti-horária como opção de mesa já foi discutida, não implementada.
+
+## O que falta para ficar como os jogos recentes
+
+Resultado de rodar o `review_checks.py` da skill `andre-bga` e de ler o projeto. O que está marcado com [x] foi feito; o resto não.
+
+**Estrutura**
+
+- [ ] Scaffold novo: classes de estado em `modules/php/States/`, `gameinfos.jsonc`, `gameoptions.jsonc`, `gamepreferences.jsonc`, `stats.jsonc` no lugar de `states.inc.php`, `gameinfos.inc.php` e dos `.json` de hoje. É a maior mudança e mexe em tudo, então só com decisão do André.
+- [ ] Regras puras em `modules/php/Rules/`, sem framework, cada uma com um teste de PHP puro em `tests/`. Hoje a regra de semeadura, captura e fim de rodada vive dentro de `SeedingService`, `StepService` e `HouseService`, misturada com banco e notificações. Esse é o pedaço que mais ganharia com teste (caminho da semeadura, os quatro finais, reabastecimento e casas queimadas).
+- [ ] Build com pnpm e rollup, como os outros. Hoje é `tsc && sass`, com `yarn.lock`.
+- [ ] `SeedingService.php` está com 293 linhas e `HouseService.php` com 251: dividir antes de acrescentar qualquer coisa neles (ex.: o caminho da semeadura e a leitura do banco em arquivos separados).
+- [ ] `src/utils.ts` tem nome genérico: renomear por domínio.
+
+**Cliente e layout**
+
+- [x] `@font-face` do Google: **feito em 2026-11-09**. O símbolo de infinito (total de rodadas na Queima total) agora é o caractere `&infin;`, sem fonte nenhuma, e o `@font-face` e a classe `.material-symbols-outlined` saíram do SCSS. Não visto na tela.
+- [ ] Layout com `@media` (740 px da janela): trocar por `@container` só faz sentido junto com baixar `game_interface_width.min` para 320 (item abaixo). Com o mínimo em 740 o BGA nunca deixa a caixa do jogo mais estreita que isso, e a consulta de container nunca dispararia. Precisa de teste visual no celular, por isso ficou.
+- [ ] `game_interface_width.min` está em 740 em `gameinfos.inc.php`; os recentes usam 320 para funcionar no celular. Só mexer se o layout for refeito para isso.
+- [ ] Sem chamada de `preloadImages` para as três imagens.
+
+**Bugs vistos na leitura**
+
+- [x] **Corrigido em 2026-11-09:** `HouseService::isGameEnd()` tinha um `echo json_encode($item);` esquecido no ramo de 6 casas queimadas, que estraga a resposta do servidor. Removido.
+- [x] **Corrigido em 2026-11-09:** `StepService::stNewRound()` testava `$lockeds > 0` com um array (sempre verdadeiro). Agora `count($lockeds) > 0`. O resultado na prática é o mesmo, porque só entra no laço quando há casas para queimar.
+- Texto do log "Players finished seeding in the same hole, one player will be randomly chosen" mas o código escolhe o jogador 1 da mesa (que é sorteado pelo BGA, mas não é um sorteio novo).
+- O zombie escolhe sempre a primeira casa possível, sem sorteio: é nível 0 a 1 no `Zombie Mode`, e o nível declarado nos metadados deve bater com isso.
+
+**Documentos**
+
+- [ ] Confirmar com o André os pontos da seção 12 do RULES.md 
+- [ ] Se o jogo for ao ar com o novo manual, gerar a versão para jogadores (o RULES.md atual é de trabalho, em português, e a ajuda do BGA é em inglês).
+- [ ] `docs` e `CLAUDE.md` não estão na lista `ignore` do `.vscode/sftp.json` (só `.vscode`, `.git`, `src`, `node_modules` e poucos mais): acrescentar `docs` e `CLAUDE.md` para não subirem ao Studio. O arquivo tem a senha do Studio, não foi aberto nem alterado nesta sessão.
+
+## Estatísticas (para a ajuda e o log)
+
+Sete por jogador, definidas em `stats.json`: `seedsStorehouse`, `sowings`, `seedsMyHouse`, `sowingsOpponentHouse`, `seedsGameEnd`, `roundsWon` e `averageSeedsRound`.
