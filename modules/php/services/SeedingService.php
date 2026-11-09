@@ -2,6 +2,7 @@
 
 namespace Bga\Games\congkak\services;
 
+use Bga\GameFramework\UserException;
 use Bga\Games\congkak\entities\Messages;
 use Bga\Games\congkak\Game;
 use Bga\Games\congkak\Rules\Board;
@@ -47,13 +48,13 @@ class SeedingService
 
         switch ($ending['type']) {
             case SowingEnding::RUMAH:
-                $this->game->notifyAllPlayers('endSeedingRumah', Messages::$EndSeedingRumah, [
+                $this->game->bga->notify->all('endSeedingRumah', Messages::$EndSeedingRumah, [
                     'player_name' => $playerName
                 ]);
                 break;
 
             case SowingEnding::OCCUPIED:
-                $this->game->notifyAllPlayers('endSeedingWithSeeds', Messages::$EndSeedingWithSeeds, [
+                $this->game->bga->notify->all('endSeedingWithSeeds', Messages::$EndSeedingWithSeeds, [
                     'player_name' => $playerName
                 ]);
                 break;
@@ -63,20 +64,20 @@ class SeedingService
 
                 $this->game->statsService->incSeedsMyHouse($capture['total'], $playerId);
 
-                $this->game->notifyAllPlayers('moveAllToRumah', Messages::$EndSeeding, [
+                $this->game->bga->notify->all('moveAllToRumah', Messages::$EndSeeding, [
                     'player_name' => $playerName,
                     'location' => $capture['location'],
                     'playerId' => $playerId,
                     'opponentLocation' => $capture['opponentLocation'],
                     'opponentPlayerId' => $capture['opponentPlayerId']
                 ]);
-                $this->game->notifyAllPlayers('simplePause', '', ['time' => 1000]);
+                $this->game->bga->notify->all('simplePause', '', ['time' => 1000]);
                 break;
 
             case SowingEnding::OPPONENT:
                 $this->game->statsService->incSowingsOpponentHouse($playerId);
 
-                $this->game->notifyAllPlayers('endSeedingInOpponent', Messages::$EndSeedingInOpponent, [
+                $this->game->bga->notify->all('endSeedingInOpponent', Messages::$EndSeedingInOpponent, [
                     'player_name' => $playerName
                 ]);
                 break;
@@ -137,18 +138,18 @@ class SeedingService
         $houses = $this->game->houseService->list();
 
         if ($houses[$playerId]['kampong'][$house] == 0) {
-            throw new \BgaUserException(Messages::$InvalidAction, 9000);
+            throw new UserException(Messages::$InvalidAction);
         }
 
         $result = $this->resolve([$activePlayerId => ['location' => "kampong_{$house}", 'playerId' => $playerId]]);
 
-        $this->game->notifyAllPlayers('playersSeeding', Messages::$PlayerSeeding, [
+        $this->game->bga->notify->all('playersSeeding', Messages::$PlayerSeeding, [
             'player_name' => $this->game->getPlayerNameById($activePlayerId),
             'movements' => $result['movements'],
             'initialHouse' => $result['initialHouse'],
             'maxSeeds' => $result['maxSeeds'],
         ]);
-        $this->game->notifyAllPlayers('simplePause', '', ['time' => 1000 + ($result['maxSeeds'] * 300)]);
+        $this->game->bga->notify->all('simplePause', '', ['time' => 1000 + ($result['maxSeeds'] * 300)]);
 
         $ending = $result['endings'][$activePlayerId];
 
@@ -156,16 +157,16 @@ class SeedingService
 
         $this->game->statsService->incSowings($activePlayerId);
 
-        $this->game->globals->delete("seeding:next:house");
-        $this->game->globals->delete("seeding:next:player");
+        $this->game->bga->globals->delete("seeding:next:house");
+        $this->game->bga->globals->delete("seeding:next:player");
 
         if ($ending['active']) {
             if ($this->game->houseService->isNewRound()) {
                 return $this->game->gamestate->nextState("newRound");
             }
 
-            $this->game->globals->set("seeding:next:house", $ending['next']['location']);
-            $this->game->globals->set("seeding:next:player", $ending['next']['playerId']);
+            $this->game->bga->globals->set("seeding:next:house", $ending['next']['location']);
+            $this->game->bga->globals->set("seeding:next:player", $ending['next']['playerId']);
 
             $this->game->giveExtraTime($activePlayerId);
             $this->game->gamestate->nextState('playerSeeding');
@@ -181,11 +182,11 @@ class SeedingService
         $houses = $this->game->houseService->list();
 
         if ($houses[$playerId]['kampong'][$house] == 0) {
-            throw new \BgaUserException(Messages::$InvalidAction, 9000);
+            throw new UserException(Messages::$InvalidAction);
         }
 
-        $this->game->globals->set("seeding:house:{$activePlayerId}", $house);
-        $this->game->globals->set("seeding:player:{$activePlayerId}", $playerId);
+        $this->game->bga->globals->set("seeding:house:{$activePlayerId}", $house);
+        $this->game->bga->globals->set("seeding:player:{$activePlayerId}", $playerId);
 
         $this->game->gamestate->setPlayerNonMultiactive($activePlayerId, 'nextMultiplayers');
     }

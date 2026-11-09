@@ -51,14 +51,6 @@ class Game extends Table
     {
         parent::__construct();
 
-        $this->initGameStateLabels([
-            "gameMode" => 100,
-            "numberOfRounds" => 101,
-            "houseBurnt" => 102,
-            "victoryMode" => 103,
-            "automaticSeeding" => 110,
-        ]);
-
         Messages::initMessages();
         $this->startConstants();
 

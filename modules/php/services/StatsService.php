@@ -15,14 +15,15 @@ class StatsService
 
     public function setup($players)
     {
-        foreach ($players as $playerId => $player) {
-            $this->game->initStat('player', 'seedsStorehouse', 0, $playerId);
-            $this->game->initStat('player', 'sowings', 0, $playerId);
-            $this->game->initStat('player', 'seedsMyHouse', 0, $playerId);
-            $this->game->initStat('player', 'sowingsOpponentHouse', 0, $playerId);
-            $this->game->initStat('player', 'seedsGameEnd', 0, $playerId);
-            $this->game->initStat('player', 'roundsWon', 0, $playerId);
-        }
+        $this->game->bga->playerStats->init([
+            'seedsStorehouse',
+            'sowings',
+            'seedsMyHouse',
+            'sowingsOpponentHouse',
+            'seedsGameEnd',
+            'roundsWon',
+            'averageSeedsRound',
+        ], 0);
     }
 
     public function setSeedsStorehouse()
@@ -30,34 +31,34 @@ class StatsService
         $houses = $this->game->houseService->list();
 
         foreach ($houses as $playerId => $house) {
-            $this->game->setStat($house['rumah'], 'seedsStorehouse', $playerId);
-            $this->game->incStat($house['rumah'], 'averageSeedsRound', $playerId);
+            $this->game->bga->playerStats->set('seedsStorehouse', $house['rumah'], (int) $playerId);
+            $this->game->bga->playerStats->inc('averageSeedsRound', $house['rumah'], (int) $playerId);
         }
     }
 
     public function incSowings($playerId)
     {
-        $this->game->incStat(1, 'sowings', $playerId);
+        $this->game->bga->playerStats->inc('sowings', 1, (int) $playerId);
     }
 
     public function incSowingsOpponentHouse($playerId)
     {
-        $this->game->incStat(1, 'sowingsOpponentHouse', $playerId);
+        $this->game->bga->playerStats->inc('sowingsOpponentHouse', 1, (int) $playerId);
     }
 
     public function incSeedsMyHouse(int $count, $playerId)
     {
-        $this->game->incStat($count, 'seedsMyHouse', $playerId);
+        $this->game->bga->playerStats->inc('seedsMyHouse', $count, (int) $playerId);
     }
 
     public function setSeedsGameEnd(int $count, $playerId)
     {
-        $this->game->setStat($count, 'seedsGameEnd', $playerId);
+        $this->game->bga->playerStats->set('seedsGameEnd', $count, (int) $playerId);
     }
 
     public function incRoundsWon($playerId)
     {
-        $this->game->incStat(1, 'roundsWon', $playerId);
+        $this->game->bga->playerStats->inc('roundsWon', 1, (int) $playerId);
     }
 
     public function setAverageSeedsRound()
@@ -66,9 +67,11 @@ class StatsService
         $roundSettings = $this->game->optionsService->getRoundSettings();
 
         foreach ($players as $player) {
-            $value = $this->game->getStat('averageSeedsRound', $player['player_id']);
+            $playerId = (int) $player['player_id'];
 
-            $this->game->setStat($value / $roundSettings['current'], 'averageSeedsRound', $player['player_id']);
+            $value = $this->game->bga->playerStats->get('averageSeedsRound', $playerId);
+
+            $this->game->bga->playerStats->set('averageSeedsRound', $value / $roundSettings['current'], $playerId);
         }
     }
 }

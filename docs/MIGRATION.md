@@ -62,6 +62,10 @@ Divide de quebra os dois arquivos grandes. Cada caso de teste ancora uma frase d
 
 ### Fase 2: chamadas de servidor para a API nova (estados ainda legados)
 
+**Feita em 2026-11-09, não testada no Studio.** O que mudou: `notifyAllPlayers` para `$this->bga->notify->all`, `globals->` para `$this->bga->globals->`, as 5 opções para `$this->bga->tableOptions->get($id)` (com o padrão de cada opção do `gameoptions.json`, em `OptionsService`) e a preferência para `$this->bga->userPreferences`, estatísticas para `$this->bga->playerStats` (`init` de todas de uma vez, e `averageSeedsRound`, que nunca era inicializada, agora também é), `BgaUserException` para `\Bga\GameFramework\UserException` (sem o código 9000), e o `initGameStateLabels` saiu do `Game.php`. Sobrou de propósito: `giveExtraTime`, `getPlayerNameById`, `activeNextPlayer` e `gamestate->` (não estão obsoletos ou ficam para a Fase 3).
+
+O plano original da fase continua abaixo.
+
 Mecânico, em um commit:
 
 - `initGameStateLabels` e `getGameStateValue` das 5 opções para `$this->bga->tableOptions->get($id)`, e a preferência para `$this->bga->userPreferences->get($playerId, $id)`.

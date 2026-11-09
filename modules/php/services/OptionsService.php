@@ -6,8 +6,19 @@ use Bga\Games\congkak\entities\GameMode;
 use Bga\Games\congkak\entities\VictoryMode;
 use Bga\Games\congkak\Game;
 
+/**
+ * The table options (gameoptions.json) and the player preference (gamepreferences.json). Each default is the one of the option file.
+ */
 class OptionsService
 {
+    private const GAME_MODE = 100;
+    private const NUMBER_OF_ROUNDS = 101;
+    private const HOUSE_BURNT = 102;
+    private const VICTORY_MODE = 103;
+    private const AUTOMATIC_SEEDING = 110;
+
+    private const PREFERENCE_AUTOMATIC_SEEDING = 100;
+
     public Game $game;
 
     public function __construct(Game $game)
@@ -15,35 +26,41 @@ class OptionsService
         $this->game = $game;
     }
 
+    private function option(int $id, int $default): int
+    {
+        return $this->game->bga->tableOptions->get($id) ?? $default;
+    }
+
     public function getRoundSettings()
     {
         $total = 1;
 
-        if ($this->game->getGameStateValue('gameMode') == 2) {
-            $total = $this->game->getGameStateValue('numberOfRounds');
-        } else if ($this->game->getGameStateValue('gameMode') == 3) {
+        if ($this->option(self::GAME_MODE, 1) == 2) {
+            $total = $this->option(self::NUMBER_OF_ROUNDS, 3);
+        } else if ($this->option(self::GAME_MODE, 1) == 3) {
             $total = null;
         }
 
         return [
-            'current' => $this->game->globals->get('round', 1),
+            'current' => $this->game->bga->globals->get('round', 1),
             'total' => $total,
         ];
     }
 
     public function isBurnt()
     {
-        return $this->game->getGameStateValue('gameMode') != 1 && $this->game->getGameStateValue('houseBurnt') == 2;
+        return $this->option(self::GAME_MODE, 1) != 1 && $this->option(self::HOUSE_BURNT, 2) == 2;
     }
 
     public function isAutomaticSeeding($playerId)
     {
-        return $this->game->getGameStateValue('automaticSeeding') == 2 || $this->game->userPreferences->get(intval($playerId), 100) == 1;
+        return $this->option(self::AUTOMATIC_SEEDING, 2) == 2
+            || $this->game->bga->userPreferences->get(intval($playerId), self::PREFERENCE_AUTOMATIC_SEEDING) == 1;
     }
 
     public function getVictoryMode()
     {
-        $victoryMode = $this->game->getGameStateValue('victoryMode');
+        $victoryMode = $this->option(self::VICTORY_MODE, 1);
 
         if ($victoryMode == 1) {
             return VictoryMode::NumberOfRounds;
@@ -60,7 +77,7 @@ class OptionsService
 
     public function getGameMode()
     {
-        $gameMode = $this->game->getGameStateValue('gameMode');
+        $gameMode = $this->option(self::GAME_MODE, 1);
 
         if ($gameMode == 1) {
             return GameMode::SingleRound;

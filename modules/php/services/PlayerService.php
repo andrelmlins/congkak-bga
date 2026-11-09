@@ -104,7 +104,7 @@ class PlayerService
             $sql = "UPDATE player SET player_round_wins = player_round_wins + 1 WHERE player_id = '%s'";
             $this->game->DbQuery(sprintf($sql, $playerId));
 
-            $this->game->notifyAllPlayers('winRound', Messages::$WinRound, [
+            $this->game->bga->notify->all('winRound', Messages::$WinRound, [
                 'player_name' => $this->game->getPlayerNameById($playerId)
             ]);
 
