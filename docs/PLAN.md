@@ -9,6 +9,10 @@ Arquivo de trabalho interno. As regras ficam em [RULES.md](RULES.md), a arte em 
 - Em 2026-11-09 o André mandou o manual que ele próprio tinha montado ("Manual do Congkak, modo por rodadas", 3 páginas). **Não será guardado no repositório** (decisão dele): o `RULES.md` vai sendo atualizado e é ele a fonte. A comparação com o jogo está na seção 13 do RULES.md, e as diferenças A a I foram decididas no mesmo dia (J ficou para depois).
 - Os documentos desta pasta (`RULES.md`, `PLAN.md`, `ASSETS.md`) e o `CLAUDE.md` foram criados no mesmo dia, para seguir o esquema dos jogos mais recentes (trucomineiro, trucopaulista, buraco).
 
+## Testado no Studio
+
+- **2026-11-09, pelo André:** depois da migração parcial (estados 1 e 99 fora, `setupNewGame` com `return 2;`, `playerScore`, HTML montado em `setup()`, `exception_on_warning` ligado, `Game.php` estendendo `Bga\GameFramework\Table`), **a partida iniciou e dá para jogar**. Ele não disse o que mais conferiu, então o resto da lista abaixo continua sem confirmação (placar no painel, fim de partida, animação da queima, abertura simultânea).
+
 ## Não testado
 
 Nesta sessão **nada foi rodado**: não houve build, nem deploy, nem partida no Studio. O RULES.md vem só da leitura do código (`modules/php/services/`, `src/states/sowing.ts`) e das duas páginas da internet citadas nele. Pode haver caso que o código trata de um jeito que a leitura não pegou.
@@ -55,9 +59,22 @@ Resultado de rodar o `review_checks.py` da skill `andre-bga` e de ler o projeto.
 - Texto do log "Players finished seeding in the same hole, one player will be randomly chosen" mas o código escolhe o jogador 1 da mesa (que é sorteado pelo BGA, mas não é um sorteio novo).
 - O zombie escolhe sempre a primeira casa possível, sem sorteio: é nível 0 a 1 no `Zombie Mode`, e o nível declarado nos metadados deve bater com isso.
 
+**Avisos das verificações do Studio (2026-11-09)**
+
+Saída do "Project code checks" depois do deploy. Imagens, SQL e CSS passaram ("All good"), e recarregar informações do jogo, opções, preferências, estatísticas e traduções deu certo. O que o Studio apontou:
+
+- [x] `extends \APP_GameClass` nos 5 serviços: removido (eles só usam `$this->game->...`, nunca as próprias funções de banco). Feito em 2026-11-09, **não testado no Studio**.
+- [x] `require_once(.../table.game.php)`, `extends \Table` e `getGameName()` em `Game.php`: agora `use Bga\GameFramework\Table;`, `class Game extends Table`, sem o `require_once` e sem `getGameName`. Também troquei `static::DbQuery` por `$this->DbQuery` (o aviso do PHP 8.4). Feito em 2026-11-09, **não testado no Studio**.
+- [x] Estados 1 e 99 saíram do `states.inc.php` e `setupNewGame` termina com `return 2;` (o `newRound`). As transições para `gameEnd` (99) continuam, o framework fornece esse estado. Feito em 2026-11-09, **não testado no Studio**: é o que decide se a partida começa e termina, então é a primeira coisa a olhar.
+- [x] `congkak_congkak.tpl` removido em 2026-11-09 e o HTML da mesa (caixa, rodada, tabuleiro e grade) agora é montado em `setup()` por `setupGameArea()` em `src/congkak.ts`, com `bga.gameArea.getElement()`. **Não testado no Studio.** Não existe `congkak.view.php` no repositório: se ele existir no servidor, apagar lá por SFTP.
+- [x] `this.scoreCtrl` e `overall_player_board`: o código de pontuação do cliente (inscrição `score`, `scoreNotif`, `ScoreNotif`) foi apagado, e a animação das sementes que saem do jogo agora vai para `bga.playerPanels.getElement(playerId)`. Feito em 2026-11-09, **não testado no Studio**.
+- [x] `PlayerService::updateScore` agora usa `$this->bga->playerScore->set()`, que manda a notificação de pontuação sozinho (a notificação `score` própria deixou de existir). Feito em 2026-11-09, **não testado no Studio**. Conferir que o placar do painel muda ao fim de cada rodada, e que o fim da partida mostra as pontuações certas.
+- [x] `is_beta` em `gameinfos.inc.php`: chave removida do arquivo em 2026-11-09 (o valor fica no Game Metadata Manager do Studio, que já tinha o `gameinfos.json` novo no servidor).
+- [x] `exception_on_warning`: ligado em `gameinfos.inc.php` em 2026-11-09, para ver os avisos de PHP que hoje passam. **Não testado no Studio**: se algum aviso virar erro numa partida, o log do Studio mostra onde. Não há mais `static::` nem `self::` no PHP.
+
 **Documentos**
 
-- [ ] Confirmar com o André os pontos da seção 12 do RULES.md 
+- [x] Pontos da seção 12 do RULES.md confirmados com o André em 2026-11-09, e a origem das imagens registrada (ASSETS.md).
 - [ ] Se o jogo for ao ar com o novo manual, gerar a versão para jogadores (o RULES.md atual é de trabalho, em português, e a ajuda do BGA é em inglês).
 - [ ] `docs` e `CLAUDE.md` não estão na lista `ignore` do `.vscode/sftp.json` (só `.vscode`, `.git`, `src`, `node_modules` e poucos mais): acrescentar `docs` e `CLAUDE.md` para não subirem ao Studio. O arquivo tem a senha do Studio, não foi aberto nem alterado nesta sessão.
 

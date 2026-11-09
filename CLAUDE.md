@@ -27,7 +27,7 @@ yarn build
 - `modules/php/Game.php`: thin entry point, delegates to the services.
 - `modules/php/services/`: `SeedingService` (sowing, the four endings, the opening), `StepService` (rounds, who plays next, reseeding), `HouseService` (houses, path, burnt houses), `PlayerService` (opponent, score, round wins), `OptionsService` (table options), `StatsService`, `ZombieService`.
 - `modules/php/entities/`: `GameMode`, `VictoryMode`, `Messages` (all log strings).
-- `src/states/sowing.ts`: selection and animations. `src/congkak.ts`: setup and the houses.
+- `src/states/sowing.ts`: selection and animations. `src/congkak.ts`: setup, the game area HTML (no `.tpl`) and the houses.
 
 ## Secrets
 
