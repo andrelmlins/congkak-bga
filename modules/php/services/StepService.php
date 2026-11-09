@@ -199,7 +199,7 @@ class StepService extends \APP_GameClass
             ]);
             $this->game->notifyAllPlayers('simplePause', '', ['time' => (count($movements) + 1) * 800]);
 
-            if ($lockeds > 0 && $this->game->optionsService->isBurnt()) {
+            if (count($lockeds) > 0 &&$this->game->optionsService->isBurnt()) {
                 foreach ($lockeds as $location) {
                     $this->game->houseService->locked($playerId, $location);
                 }

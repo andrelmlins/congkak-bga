@@ -217,7 +217,6 @@ class HouseService extends \APP_GameClass
                 $sql = "SELECT SUM(house_seeds) seeds FROM house WHERE house_player = '%s' AND house_location != 'rumah'";
                 $item = $this->game->getObjectFromDB(sprintf($sql, $player['player_id']));
 
-                echo json_encode($item);
                 if (intval($item['seeds']) == 1) {
                     $isGameEnd = true;
                 }

@@ -84,7 +84,7 @@ class Congkak implements CongkakGame {
 
     document.getElementById('congkak-round-box').insertAdjacentText('afterbegin', _('Round: '));
     document.getElementById('congkak-round-total').innerHTML = `${
-      this.gamedatas.roundDetails.total ?? '<i class="material-symbols-outlined">&#xEB3D;</i>'
+      this.gamedatas.roundDetails.total ?? '&infin;'
     }`;
 
     this.roundCounter = new ebg.counter();

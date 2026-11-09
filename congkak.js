@@ -82,7 +82,7 @@ var Congkak = /** @class */ (function () {
             this.setSeeds('rumah', playerId, playerHouses.rumah);
         }
         document.getElementById('congkak-round-box').insertAdjacentText('afterbegin', _('Round: '));
-        document.getElementById('congkak-round-total').innerHTML = "".concat((_b = this.gamedatas.roundDetails.total) !== null && _b !== void 0 ? _b : '<i class="material-symbols-outlined">&#xEB3D;</i>');
+        document.getElementById('congkak-round-total').innerHTML = "".concat((_b = this.gamedatas.roundDetails.total) !== null && _b !== void 0 ? _b : '&infin;');
         this.roundCounter = new ebg.counter();
         this.roundCounter.create('congkak-round-current');
         this.roundCounter.setValue(this.gamedatas.roundDetails.current);
