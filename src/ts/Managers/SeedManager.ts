@@ -1,4 +1,5 @@
 import { Game } from '../Game';
+import { BgaAttachWithAnimation, BgaSlideAnimation } from '../vendor/bga-animations.js';
 import { PAUSE, RUMAH, SEED_DURATION, SEED_STAGGER, KAMPONGS, delayTime } from '../Constants';
 
 /**
@@ -106,7 +107,10 @@ export class SeedManager {
     await delayTime(PAUSE);
   }
 
+  /** The seed slides from its house to the destination and is attached to it (the same as before the client moved to the Game class). */
   private move(seed: HTMLElement, destination: HTMLElement): Promise<unknown> {
-    return this.game.animationManager.slideAndAttach(seed, destination, { duration: SEED_DURATION, bump: 1 });
+    const slide = new BgaSlideAnimation({ element: seed, duration: SEED_DURATION, rotationDelta: 0 });
+
+    return this.game.animationManager.play(new BgaAttachWithAnimation({ animation: slide, where: 'beforeend', attachElement: destination }));
   }
 }

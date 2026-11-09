@@ -4,11 +4,11 @@ import { HouseManager } from './Managers/HouseManager';
 import { SeedManager } from './Managers/SeedManager';
 import { SelectionManager } from './Managers/SelectionManager';
 import { TableManager } from './Managers/TableManager';
-import { BgaAnimationManager, BgaAnimations } from './libs';
+import { AnimationManager } from './vendor/bga-animations.js';
 
 export class Game {
   public bga: Bga<CongkakPlayer, CongkakGamedatas>;
-  public animationManager: BgaAnimationManager;
+  public animationManager: AnimationManager;
 
   public houseManager: HouseManager;
   public seedManager: SeedManager;
@@ -17,7 +17,7 @@ export class Game {
 
   constructor(bga: Bga<CongkakPlayer, CongkakGamedatas>) {
     this.bga = bga;
-    this.animationManager = new BgaAnimations.Manager({ animationsActive: () => this.bga.gameui.bgaAnimationsActive() });
+    this.animationManager = new AnimationManager(this.bga.gameui);
 
     // The board, the seeds and the page background are CSS images: load them now, so they do not pop in.
     this.bga.images.preloadImages(['table.png', 'seeds.png', 'background.png']);
