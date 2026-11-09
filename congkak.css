@@ -973,6 +973,151 @@
   margin: -10% 0 0 -10%;
 }
 
+.congkak-box .congkak-help-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 40;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 2px solid #35241d;
+  border-radius: 50%;
+  background-image: linear-gradient(180deg, #6b4c3d, #4b342b);
+  color: #f6ead3;
+  font-size: 1.4em;
+  font-weight: bold;
+  line-height: 1;
+  cursor: pointer;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -2px 4px rgba(0, 0, 0, 0.35), 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+.congkak-box .congkak-help-button:hover, .congkak-box .congkak-help-button[aria-expanded=true] {
+  color: #ffe2a8;
+  filter: brightness(1.15);
+}
+
+.congkak-box .congkak-help {
+  position: absolute;
+  top: 56px;
+  right: 10px;
+  z-index: 50;
+  box-sizing: border-box;
+  width: min(640px, 100% - 20px);
+  max-height: calc(100% - 66px);
+  overflow-y: auto;
+  padding: 10px 16px 12px;
+  background-image: linear-gradient(180deg, #6b4c3d, #4b342b);
+  color: #f6ead3;
+  border: 2px solid #35241d;
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -3px 6px rgba(0, 0, 0, 0.35), 0 3px 6px rgba(0, 0, 0, 0.35);
+}
+.congkak-box .congkak-help .congkak-help-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.45);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12);
+}
+.congkak-box .congkak-help .congkak-help-header b {
+  min-width: 0;
+  white-space: nowrap;
+  color: #ffe2a8;
+  font-size: 1.2em;
+  letter-spacing: 0.02em;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
+}
+.congkak-box .congkak-help .congkak-help-close {
+  flex: none;
+  box-sizing: border-box;
+  min-width: 28px;
+  max-width: 28px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 2px solid #35241d;
+  border-radius: 50%;
+  background-image: linear-gradient(180deg, #6b4c3d, #4b342b);
+  color: #f6ead3;
+  font-size: 1.2em;
+  font-weight: bold;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 1px 3px rgba(0, 0, 0, 0.4);
+}
+.congkak-box .congkak-help .congkak-help-close:hover {
+  color: #ffe2a8;
+  filter: brightness(1.15);
+}
+.congkak-box .congkak-help .congkak-help-body p {
+  margin: 8px 0;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
+}
+.congkak-box .congkak-help .congkak-help-endings {
+  list-style: none;
+  margin: 10px 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 10px;
+  counter-reset: ending;
+}
+.congkak-box .congkak-help .congkak-help-ending {
+  counter-increment: ending;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 8px 10px 8px 52px;
+  position: relative;
+  background-color: rgba(0, 0, 0, 0.28);
+  border-radius: 12px;
+  box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.12);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+}
+.congkak-box .congkak-help .congkak-help-ending b {
+  color: #ffe2a8;
+}
+.congkak-box .congkak-help .congkak-help-ending::before {
+  content: counter(ending);
+  position: absolute;
+  left: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 32px;
+  height: 32px;
+  background-image: url(img/seeds.png);
+  background-repeat: no-repeat;
+  background-size: 400% 100%;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.55)) drop-shadow(0 0.5px 0 rgba(0, 0, 0, 0.65));
+  color: white;
+  font-weight: bold;
+  font-size: 1.05em;
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.95), 0 1px 2px rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.congkak-box .congkak-help .congkak-help-ending[type=rumah]::before {
+  background-position-x: 0%;
+}
+.congkak-box .congkak-help .congkak-help-ending[type=seeds]::before {
+  background-position-x: 33.3333333333%;
+}
+.congkak-box .congkak-help .congkak-help-ending[type=capture]::before {
+  background-position-x: 66.6666666667%;
+}
+.congkak-box .congkak-help .congkak-help-ending[type=opponent]::before {
+  background-position-x: 100%;
+}
+
 html {
   background-image: url(img/background.png);
   background-size: auto;

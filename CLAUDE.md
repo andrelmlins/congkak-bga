@@ -29,7 +29,7 @@ pnpm run build
 - `modules/php/States/`: one class per state (`NewRound`, `PlayersSeeding`, `PlayerSeeding`, `NextMultiplayers`, `NextPlayer`), they only delegate to the managers.
 - `modules/php/Rules/`: the pure rules (see Rules and tests).
 - `modules/php/entities/`: `GameMode`, `VictoryMode`, `Messages` (all log strings).
-- `src/ts/Game.ts`: the `Game` class, wires the managers and the states and has the `notif_*` handlers (one method each, they await the animation). `src/ts/Managers/`: `TableManager` (game area HTML, no `.tpl`, round), `HouseManager` (houses and counters), `SeedManager` (every seed animation), `SelectionManager` (choose, then confirm). `src/ts/States/`: `PlayersSeeding`, `PlayerSeeding`. `src/ts/libs.ts`: the `bga-animations` lib. `src/scss/`: one partial per area, `Game.scss` is the entry.
+- `src/ts/Game.ts`: the `Game` class, wires the managers and the states and has the `notif_*` handlers (one method each, they await the animation). `src/ts/Managers/`: `TableManager` (game area HTML, no `.tpl`, round), `HouseManager` (houses and counters), `SeedManager` (every seed animation), `SelectionManager` (choose, then confirm), `HelpManager` (the player aid, a "?" button on the board that opens how a sowing ends over it: takes no room, so the board still fits in the first view). `src/ts/States/`: `PlayersSeeding`, `PlayerSeeding`. `src/ts/libs.ts`: the `bga-animations` lib. `src/scss/`: one partial per area, `Game.scss` is the entry.
 
 ## Rules and tests
 

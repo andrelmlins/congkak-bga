@@ -1,0 +1,169 @@
+// The player aid (src/ts/Managers/HelpManager.ts): how a sowing ends. A round "?" button in the top right corner of the board opens it over the board, so
+// it takes no room of the page. It looks like the rest of the game: the dark wood of the board, cream letters, and the glass marbles of img/seeds.png as
+// the numbers of the four endings.
+
+$WOOD_LIGHT: #6b4c3d;
+$WOOD_DARK: #4b342b;
+$CREAM: #f6ead3;
+
+.congkak-box .congkak-help-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 40;
+  width: 38px;
+  height: 38px;
+  padding: 0;
+  border: 2px solid #35241d;
+  border-radius: 50%;
+  background-image: linear-gradient(180deg, $WOOD_LIGHT, $WOOD_DARK);
+  color: $CREAM;
+  font-size: 1.4em;
+  font-weight: bold;
+  line-height: 1;
+  cursor: pointer;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -2px 4px rgba(0, 0, 0, 0.35), 0 2px 4px rgba(0, 0, 0, 0.4);
+
+  &:hover,
+  &[aria-expanded='true'] {
+    color: #ffe2a8;
+    filter: brightness(1.15);
+  }
+}
+
+.congkak-box .congkak-help {
+  position: absolute;
+  top: 56px;
+  right: 10px;
+  z-index: 50;
+  box-sizing: border-box;
+  width: min(640px, calc(100% - 20px));
+  max-height: calc(100% - 66px);
+  overflow-y: auto;
+  padding: 10px 16px 12px;
+  background-image: linear-gradient(180deg, $WOOD_LIGHT, $WOOD_DARK);
+  color: $CREAM;
+  border: 2px solid #35241d;
+  border-radius: 18px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -3px 6px rgba(0, 0, 0, 0.35), 0 3px 6px rgba(0, 0, 0, 0.35);
+
+  // The title and the close button: a line under them, like the edge of a plank, the title in the gold of the names of the endings and the button
+  // round like the "?" that opens the aid.
+  & .congkak-help-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.45);
+    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.12);
+
+    & b {
+      min-width: 0;
+      white-space: nowrap;
+      color: #ffe2a8;
+      font-size: 1.2em;
+      letter-spacing: 0.02em;
+      text-shadow: 0 1px 1px rgba(0, 0, 0, 0.6);
+    }
+  }
+
+  // Width, height and margin are fixed on purpose: a button with none of them was stretched by the styles of the BGA page and sat in the middle.
+  & .congkak-help-close {
+    flex: none;
+    box-sizing: border-box;
+    min-width: 28px;
+    max-width: 28px;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 2px solid #35241d;
+    border-radius: 50%;
+    background-image: linear-gradient(180deg, $WOOD_LIGHT, $WOOD_DARK);
+    color: $CREAM;
+    font-size: 1.2em;
+    font-weight: bold;
+    line-height: 1;
+    cursor: pointer;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 1px 3px rgba(0, 0, 0, 0.4);
+
+    &:hover {
+      color: #ffe2a8;
+      filter: brightness(1.15);
+    }
+  }
+
+  & .congkak-help-body p {
+    margin: 8px 0;
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
+  }
+
+  & .congkak-help-endings {
+    list-style: none;
+    margin: 10px 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 10px;
+    counter-reset: ending;
+  }
+
+  // Each ending is a hollow in the wood, like a house of the board, with a marble that has its number.
+  & .congkak-help-ending {
+    counter-increment: ending;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    padding: 8px 10px 8px 52px;
+    position: relative;
+    background-color: rgba(0, 0, 0, 0.28);
+    border-radius: 12px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.55), 0 1px 0 rgba(255, 255, 255, 0.12);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
+
+    & b {
+      color: #ffe2a8;
+    }
+
+    // The marble: a cell of the seeds sprite (the four colors, as the seeds in the houses), the number over it.
+    &::before {
+      content: counter(ending);
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 32px;
+      background-image: url(img/seeds.png);
+      background-repeat: no-repeat;
+      background-size: 400% 100%;
+      filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.55)) drop-shadow(0 0.5px 0 rgba(0, 0, 0, 0.65));
+      color: white;
+      font-weight: bold;
+      font-size: 1.05em;
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.95), 0 1px 2px rgba(0, 0, 0, 0.9);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &[type='rumah']::before {
+      background-position-x: calc((100% / 3) * 0);
+    }
+    &[type='seeds']::before {
+      background-position-x: calc((100% / 3) * 1);
+    }
+    &[type='capture']::before {
+      background-position-x: calc((100% / 3) * 2);
+    }
+    &[type='opponent']::before {
+      background-position-x: calc((100% / 3) * 3);
+    }
+  }
+}

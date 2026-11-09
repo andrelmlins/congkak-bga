@@ -1,5 +1,6 @@
 import { PlayerSeeding } from './States/PlayerSeeding';
 import { PlayersSeeding } from './States/PlayersSeeding';
+import { HelpManager } from './Managers/HelpManager';
 import { HouseManager } from './Managers/HouseManager';
 import { SeedManager } from './Managers/SeedManager';
 import { SelectionManager } from './Managers/SelectionManager';
@@ -10,6 +11,7 @@ export class Game {
   public bga: Bga<CongkakPlayer, CongkakGamedatas>;
   public animationManager: AnimationManager;
 
+  public helpManager: HelpManager;
   public houseManager: HouseManager;
   public seedManager: SeedManager;
   public selectionManager: SelectionManager;
@@ -23,6 +25,7 @@ export class Game {
     this.bga.images.preloadImages(['table.png', 'seeds.png', 'background.png']);
 
     // Declare the Manager classes
+    this.helpManager = new HelpManager(this);
     this.houseManager = new HouseManager();
     this.seedManager = new SeedManager(this);
     this.selectionManager = new SelectionManager(this);
@@ -35,6 +38,7 @@ export class Game {
 
   setup(gamedatas: CongkakGamedatas) {
     this.tableManager.setup(gamedatas);
+    this.helpManager.setup();
 
     this.setupNotifications();
   }
