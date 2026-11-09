@@ -20,7 +20,6 @@ class PlayersSeeding extends GameState
             $game,
             id: 10,
             type: StateType::MULTIPLE_ACTIVE_PLAYER,
-            name: 'playersSeeding',
             description: clienttranslate('Waiting for other players to perform their action'),
             descriptionMyTurn: clienttranslate('${you} must select a house to sow'),
         );

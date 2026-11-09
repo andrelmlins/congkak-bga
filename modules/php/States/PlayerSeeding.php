@@ -20,7 +20,6 @@ class PlayerSeeding extends GameState
             $game,
             id: 11,
             type: StateType::ACTIVE_PLAYER,
-            name: 'playerSeeding',
             description: clienttranslate('${actplayer} must select a house to sow'),
             descriptionMyTurn: clienttranslate('${you} must select a house to sow'),
             updateGameProgression: true,

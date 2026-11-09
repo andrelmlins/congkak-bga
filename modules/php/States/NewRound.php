@@ -21,7 +21,6 @@ class NewRound extends GameState
             $game,
             id: 2,
             type: StateType::GAME,
-            name: 'newRound',
             updateGameProgression: true,
         );
     }

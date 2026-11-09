@@ -74,7 +74,6 @@ class SeedingManager
                     'opponentLocation' => $capture['opponentLocation'],
                     'opponentPlayerId' => $capture['opponentPlayerId']
                 ]);
-                $this->game->bga->notify->all('simplePause', '', ['time' => 1000]);
                 break;
 
             case SowingEnding::OPPONENT:
@@ -156,7 +155,6 @@ class SeedingManager
             'initialHouse' => $result['initialHouse'],
             'maxSeeds' => $result['maxSeeds'],
         ]);
-        $this->game->bga->notify->all('simplePause', '', ['time' => 1000 + ($result['maxSeeds'] * 300)]);
 
         $ending = $result['endings'][$activePlayerId];
 

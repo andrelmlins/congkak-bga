@@ -1,0 +1,15 @@
+/*
+ * The stylesheet of Congkak (built from src/scss, see package.json). The board and the seeds are images (img/table.png, img/seeds.png, see
+ * docs/ASSETS.md); the houses are laid over the board in percentages, so everything scales with the width of the table.
+ */
+
+@use './Constants.scss' as *;
+@use './Table.scss';
+@use './Houses.scss';
+@use './Seeds.scss';
+
+// The background of the page (img/background.png, see docs/ASSETS.md).
+html {
+  background-image: url(img/background.png);
+  background-size: auto;
+}

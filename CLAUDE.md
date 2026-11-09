@@ -10,17 +10,17 @@ The art (board, seeds, background) is described in [docs/ASSETS.md](docs/ASSETS.
 
 ## Older scaffold
 
-This game predates the newer ones (trucomineiro, trucopaulista, buraco): its game states are classes in `modules/php/States/`, but it still has a `Game` class extending `\Table` and a `tsc` and `sass` build with yarn. Do not copy the structure of the newer games here without asking, and do not migrate it on your own: the phased plan for that is in [docs/MIGRATION.md](docs/MIGRATION.md) (inventory in docs/PLAN.md).
+This game predates the newer ones (trucomineiro, trucopaulista, buraco): its game states are classes in `modules/php/States/`, and its client is the new `Game` class with promise notifications and a pnpm and rollup build, but it still has a `Game` class extending `\Table` on the server. Do not copy the structure of the newer games here without asking, and do not migrate it on your own: the phased plan for that is in [docs/MIGRATION.md](docs/MIGRATION.md) (inventory in docs/PLAN.md).
 
 ## Build
 
 After editing any file under `src/`, recompile before considering the change done:
 
 ```
-yarn build
+pnpm run build
 ```
 
-`congkak.js` and `congkak.css` (in the project root) are build outputs, edit the `src/` sources instead.
+`modules/js/Game.js` and `congkak.css` (in the project root) are build outputs, edit the `src/` sources instead. `bga-framework.d.ts` is the typing of the BGA client framework, copied from the newer games.
 
 ## Code map
 
@@ -29,7 +29,7 @@ yarn build
 - `modules/php/States/`: one class per state (`NewRound`, `PlayersSeeding`, `PlayerSeeding`, `NextMultiplayers`, `NextPlayer`), they only delegate to the managers.
 - `modules/php/Rules/`: the pure rules (see Rules and tests).
 - `modules/php/entities/`: `GameMode`, `VictoryMode`, `Messages` (all log strings).
-- `src/states/sowing.ts`: selection and animations. `src/congkak.ts`: setup, the game area HTML (no `.tpl`) and the houses.
+- `src/ts/Game.ts`: the `Game` class, wires the managers and the states and has the `notif_*` handlers (one method each, they await the animation). `src/ts/Managers/`: `TableManager` (game area HTML, no `.tpl`, round), `HouseManager` (houses and counters), `SeedManager` (every seed animation), `SelectionManager` (choose, then confirm). `src/ts/States/`: `PlayersSeeding`, `PlayerSeeding`. `src/ts/libs.ts`: the `bga-animations` lib. `src/scss/`: one partial per area, `Game.scss` is the entry.
 
 ## Rules and tests
 

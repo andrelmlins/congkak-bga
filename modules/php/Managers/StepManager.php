@@ -40,7 +40,6 @@ class StepManager
                     'player_name' => $this->game->getPlayerNameById($playerId),
                     'playerId' => $playerId,
                 ]);
-                $this->game->bga->notify->all('simplePause', '', ['time' => 1000]);
             }
         }
     }
@@ -70,7 +69,6 @@ class StepManager
             'initialHouse' => $result['initialHouse'],
             'maxSeeds' => $result['maxSeeds'],
         ]);
-        $this->game->bga->notify->all('simplePause', '', ['time' => 1000 + ($result['maxSeeds'] * 300)]);
 
         $actives = [];
 
@@ -188,7 +186,6 @@ class StepManager
                 'movements' => $movements,
                 'outwardMovementsCount' => $outwardMovementsCount,
             ]);
-            $this->game->bga->notify->all('simplePause', '', ['time' => (count($movements) + 1) * 800]);
 
             if (count($lockeds) > 0 && $this->game->optionsManager->isBurnt()) {
                 foreach ($lockeds as $location) {

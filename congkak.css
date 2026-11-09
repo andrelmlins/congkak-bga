@@ -1,8 +1,7 @@
-html {
-  background-image: url(img/background.png);
-  background-size: auto;
-}
-
+/*
+ * The stylesheet of Congkak (built from src/scss, see package.json). The board and the seeds are images (img/table.png, img/seeds.png, see
+ * docs/ASSETS.md); the houses are laid over the board in percentages, so everything scales with the width of the table.
+ */
 .congkak-box {
   display: flex;
   gap: 20px;
@@ -64,28 +63,20 @@ html {
   grid-template-areas: "a a a a a a a";
   grid-gap: 6% 1%;
 }
-.congkak-box .congkak-table .congkak-seed {
-  width: 20%;
-  aspect-ratio: 1/1;
-  background-image: url(img/seeds.png);
-  background-repeat: no-repeat;
-  background-size: 400% 100%;
-  background-position-y: 0;
+.congkak-box .congkak-round-box {
+  display: inline-flex;
+  gap: 5px;
   position: absolute;
-  filter: drop-shadow(0 1px 0px rgba(0, 0, 0, 0.55)) drop-shadow(0 0.5px 0px rgba(0, 0, 0, 0.65));
+  top: 10px;
+  left: 10px;
+  font-size: 1.2em;
+  font-weight: bold;
+  padding: 4px 6px;
+  background-color: white;
+  border-radius: 4px;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
 }
-.congkak-box .congkak-table .congkak-seed[position="1"] {
-  background-position-x: 0%;
-}
-.congkak-box .congkak-table .congkak-seed[position="2"] {
-  background-position-x: 33.3333333333%;
-}
-.congkak-box .congkak-table .congkak-seed[position="3"] {
-  background-position-x: 66.6666666667%;
-}
-.congkak-box .congkak-table .congkak-seed[position="4"] {
-  background-position-x: 100%;
-}
+
 .congkak-box .congkak-table .congkak-kampong {
   position: relative;
 }
@@ -117,6 +108,76 @@ html {
   color: white;
   background-color: #acacac;
   transition: 0.2s all;
+}
+.congkak-box .congkak-table .congkak-rumah {
+  width: 9.8%;
+  height: 58%;
+  position: absolute;
+}
+.congkak-box .congkak-table .congkak-rumah:nth-child(2) {
+  width: 11%;
+  top: 13%;
+  left: 9.7%;
+}
+.congkak-box .congkak-table .congkak-rumah:nth-child(3) {
+  top: 13%;
+  right: 9.8%;
+}
+.congkak-box .congkak-table .congkak-counter {
+  position: absolute;
+  background-color: white;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.55), 0 1px 0px rgba(0, 0, 0, 0.65);
+  height: 1.7em;
+  border-radius: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1/1;
+  font-size: 0.9em;
+  z-index: 20;
+}
+.congkak-box .congkak-table .congkak-counter.top {
+  top: -0.75em;
+  left: 50%;
+  transform: translate(-50%, 0%);
+}
+.congkak-box .congkak-table .congkak-counter.bottom {
+  bottom: -0.75em;
+  left: 50%;
+  transform: translate(-50%, 0%);
+}
+.congkak-box .congkak-table .congkak-counter.left {
+  left: -0.75em;
+  top: 50%;
+  transform: translate(0%, -50%);
+}
+.congkak-box .congkak-table .congkak-counter.right {
+  right: -0.75em;
+  top: 50%;
+  transform: translate(0%, -50%);
+}
+
+.congkak-box .congkak-table .congkak-seed {
+  width: 20%;
+  aspect-ratio: 1/1;
+  background-image: url(img/seeds.png);
+  background-repeat: no-repeat;
+  background-size: 400% 100%;
+  background-position-y: 0;
+  position: absolute;
+  filter: drop-shadow(0 1px 0px rgba(0, 0, 0, 0.55)) drop-shadow(0 0.5px 0px rgba(0, 0, 0, 0.65));
+}
+.congkak-box .congkak-table .congkak-seed[position="1"] {
+  background-position-x: 0%;
+}
+.congkak-box .congkak-table .congkak-seed[position="2"] {
+  background-position-x: 33.3333333333%;
+}
+.congkak-box .congkak-table .congkak-seed[position="3"] {
+  background-position-x: 66.6666666667%;
+}
+.congkak-box .congkak-table .congkak-seed[position="4"] {
+  background-position-x: 100%;
 }
 .congkak-box .congkak-table .congkak-kampong .congkak-seed:nth-child(2) {
   left: 59.6%;
@@ -367,20 +428,6 @@ html {
   left: 93.8501819668%;
   top: 30.4766411324%;
   transform: translate(-50%, -50%);
-}
-.congkak-box .congkak-table .congkak-rumah {
-  width: 9.8%;
-  height: 58%;
-  position: absolute;
-}
-.congkak-box .congkak-table .congkak-rumah:nth-child(2) {
-  width: 11%;
-  top: 13%;
-  left: 9.7%;
-}
-.congkak-box .congkak-table .congkak-rumah:nth-child(3) {
-  top: 13%;
-  right: 9.8%;
 }
 .congkak-box .congkak-table .congkak-rumah .congkak-seed:nth-child(2) {
   left: 55.3333333333%;
@@ -872,49 +919,8 @@ html {
   top: 37.4237792251%;
   transform: translate(-50%, -50%);
 }
-.congkak-box .congkak-table .congkak-counter {
-  position: absolute;
-  background-color: white;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.55), 0 1px 0px rgba(0, 0, 0, 0.65);
-  height: 1.7em;
-  border-radius: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  aspect-ratio: 1/1;
-  font-size: 0.9em;
-  z-index: 20;
-}
-.congkak-box .congkak-table .congkak-counter.top {
-  top: -0.75em;
-  left: 50%;
-  transform: translate(-50%, 0%);
-}
-.congkak-box .congkak-table .congkak-counter.bottom {
-  bottom: -0.75em;
-  left: 50%;
-  transform: translate(-50%, 0%);
-}
-.congkak-box .congkak-table .congkak-counter.left {
-  left: -0.75em;
-  top: 50%;
-  transform: translate(0%, -50%);
-}
-.congkak-box .congkak-table .congkak-counter.right {
-  right: -0.75em;
-  top: 50%;
-  transform: translate(0%, -50%);
-}
-.congkak-box .congkak-round-box {
-  display: inline-flex;
-  gap: 5px;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  font-size: 1.2em;
-  font-weight: bold;
-  padding: 4px 6px;
-  background-color: white;
-  border-radius: 4px;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+
+html {
+  background-image: url(img/background.png);
+  background-size: auto;
 }

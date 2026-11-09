@@ -134,6 +134,16 @@ Hoje o cliente é `declare('bgagame.congkak', ebg.core.gamegui, new Congkak())`,
 
 Pronto quando: abertura simultânea, captura, fim de rodada, reabastecimento com queima e fim de partida funcionam e animam, sem erro no console.
 
+**Fases 5 e 6 feitas juntas em 2026-11-09. `pnpm run build` roda sem erro e `tsc --noEmit` passa, mas o cliente novo NÃO foi aberto no Studio** (nem uma partida). O que mudou:
+
+- Build: `package.json`, `rollup.config.mjs`, `tsconfig.json`, `pnpm-workspace.yaml` e `pnpm-lock.yaml` copiados do buraco (mesmas versões), `bga-framework.d.ts` na raiz, saída em `modules/js/Game.js` e `congkak.css`. `yarn.lock`, `congkak.js`, `src/framework.d.ts`, `define.ts` e o resto do cliente antigo saíram. O CSS gerado tem as mesmas 176 regras do antigo (conferido por comparação, só a ordem dos arquivos mudou).
+- `src/scss/`: `Game.scss` (entrada, fundo da página), `Table.scss`, `Houses.scss`, `Seeds.scss`, `Constants.scss` (as posições das sementes).
+- `src/ts/`: `Game.ts` (classe `Game`, `notif_*` assíncronos), `libs.ts` (`bga-animations` por `importEsmLib`), `Constants.ts` (tempos e nomes), `types.d.ts`, `Managers/` (`TableManager`, `HouseManager`, `SeedManager`, `SelectionManager`), `States/` (`PlayersSeeding`, `PlayerSeeding`). `BgaLocalAnimation` e o `bga-zoom` (que não era usado) saíram: as sementes andam por `animationManager.slideAndAttach`.
+- As classes de estado do PHP perderam o `name:` (o cliente registra pelo nome da classe, como no buraco) e o servidor não manda mais `simplePause` (5 pontos): cada `notif_*` espera suas sementes pousarem, os contadores mudam depois, e `PAUSE` (500 ms, `Constants.ts`) dá um respiro entre uma jogada e outra.
+- `FormatStrings.ts` e `bgaFormatText` não foram criados: o formatador antigo era vazio. A pré-carga de imagens também não: o BGA já carrega o que está em `img/`.
+
+O que olhar no Studio (nada disso foi visto): se o jogo abre e as casas aparecem; se os estados `PlayersSeeding` e `PlayerSeeding` são achados pelo nome da classe; se `onPlayerActivationChange` roda ao entrar no estado multiativo (é de onde sai a seleção e o botão "Sow"); se as sementes que saem do jogo (deslizam para o painel do jogador e são removidas) aparecem durante o deslize, já que perdem o estilo da mesa ao serem coladas no painel (o código antigo fazia igual, mas com outra animação); se os contadores batem com as sementes depois de cada notificação; e se a pausa de 500 ms parece boa.
+
 ### Fase 7: layout para celular (cancelada)
 
 **Decisão do André em 2026-11-09: a responsividade está boa, não mexer.** `game_interface_width.min` continua em 740 e o `@media` por janela continua. O `@container` fica como diferença conhecida em relação aos jogos recentes (o `review_checks.py` vai continuar apontando um `[GAP]`).

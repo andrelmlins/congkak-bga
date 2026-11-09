@@ -18,7 +18,6 @@ class NextMultiplayers extends GameState
             $game,
             id: 20,
             type: StateType::GAME,
-            name: 'nextMultiplayers',
             updateGameProgression: true,
         );
     }

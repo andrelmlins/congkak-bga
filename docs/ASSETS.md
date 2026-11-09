@@ -20,8 +20,8 @@ Três imagens em `img/` (o BGA pede PNG ou JPG, sem subpastas). Descritas em pal
   2. azul esverdeado claro, com miolo turquesa e uma faixa âmbar;
   3. âmbar (laranja amarelado), com miolo marrom;
   4. vermelha, com miolo vermelho escuro.
-- As cores são só enfeite. `src/congkak.ts` (`setSeeds`) dá a cada semente um atributo `position` de 1 a 4 sorteado, e o CSS escolhe a coluna do sprite por ele (`background-size: 400% 100%`).
-- Dentro de uma casa, as sementes são colocadas em **anéis concêntricos** calculados no SCSS (`src/sass/congkak.scss`, listas `$positions` com 50 posições e `$rumahpositions` com 98). Cada semente é o n-ésimo filho da casa e pega a n-ésima posição da lista.
+- As cores são só enfeite. `src/ts/Managers/HouseManager.ts` (`fill`) dá a cada semente um atributo `position` de 1 a 4 sorteado, e o CSS escolhe a coluna do sprite por ele (`background-size: 400% 100%`).
+- Dentro de uma casa, as sementes são colocadas em **anéis concêntricos** calculados no SCSS (`src/scss/Constants.scss`, usadas em `src/scss/Seeds.scss`, listas `$positions` com 50 posições e `$rumahpositions` com 98). Cada semente é o n-ésimo filho da casa e pega a n-ésima posição da lista.
 
 ## Fundo: `img/background.png`
 

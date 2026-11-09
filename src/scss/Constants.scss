@@ -1,3 +1,6 @@
+// The positions of the seeds inside a house (rings around the center of the house, up to 50 in a kampong and 98 in a rumah), computed here and used by
+// Seeds.scss. The timings and the counts of the client are in src/ts/Constants.ts.
+
 @use 'sass:math';
 @use 'sass:list';
 

@@ -1,0 +1,51 @@
+// The seeds: one sprite of 4 marbles (img/seeds.png, docs/ASSETS.md), placed in spiral rings inside their house by the positions of Constants.scss.
+@use 'sass:list';
+@use './Constants.scss' as *;
+
+.congkak-box .congkak-table {
+  & .congkak-seed {
+    width: 20%;
+    aspect-ratio: 1/1;
+    background-image: url(img/seeds.png);
+    background-repeat: no-repeat;
+    background-size: 400% 100%;
+    background-position-y: 0;
+    position: absolute;
+    filter: drop-shadow(0 1px 0px rgba(0, 0, 0, 0.55)) drop-shadow(0 0.5px 0px rgba(0, 0, 0, 0.65));
+
+    &[position='1'] {
+      background-position-x: calc((100% / 3) * 0);
+    }
+    &[position='2'] {
+      background-position-x: calc((100% / 3) * 1);
+    }
+    &[position='3'] {
+      background-position-x: calc((100% / 3) * 2);
+    }
+    &[position='4'] {
+      background-position-x: calc((100% / 3) * 3);
+    }
+  }
+
+  & .congkak-kampong .congkak-seed {
+    @for $i from 1 through list.length($positions) {
+      &:nth-child(#{$i + 1}) {
+        $pos: list.nth($positions, $i);
+        left: list.nth($pos, 1);
+        top: list.nth($pos, 2);
+        transform: translate(-50%, -50%);
+      }
+    }
+  }
+
+  .congkak-rumah .congkak-seed {
+    @for $i from 1 through list.length($rumahpositions) {
+      &:nth-child(#{$i + 1}) {
+        $pos: list.nth($rumahpositions, $i);
+        left: list.nth($pos, 1);
+        top: list.nth($pos, 2);
+        transform: translate(-50%, -50%);
+      }
+    }
+  }
+}
