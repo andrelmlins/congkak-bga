@@ -89,7 +89,7 @@ Um estado por vez, jogando uma rodada depois de cada um. Ordem sugerida do mais 
 Pontos de atenção:
 
 - O construtor do estado leva **só** `id` e `type`; as transições viram o `return NextState::class` das ações.
-- **`setPlayerNonMultiactive($id, 'nextMultiplayers')` deixa de existir**: a ação devolve a classe do próximo estado.
+- **Em estado multiativo a ação NÃO devolve a classe do próximo estado**: o framework pula para ele logo depois do primeiro jogador (erro visto no Studio em 2026-11-09: `NextMultiplayers` entrou com só uma escolha gravada). Usar `setPlayerNonMultiactive($id, Proximo::class)` e devolver `void`. Só estados de jogador ativo único devolvem a classe.
 - Em estado multiativo **não** existe `$activePlayerId`: usar `getCurrentPlayerId()` na ação, e fazer o `zombie` chamar uma função auxiliar que recebe o jogador (o `ZombieService` de hoje já passa o jogador).
 - O zombie hoje escolhe sempre a primeira casa. Decidido: **nível 1** (uma casa legal ao acaso com `bga_rand`), declarado no Game Metadata Manager e igual em todos os estados.
 - O que o próximo estado lê em `getArgs()` é gravado na ação, antes do `return`, não no `onEnteringState` (erro clássico "errado no primeiro desenho, certo depois do F5").

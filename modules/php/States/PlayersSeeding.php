@@ -41,21 +41,28 @@ class PlayersSeeding extends GameState
 
     /** @param int $playerId the owner of the house to sow */
     #[PossibleAction]
-    function actPlayersSeeding(int $playerId, int $house)
+    function actPlayersSeeding(int $playerId, int $house): void
     {
-        $this->game->seedingManager->recordPick((int) $this->game->getCurrentPlayerId(), $playerId, $house);
-
-        return NextMultiplayers::class;
+        $this->choose((int) $this->game->getCurrentPlayerId(), $playerId, $house);
     }
 
     /** Zombie level 1: chooses a random house among the allowed ones. */
-    function zombie(int $playerId)
+    function zombie(int $playerId): void
     {
         $locations = $this->game->seedingManager->availableLocations($playerId);
         $choice = $locations[bga_rand(0, count($locations) - 1)];
 
-        $this->game->seedingManager->recordPick($playerId, (int) $choice['playerId'], Board::houseNumber($choice['location']));
+        $this->choose($playerId, (int) $choice['playerId'], Board::houseNumber($choice['location']));
+    }
 
-        return NextMultiplayers::class;
+    /**
+     * Records the choice and takes the player out of the active ones: the framework only goes on to NextMultiplayers when the last one has chosen
+     * (returning the state from the action would jump there after the first player).
+     */
+    private function choose(int $playerId, int $ownerId, int $house): void
+    {
+        $this->game->seedingManager->recordPick($playerId, $ownerId, $house);
+
+        $this->game->gamestate->setPlayerNonMultiactive($playerId, NextMultiplayers::class);
     }
 }
