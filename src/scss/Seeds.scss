@@ -33,7 +33,9 @@
         $pos: list.nth($positions, $i);
         left: list.nth($pos, 1);
         top: list.nth($pos, 2);
-        transform: translate(-50%, -50%);
+        // Half of the seed (20% of the house wide and tall) back, with margins and not a transform: the slide of BgaAnimations sets its own transform on
+        // the seed, which would replace this one and make the seed jump while it moves.
+        margin: -10% 0 0 -10%;
       }
     }
   }
@@ -44,7 +46,9 @@
         $pos: list.nth($rumahpositions, $i);
         left: list.nth($pos, 1);
         top: list.nth($pos, 2);
-        transform: translate(-50%, -50%);
+        // Half of the seed (20% of the house wide and tall) back, with margins and not a transform: the slide of BgaAnimations sets its own transform on
+        // the seed, which would replace this one and make the seed jump while it moves.
+        margin: -10% 0 0 -10%;
       }
     }
   }

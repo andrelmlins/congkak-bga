@@ -88,9 +88,12 @@ class HouseManager {
     element(playerId, location) {
         return document.getElementById(`congkak-${playerId}-${location}`);
     }
-    /** The seeds now in a house, as they are on the screen. */
+    /**
+     * The seeds now in a house, as they are on the screen, the last one first. The position of a seed in the house is the order it has among its siblings
+     * (see src/scss/Seeds.scss), so the seeds that leave must be the last ones: the others then stay where they are instead of jumping to the empty place.
+     */
     seeds(playerId, location) {
-        return Array.from(this.element(playerId, location).querySelectorAll('.congkak-seed'));
+        return Array.from(this.element(playerId, location).querySelectorAll('.congkak-seed')).reverse();
     }
     /** Changes the number shown on a house, once the seeds have moved (the seeds themselves are moved by SeedManager). */
     change(playerId, location, by) {

@@ -7,7 +7,7 @@
   "game_name": "Congkak",
   "publisher": "Public Domain",
   "publisher_website": "",
-  "publisher_bgg_id": null,
+  "publisher_bgg_id": 4,
   "bgg_id": 255613,
 
   // 2 players only (docs/RULES.md, section 1).
