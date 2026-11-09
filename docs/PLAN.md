@@ -42,7 +42,7 @@ Resultado de rodar o `review_checks.py` da skill `andre-bga` e de ler o projeto.
 **Estrutura**
 
 - [~] Scaffold novo: classes de estado (Fase 3) e arquivos `.jsonc` e `Managers/` (Fase 4) feitos em 2026-11-09, **não testados no Studio**. Falta o cliente (Fases 5 e 6), ver docs/MIGRATION.md.
-- [x] Regras puras em `modules/php/Rules/` com testes em `tests/`: **feito em 2026-11-09** (Fase 1 de [MIGRATION.md](MIGRATION.md)), 145 verificações passando. **Não confirmado no Studio**: falta jogar uma rodada (abertura, captura, reabastecimento) para ver que nada mudou.
+- [x] Regras puras em `modules/php/Rules/` com testes em `tests/`: **feito em 2026-11-09** (Fase 1 de [MIGRATION.md](MIGRATION.md)), 10 arquivos de teste passando (ver a Fase 8 de MIGRATION.md). **Não confirmado no Studio**: falta jogar uma rodada (abertura, captura, reabastecimento) para ver que nada mudou.
 - [x] Build com pnpm e rollup, como os outros (Fase 5 da migração, 2026-11-09, `pnpm run build` roda sem erro, **jogo não aberto no Studio**).
 - [x] `SeedingManager.php` (agora 234 linhas) e `HouseManager.php` (219) saíram do limite ao passar as regras para `Rules/`.
 - [ ] `src/utils.ts` tem nome genérico: renomear por domínio.

@@ -19,6 +19,9 @@ export class Game {
     this.bga = bga;
     this.animationManager = new BgaAnimations.Manager({ animationsActive: () => this.bga.gameui.bgaAnimationsActive() });
 
+    // The board, the seeds and the page background are CSS images: load them now, so they do not pop in.
+    this.bga.images.preloadImages(['table.png', 'seeds.png', 'background.png']);
+
     // Declare the Manager classes
     this.houseManager = new HouseManager();
     this.seedManager = new SeedManager(this);
@@ -56,7 +59,7 @@ export class Game {
   }
 
   async notif_newRound(args: NewRoundNotifArgs) {
-    this.tableManager.setRound(args.round);
+    await this.tableManager.setRound(args.round);
   }
 
   async notif_moveStorehouseSeeds(args: MoveStorehouseSeedsNotifArgs) {

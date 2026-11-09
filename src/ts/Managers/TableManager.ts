@@ -1,5 +1,5 @@
 import { Game } from '../Game';
-import { KAMPONGS, RUMAH } from '../Constants';
+import { KAMPONGS, PAUSE, RUMAH, delayTime } from '../Constants';
 
 /**
  * The game area: the board with the 14 kampongs and the 2 rumah, the names of the players and the round (docs/RULES.md, sections 1 and 8). The player
@@ -16,9 +16,10 @@ export class TableManager {
     this.setupRound(gamedatas.roundDetails);
   }
 
-  /** A new round started. */
-  public setRound(round: number) {
+  /** A new round started: the number counts up, and the next notification (the reseeding) waits a moment. */
+  public async setRound(round: number) {
     this.roundCounter.toValue(round);
+    await delayTime(PAUSE);
   }
 
   private setupGameArea() {

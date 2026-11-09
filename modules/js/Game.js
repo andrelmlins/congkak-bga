@@ -264,9 +264,10 @@ class TableManager {
         this.setupHouses(gamedatas);
         this.setupRound(gamedatas.roundDetails);
     }
-    /** A new round started. */
-    setRound(round) {
+    /** A new round started: the number counts up, and the next notification (the reseeding) waits a moment. */
+    async setRound(round) {
         this.roundCounter.toValue(round);
+        await delayTime(PAUSE);
     }
     setupGameArea() {
         this.game.bga.gameArea.getElement().insertAdjacentHTML('beforeend', `
@@ -326,6 +327,8 @@ class Game {
     constructor(bga) {
         this.bga = bga;
         this.animationManager = new BgaAnimations.Manager({ animationsActive: () => this.bga.gameui.bgaAnimationsActive() });
+        // The board, the seeds and the page background are CSS images: load them now, so they do not pop in.
+        this.bga.images.preloadImages(['table.png', 'seeds.png', 'background.png']);
         // Declare the Manager classes
         this.houseManager = new HouseManager();
         this.seedManager = new SeedManager(this);
@@ -355,7 +358,7 @@ class Game {
         await this.seedManager.sweep(args);
     }
     async notif_newRound(args) {
-        this.tableManager.setRound(args.round);
+        await this.tableManager.setRound(args.round);
     }
     async notif_moveStorehouseSeeds(args) {
         await this.seedManager.reseed(args);

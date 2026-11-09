@@ -155,6 +155,8 @@ O que olhar no Studio (nada disso foi visto): se o jogo abre e as casas aparecem
 - Zombie e metadados conferidos no Game Metadata Manager.
 - Variações do manual do André (J no RULES.md) só depois de tudo estável.
 
+**Fase 8 feita em parte em 2026-11-09.** O `review_checks.py` roda sem aviso, com um só `[GAP]`: a falta de `@container`, que é a diferença conhecida da Fase 7 cancelada. Para fechar aquele aviso, as regras que só eram cobertas por outro teste ganharam o seu: `BoardTest`, `ChoicesTest`, `GameEndTest`, `ScoringTest`, `SowingTest` e `SowingTurnTest` (agora são 10 arquivos em `tests/`, todos passando; `RoundResultTest` perdeu o que foi para `GameEndTest` e `ScoringTest`). **Falta, e só o André pode fazer:** abrir uma partida no Studio (tudo das Fases 2 a 6 foi só compilado e testado em PHP puro), rodar o "Project code checks", declarar o zombie nível 1 no Game Metadata Manager e acrescentar `docs`, `CLAUDE.md`, `tests`, `bga-framework.d.ts`, `pnpm-lock.yaml`, `rollup.config.mjs` e afins à lista `ignore` do `.vscode/sftp.json` (não mexi nele, tem a senha), conferindo que `modules/js` **não** está ignorado.
+
 ## Decisões
 
 Respondidas pelo André em 2026-11-09:
