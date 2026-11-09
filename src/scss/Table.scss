@@ -54,16 +54,10 @@
       }
     }
 
-    // The area of the 14 kampongs, over the board.
+    // The 14 kampongs: the whole board is their area, each one is placed over its own hole (see Houses.scss).
     & .congkak-grid {
       position: absolute;
-      width: 58.5%;
-      height: 71.2%;
-      margin-left: 21.3%;
-      margin-top: 1.6%;
-      display: grid;
-      grid-template-areas: 'a a a a a a a';
-      grid-gap: 6% 1%;
+      inset: 0;
     }
   }
 

@@ -1,8 +1,53 @@
 // The houses over the board: 7 kampongs per player (selectable, selected, burnt) and the rumah (storehouse), each with its counter of seeds.
+//
+// Each house is placed by hand over its hole in img/table.png (1472 x 342 px), in percentages of the board so it scales. The holes of the image are not
+// on an even grid, so the measures were taken from the image itself (the edge of each hole, found by its sharp change of brightness; docs/ASSETS.md).
+// The 14 kampongs are the children of the grid, in the order they are built (see TableManager): the top row left to right (the opponent, 7 to 1), then
+// the bottom row (the player looking at the game, 1 to 7).
+
+@use 'sass:list';
+@use 'sass:math';
+
+$TABLE_WIDTH: 1472;
+$TABLE_HEIGHT: 342;
+$HOLE: 105.5; // the diameter of a kampong hole, in px of the image
+$TOP_ROW_X: (371, 496.5, 621.5, 742.5, 866.5, 990, 1113.5); // the center of each hole of the top row
+$BOTTOM_ROW_X: (371, 496, 621, 742.5, 866.5, 990.5, 1115);
+$TOP_ROW_Y: 79.5;
+$BOTTOM_ROW_Y: 209;
+
+// The rumahs (the storehouses) are ovals: left, top, width and height of the hole, in px of the image.
+$RUMAH_LEFT: (145, 48, 157, 191);
+$RUMAH_RIGHT: (1186, 49, 138, 190.5);
+
+@function x-percent($px) {
+  @return math.div($px, $TABLE_WIDTH) * 100%;
+}
+
+@function y-percent($px) {
+  @return math.div($px, $TABLE_HEIGHT) * 100%;
+}
 
 .congkak-box .congkak-table {
+  & .congkak-grid .congkak-kampong {
+    position: absolute;
+    width: x-percent($HOLE);
+    aspect-ratio: 1/1;
+
+    @for $i from 1 through 7 {
+      &:nth-child(#{$i}) {
+        left: x-percent(list.nth($TOP_ROW_X, $i) - math.div($HOLE, 2));
+        top: y-percent($TOP_ROW_Y - math.div($HOLE, 2));
+      }
+
+      &:nth-child(#{$i + 7}) {
+        left: x-percent(list.nth($BOTTOM_ROW_X, $i) - math.div($HOLE, 2));
+        top: y-percent($BOTTOM_ROW_Y - math.div($HOLE, 2));
+      }
+    }
+  }
+
   & .congkak-kampong {
-    position: relative;
 
     &.selectable::before {
       content: '';
@@ -39,19 +84,20 @@
   }
 
   .congkak-rumah {
-    width: 9.8%;
-    height: 58%;
     position: absolute;
 
     &:nth-child(2) {
-      width: 11%;
-      top: 13%;
-      left: 9.7%;
+      left: x-percent(list.nth($RUMAH_LEFT, 1));
+      top: y-percent(list.nth($RUMAH_LEFT, 2));
+      width: x-percent(list.nth($RUMAH_LEFT, 3));
+      height: y-percent(list.nth($RUMAH_LEFT, 4));
     }
 
     &:nth-child(3) {
-      top: 13%;
-      right: 9.8%;
+      left: x-percent(list.nth($RUMAH_RIGHT, 1));
+      top: y-percent(list.nth($RUMAH_RIGHT, 2));
+      width: x-percent(list.nth($RUMAH_RIGHT, 3));
+      height: y-percent(list.nth($RUMAH_RIGHT, 4));
     }
   }
 

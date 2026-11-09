@@ -55,13 +55,7 @@
 }
 .congkak-box .congkak-table .congkak-grid {
   position: absolute;
-  width: 58.5%;
-  height: 71.2%;
-  margin-left: 21.3%;
-  margin-top: 1.6%;
-  display: grid;
-  grid-template-areas: "a a a a a a a";
-  grid-gap: 6% 1%;
+  inset: 0;
 }
 .congkak-box .congkak-round-box {
   display: inline-flex;
@@ -77,8 +71,66 @@
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
 }
 
-.congkak-box .congkak-table .congkak-kampong {
-  position: relative;
+.congkak-box .congkak-table .congkak-grid .congkak-kampong {
+  position: absolute;
+  width: 7.1671195652%;
+  aspect-ratio: 1/1;
+}
+.congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(1) {
+  left: 21.6202445652%;
+  top: 7.8216374269%;
+}
+.congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(8) {
+  left: 21.6202445652%;
+  top: 45.6871345029%;
+}
+.congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(2) {
+  left: 30.1460597826%;
+  top: 7.8216374269%;
+}
+.congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(9) {
+  left: 30.1120923913%;
+  top: 45.6871345029%;
+}
+.congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(3) {
+  left: 38.6379076087%;
+  top: 7.8216374269%;
+}
+.congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(10) {
+  left: 38.6039402174%;
+  top: 45.6871345029%;
+}
+.congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(4) {
+  left: 46.8580163043%;
+  top: 7.8216374269%;
+}
+.congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(11) {
+  left: 46.8580163043%;
+  top: 45.6871345029%;
+}
+.congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(5) {
+  left: 55.2819293478%;
+  top: 7.8216374269%;
+}
+.congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(12) {
+  left: 55.2819293478%;
+  top: 45.6871345029%;
+}
+.congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(6) {
+  left: 63.671875%;
+  top: 7.8216374269%;
+}
+.congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(13) {
+  left: 63.7058423913%;
+  top: 45.6871345029%;
+}
+.congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(7) {
+  left: 72.0618206522%;
+  top: 7.8216374269%;
+}
+.congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(14) {
+  left: 72.1637228261%;
+  top: 45.6871345029%;
 }
 .congkak-box .congkak-table .congkak-kampong.selectable::before {
   content: "";
@@ -110,18 +162,19 @@
   transition: 0.2s all;
 }
 .congkak-box .congkak-table .congkak-rumah {
-  width: 9.8%;
-  height: 58%;
   position: absolute;
 }
 .congkak-box .congkak-table .congkak-rumah:nth-child(2) {
-  width: 11%;
-  top: 13%;
-  left: 9.7%;
+  left: 9.8505434783%;
+  top: 14.0350877193%;
+  width: 10.6657608696%;
+  height: 55.8479532164%;
 }
 .congkak-box .congkak-table .congkak-rumah:nth-child(3) {
-  top: 13%;
-  right: 9.8%;
+  left: 80.5706521739%;
+  top: 14.3274853801%;
+  width: 9.375%;
+  height: 55.701754386%;
 }
 .congkak-box .congkak-table .congkak-counter {
   position: absolute;
