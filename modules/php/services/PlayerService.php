@@ -5,6 +5,8 @@ namespace Bga\Games\congkak\services;
 use Bga\Games\congkak\entities\Messages;
 use Bga\Games\congkak\entities\VictoryMode;
 use Bga\Games\congkak\Game;
+use Bga\Games\congkak\Rules\RoundResult;
+use Bga\Games\congkak\Rules\Scoring;
 
 class PlayerService
 {
@@ -28,6 +30,18 @@ class PlayerService
         }
 
         return $opponentPlayerId;
+    }
+
+    /** @return array `[playerId => opponentId]` */
+    public function opponentMap()
+    {
+        $result = [];
+
+        foreach ($this->game->loadPlayersBasicInfos() as $player) {
+            $result[$player['player_id']] = $this->getOpponnetId($player['player_id']);
+        }
+
+        return $result;
     }
 
     public function getPlayerOrder($currentPlayerId)
@@ -56,42 +70,37 @@ class PlayerService
     function updateScore($playerId)
     {
         $victoryMode = $this->game->optionsService->getVictoryMode();
-        $score = 0;
+        $rumah = 0;
+        $roundWins = 0;
+        $lockeds = 0;
 
         if ($victoryMode == VictoryMode::NumberOfSeeds) {
             $seeds = $this->game->houseService->list();
-            $score = $seeds[$playerId]['rumah'];
+            $rumah = $seeds[$playerId]['rumah'];
         } else if ($victoryMode == VictoryMode::NumberOfRounds) {
             $sql = "SELECT player_round_wins FROM player WHERE player_id = '%s'";
             $result = $this->game->getObjectFromDB(sprintf($sql, $playerId));
 
-            $score = intval($result['player_round_wins']);
+            $roundWins = intval($result['player_round_wins']);
         } else if ($victoryMode == VictoryMode::NumberHousesBurned) {
             $sql = "SELECT count(*) lockeds FROM house WHERE house_player = '%s' AND house_locked = '1'";
             $result = $this->game->getObjectFromDB(sprintf($sql, $playerId));
 
-            $score = 7 - intval($result['lockeds']);
+            $lockeds = intval($result['lockeds']);
         }
 
-        $this->game->bga->playerScore->set((int) $playerId, $score);
+        $this->game->bga->playerScore->set((int) $playerId, Scoring::score($victoryMode, $rumah, $roundWins, $lockeds));
     }
 
     function setRoundWin()
     {
-        $houses = $this->game->houseService->list();
-        $winPlayersIds = [];
-        $maxSeeds = 0;
+        $rumah = [];
 
-        foreach ($houses as $playerId => $house) {
-            if ($house['rumah'] > $maxSeeds) {
-                $maxSeeds = $house['rumah'];
-                $winPlayersIds = [$playerId];
-            } else if ($house['rumah'] == $maxSeeds) {
-                $winPlayersIds[] = $playerId;
-            }
+        foreach ($this->game->houseService->list() as $playerId => $house) {
+            $rumah[$playerId] = $house['rumah'];
         }
 
-        foreach ($winPlayersIds as $playerId) {
+        foreach (RoundResult::winners($rumah) as $playerId) {
             $sql = "UPDATE player SET player_round_wins = player_round_wins + 1 WHERE player_id = '%s'";
             $this->game->DbQuery(sprintf($sql, $playerId));
 

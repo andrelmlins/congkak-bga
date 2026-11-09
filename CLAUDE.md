@@ -10,7 +10,7 @@ The art (board, seeds, background) is described in [docs/ASSETS.md](docs/ASSETS.
 
 ## Older scaffold
 
-This game predates the newer ones (trucomineiro, trucopaulista, buraco): it still uses `states.inc.php`, a `Game` class extending `\Table`, plain `.json` config files and a `tsc` and `sass` build with yarn. Do not copy the structure of the newer games here without asking, and do not migrate it on your own: the plan for that is in docs/PLAN.md.
+This game predates the newer ones (trucomineiro, trucopaulista, buraco): it still uses `states.inc.php`, a `Game` class extending `\Table`, plain `.json` config files and a `tsc` and `sass` build with yarn. Do not copy the structure of the newer games here without asking, and do not migrate it on your own: the phased plan for that is in [docs/MIGRATION.md](docs/MIGRATION.md) (inventory in docs/PLAN.md).
 
 ## Build
 
@@ -26,8 +26,19 @@ yarn build
 
 - `modules/php/Game.php`: thin entry point, delegates to the services.
 - `modules/php/services/`: `SeedingService` (sowing, the four endings, the opening), `StepService` (rounds, who plays next, reseeding), `HouseService` (houses, path, burnt houses), `PlayerService` (opponent, score, round wins), `OptionsService` (table options), `StatsService`, `ZombieService`.
+- `modules/php/Rules/`: the pure rules (see Rules and tests).
 - `modules/php/entities/`: `GameMode`, `VictoryMode`, `Messages` (all log strings).
 - `src/states/sowing.ts`: selection and animations. `src/congkak.ts`: setup, the game area HTML (no `.tpl`) and the houses.
+
+## Rules and tests
+
+The pure rules (sowing path, the four endings of a sowing, the simultaneous opening, reseeding, round and game end, scoring) live in `modules/php/Rules/`, with no framework and no database. Each has a plain-PHP test in `tests/` (shared helpers in `tests/Check.php`); after changing a rule, run them all:
+
+```
+for t in tests/*Test.php; do php "$t" || exit 1; done
+```
+
+The services in `modules/php/services/` only read the database, save, notify and answer the states. A change to a rule goes in `Rules/` with a test, and its section in docs/RULES.md changes in the same commit.
 
 ## Secrets
 

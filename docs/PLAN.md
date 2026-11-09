@@ -7,7 +7,7 @@ Arquivo de trabalho interno. As regras ficam em [RULES.md](RULES.md), a arte em 
 - O jogo foi feito em julho de 2025 (15 commits, de 2025-07-01 a 2025-07-29), no scaffold **antigo** do BGA (`states.inc.php`, `Game.php` herdando de `\Table`, sem classes de estado). Os dois últimos commits citam números de bug (#177979, #175652).
 - O manual de regras original se perdeu. Em **2026-11-09** o [RULES.md](RULES.md) foi reconstituído a partir do código e de duas fontes da internet. Ele ainda **não foi revisado pelo André**: a seção 12 lista o que precisa da confirmação dele.
 - Em 2026-11-09 o André mandou o manual que ele próprio tinha montado ("Manual do Congkak, modo por rodadas", 3 páginas). **Não será guardado no repositório** (decisão dele): o `RULES.md` vai sendo atualizado e é ele a fonte. A comparação com o jogo está na seção 13 do RULES.md, e as diferenças A a I foram decididas no mesmo dia (J ficou para depois).
-- Os documentos desta pasta (`RULES.md`, `PLAN.md`, `ASSETS.md`) e o `CLAUDE.md` foram criados no mesmo dia, para seguir o esquema dos jogos mais recentes (trucomineiro, trucopaulista, buraco).
+- Os documentos desta pasta (`RULES.md`, `PLAN.md`, `ASSETS.md`, e depois `MIGRATION.md`) e o `CLAUDE.md` foram criados no mesmo dia, para seguir o esquema dos jogos mais recentes (trucomineiro, trucopaulista, buraco).
 
 ## Testado no Studio
 
@@ -35,14 +35,16 @@ Decisões de **2026-11-09**, depois de comparar o manual do André com o jogo (R
 
 ## O que falta para ficar como os jogos recentes
 
+O plano em fases (com ordem, riscos e decisões pendentes) está em [MIGRATION.md](MIGRATION.md). A lista abaixo é o inventário que deu origem a ele.
+
 Resultado de rodar o `review_checks.py` da skill `andre-bga` e de ler o projeto. O que está marcado com [x] foi feito; o resto não.
 
 **Estrutura**
 
 - [ ] Scaffold novo: classes de estado em `modules/php/States/`, `gameinfos.jsonc`, `gameoptions.jsonc`, `gamepreferences.jsonc`, `stats.jsonc` no lugar de `states.inc.php`, `gameinfos.inc.php` e dos `.json` de hoje. É a maior mudança e mexe em tudo, então só com decisão do André.
-- [ ] Regras puras em `modules/php/Rules/`, sem framework, cada uma com um teste de PHP puro em `tests/`. Hoje a regra de semeadura, captura e fim de rodada vive dentro de `SeedingService`, `StepService` e `HouseService`, misturada com banco e notificações. Esse é o pedaço que mais ganharia com teste (caminho da semeadura, os quatro finais, reabastecimento e casas queimadas).
+- [x] Regras puras em `modules/php/Rules/` com testes em `tests/`: **feito em 2026-11-09** (Fase 1 de [MIGRATION.md](MIGRATION.md)), 145 verificações passando. **Não confirmado no Studio**: falta jogar uma rodada (abertura, captura, reabastecimento) para ver que nada mudou.
 - [ ] Build com pnpm e rollup, como os outros. Hoje é `tsc && sass`, com `yarn.lock`.
-- [ ] `SeedingService.php` está com 293 linhas e `HouseService.php` com 251: dividir antes de acrescentar qualquer coisa neles (ex.: o caminho da semeadura e a leitura do banco em arquivos separados).
+- [x] `SeedingService.php` (agora 234 linhas) e `HouseService.php` (219) saíram do limite ao passar as regras para `Rules/`.
 - [ ] `src/utils.ts` tem nome genérico: renomear por domínio.
 
 **Cliente e layout**
@@ -76,7 +78,7 @@ Saída do "Project code checks" depois do deploy. Imagens, SQL e CSS passaram ("
 
 - [x] Pontos da seção 12 do RULES.md confirmados com o André em 2026-11-09, e a origem das imagens registrada (ASSETS.md).
 - [ ] Se o jogo for ao ar com o novo manual, gerar a versão para jogadores (o RULES.md atual é de trabalho, em português, e a ajuda do BGA é em inglês).
-- [ ] `docs` e `CLAUDE.md` não estão na lista `ignore` do `.vscode/sftp.json` (só `.vscode`, `.git`, `src`, `node_modules` e poucos mais): acrescentar `docs` e `CLAUDE.md` para não subirem ao Studio. O arquivo tem a senha do Studio, não foi aberto nem alterado nesta sessão.
+- [ ] `docs` e `CLAUDE.md` não estão na lista `ignore` do `.vscode/sftp.json` (só `.vscode`, `.git`, `src`, `node_modules` e poucos mais): acrescentar `docs`, `CLAUDE.md` e `tests` para não subirem ao Studio. O arquivo tem a senha do Studio, não foi aberto nem alterado nesta sessão.
 
 ## Estatísticas (para a ajuda e o log)
 

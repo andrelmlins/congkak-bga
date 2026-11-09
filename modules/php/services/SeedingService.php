@@ -4,7 +4,15 @@ namespace Bga\Games\congkak\services;
 
 use Bga\Games\congkak\entities\Messages;
 use Bga\Games\congkak\Game;
+use Bga\Games\congkak\Rules\Board;
+use Bga\Games\congkak\Rules\Choices;
+use Bga\Games\congkak\Rules\SowingEnding;
+use Bga\Games\congkak\Rules\SowingTurn;
 
+/**
+ * The sowing turns (docs/RULES.md, sections 5 and 6): the rules are in modules/php/Rules/, this class reads the board, saves the result, sends the
+ * notifications and answers the states.
+ */
 class SeedingService
 {
     public Game $game;
@@ -14,157 +22,99 @@ class SeedingService
         $this->game = $game;
     }
 
-    public function moveAllToRumah($playerId, $houseLocation)
+    /**
+     * Sows the seeds of one or both players and settles how each sowing ends, then saves the board.
+     *
+     * @param array $picks per player, `['location' => 'kampong_N', 'playerId' => owner of the house]`
+     * @return array see SowingTurn::resolve
+     */
+    public function resolve(array $picks): array
     {
         $houses = $this->game->houseService->list();
-        $houseNumber = intval(str_replace('kampong_', '', $houseLocation));
+        $locked = $this->game->houseService->listLockeds();
 
-        $opponentHouseNumber = 8 - $houseNumber;
-        $opponentPlayerId = $this->game->playerService->getOpponnetId($playerId);
+        $result = SowingTurn::resolve($houses, $locked, $this->game->playerService->opponentMap(), $picks);
 
-        $total = $houses[$playerId]['kampong'][$houseNumber] + $houses[$opponentPlayerId]['kampong'][$opponentHouseNumber];
-
-        $this->game->houseService->updateInc($playerId, 'rumah', $total);
-        $this->game->houseService->update($playerId, "kampong_{$houseNumber}", 0);
-        $this->game->houseService->update($opponentPlayerId, "kampong_{$opponentHouseNumber}", 0);
-
-        $this->game->statsService->incSeedsMyHouse($total, $playerId);
-
-        $this->game->notifyAllPlayers('moveAllToRumah', Messages::$EndSeeding, [
-            'player_name' => $this->game->getPlayerNameById($playerId),
-            'location' => $houseLocation,
-            'playerId' => $playerId,
-            'opponentLocation' => "kampong_{$opponentHouseNumber}",
-            'opponentPlayerId' => $opponentPlayerId
-        ]);
-        $this->game->notifyAllPlayers('simplePause', '', ['time' => 1000]);
-    }
-
-    public function seeding($maxSeeds, $initialHouse)
-    {
-        foreach ($initialHouse as $house) {
-            $this->game->houseService->update($house['playerId'], $house['location'], 0);
-        }
-
-        $movements = [];
-        $finalHouse = $initialHouse;
-
-        for ($i = 0; $i < $maxSeeds; $i++) {
-            foreach ($finalHouse as $playerId => $house) {
-                if ($house['seeds'] == 0) continue;
-
-                $nextHouse = $this->game->houseService->getNextHouse($playerId, $house['playerId'], $house['location']);
-
-                if (!array_key_exists($playerId, $movements)) {
-                    $movements[$playerId] = [];
-                }
-
-                $movements[$playerId][] = $nextHouse;
-
-                $this->game->houseService->updateInc($nextHouse['playerId'], $nextHouse['location'], 1);
-
-                $finalHouse[$playerId] = [
-                    'location' => $nextHouse['location'],
-                    'playerId' => $nextHouse['playerId'],
-                    'seeds' => $house['seeds'] - 1
-                ];
-            }
-        }
-
-        return [$finalHouse, $movements];
-    }
-
-    public function finishSeeding($house, $playerId)
-    {
-        $newHouses = $this->game->houseService->list();
-
-        $location = '';
-        $locationPlayer = '';
-        $active = false;
-
-        if ($house['location'] == 'rumah') {
-            $location = 'initial';
-            $active = true;
-
-            $this->game->notifyAllPlayers('endSeedingRumah', Messages::$EndSeedingRumah, [
-                'player_name' => $this->game->getPlayerNameById($playerId)
-            ]);
-        } else {
-            $houseNumber = intval(str_replace('kampong_', '', $house['location']));
-            $seeds = $newHouses[$house['playerId']]['kampong'][$houseNumber];
-
-            if ($seeds > 1) {
-                $location = $house['location'];
-                $locationPlayer = $house['playerId'];
-                $active = true;
-
-                $this->game->notifyAllPlayers('endSeedingWithSeeds', Messages::$EndSeedingWithSeeds, [
-                    'player_name' => $this->game->getPlayerNameById($playerId)
-                ]);
-            } else if ($house['playerId'] == $playerId) {
-                $this->moveAllToRumah($playerId, $house['location']);
-            } else {
-                $this->game->statsService->incSowingsOpponentHouse($playerId);
-
-                $this->game->notifyAllPlayers('endSeedingInOpponent', Messages::$EndSeedingInOpponent, [
-                    'player_name' => $this->game->getPlayerNameById($playerId)
-                ]);
-            }
-        }
-
-        return [
-            ['location' => $location, 'playerId' => $locationPlayer],
-            $active
-        ];
-    }
-
-    public function availableLocations($playerId)
-    {
-        if ($this->game->globals->has("seeding:next:house:{$playerId}") && $this->game->globals->get("seeding:next:house:{$playerId}") != 'initial') {
-            $location = $this->game->globals->get("seeding:next:house:{$playerId}");
-            $locationPlayerId = $this->game->globals->get("seeding:next:player:{$playerId}");
-
-            return [['location' => $location, 'playerId' => $locationPlayerId, 'isNext' => true]];
-        }
-
-        $opponentPlayerId = $this->game->playerService->getOpponnetId($playerId);
-        $opponentLocation = $this->game->globals->get("seeding:next:house:{$opponentPlayerId}") ?? 'initial';
-        $opponentLocationPlayerId = $this->game->globals->get("seeding:next:player:{$opponentPlayerId}");
-
-        $result = [];
-        $houses = $this->game->houseService->list()[$playerId];
-
-        for ($i = 1; $i <= 7; $i++) {
-            if ($houses['kampong'][$i] == 0) continue;
-            if ($opponentLocationPlayerId == $playerId && $opponentLocation == "kampong_{$i}") continue;
-            if ($this->game->houseService->isLocked($playerId, "kampong_{$i}")) continue;
-
-            $result[] = ['location' => "kampong_{$i}", 'playerId' => $playerId, 'isNext' => false];
-        }
+        $this->game->houseService->save($houses, $result['houses']);
 
         return $result;
     }
 
+    /** Sends the notification (and counts the statistic) of how one player's sowing ended. */
+    public function announceEnding($playerId, array $ending)
+    {
+        $playerName = $this->game->getPlayerNameById($playerId);
+
+        switch ($ending['type']) {
+            case SowingEnding::RUMAH:
+                $this->game->notifyAllPlayers('endSeedingRumah', Messages::$EndSeedingRumah, [
+                    'player_name' => $playerName
+                ]);
+                break;
+
+            case SowingEnding::OCCUPIED:
+                $this->game->notifyAllPlayers('endSeedingWithSeeds', Messages::$EndSeedingWithSeeds, [
+                    'player_name' => $playerName
+                ]);
+                break;
+
+            case SowingEnding::CAPTURE:
+                $capture = $ending['capture'];
+
+                $this->game->statsService->incSeedsMyHouse($capture['total'], $playerId);
+
+                $this->game->notifyAllPlayers('moveAllToRumah', Messages::$EndSeeding, [
+                    'player_name' => $playerName,
+                    'location' => $capture['location'],
+                    'playerId' => $playerId,
+                    'opponentLocation' => $capture['opponentLocation'],
+                    'opponentPlayerId' => $capture['opponentPlayerId']
+                ]);
+                $this->game->notifyAllPlayers('simplePause', '', ['time' => 1000]);
+                break;
+
+            case SowingEnding::OPPONENT:
+                $this->game->statsService->incSowingsOpponentHouse($playerId);
+
+                $this->game->notifyAllPlayers('endSeedingInOpponent', Messages::$EndSeedingInOpponent, [
+                    'player_name' => $playerName
+                ]);
+                break;
+        }
+    }
+
+    /** What a player may choose when both choose at the same time. */
+    public function availableLocations($playerId)
+    {
+        $globals = $this->game->globals;
+        $opponentId = $this->game->playerService->getOpponnetId($playerId);
+
+        $nextHouseKey = "seeding:next:house:{$playerId}";
+
+        return Choices::simultaneous(
+            $playerId,
+            $this->game->houseService->list(),
+            $this->game->houseService->listLockeds(),
+            $globals->has($nextHouseKey) ? $globals->get($nextHouseKey) : null,
+            $globals->get("seeding:next:player:{$playerId}"),
+            $globals->get("seeding:next:house:{$opponentId}"),
+            $globals->get("seeding:next:player:{$opponentId}")
+        );
+    }
+
     public function argPlayerSeeding()
     {
-        if ($this->game->globals->has("seeding:next:house") && $this->game->globals->get("seeding:next:house") != 'initial') {
-            $location = $this->game->globals->get("seeding:next:house");
-            $locationPlayerId = $this->game->globals->get("seeding:next:player");
-
-            return ['locations' => [['location' => $location, 'playerId' => $locationPlayerId, 'isNext' => true]]];
-        }
-
+        $globals = $this->game->globals;
         $activePlayerId = $this->game->getActivePlayerId();
-        $houses = $this->game->houseService->list()[$activePlayerId];
-        $result = [];
 
-        for ($i = 1; $i <= 7; $i++) {
-            if ($houses['kampong'][$i] == 0) continue;
+        $locations = Choices::single(
+            $activePlayerId,
+            $this->game->houseService->list(),
+            $globals->has('seeding:next:house') ? $globals->get('seeding:next:house') : null,
+            $globals->get('seeding:next:player')
+        );
 
-            $result[] = ['location' => "kampong_{$i}", 'playerId' => $activePlayerId, 'isNext' => false];
-        }
-
-        return ['locations' => $result];
+        return ['locations' => $locations];
     }
 
     public function argPlayersSeeding()
@@ -190,40 +140,32 @@ class SeedingService
             throw new \BgaUserException(Messages::$InvalidAction, 9000);
         }
 
-        $initialHouse = [
-            $activePlayerId => [
-                'location' => "kampong_{$house}",
-                'playerId' => $playerId,
-                'seeds' => $houses[$playerId]['kampong'][$house]
-            ]
-        ];
-
-        $maxSeeds = $houses[$playerId]['kampong'][$house];
-
-        list($housePerPlayer, $movements) = $this->seeding($maxSeeds, $initialHouse);
+        $result = $this->resolve([$activePlayerId => ['location' => "kampong_{$house}", 'playerId' => $playerId]]);
 
         $this->game->notifyAllPlayers('playersSeeding', Messages::$PlayerSeeding, [
             'player_name' => $this->game->getPlayerNameById($activePlayerId),
-            'movements' => $movements,
-            'initialHouse' => $initialHouse,
-            'maxSeeds' => $maxSeeds,
+            'movements' => $result['movements'],
+            'initialHouse' => $result['initialHouse'],
+            'maxSeeds' => $result['maxSeeds'],
         ]);
-        $this->game->notifyAllPlayers('simplePause', '', ['time' => 1000 + ($maxSeeds * 300)]);
+        $this->game->notifyAllPlayers('simplePause', '', ['time' => 1000 + ($result['maxSeeds'] * 300)]);
 
-        list($location, $active) = $this->finishSeeding($housePerPlayer[$activePlayerId], $activePlayerId);
+        $ending = $result['endings'][$activePlayerId];
+
+        $this->announceEnding($activePlayerId, $ending);
 
         $this->game->statsService->incSowings($activePlayerId);
 
         $this->game->globals->delete("seeding:next:house");
         $this->game->globals->delete("seeding:next:player");
 
-        if ($active) {
+        if ($ending['active']) {
             if ($this->game->houseService->isNewRound()) {
                 return $this->game->gamestate->nextState("newRound");
             }
 
-            $this->game->globals->set("seeding:next:house", $location['location']);
-            $this->game->globals->set("seeding:next:player", $location['playerId']);
+            $this->game->globals->set("seeding:next:house", $ending['next']['location']);
+            $this->game->globals->set("seeding:next:player", $ending['next']['playerId']);
 
             $this->game->giveExtraTime($activePlayerId);
             $this->game->gamestate->nextState('playerSeeding');
@@ -263,7 +205,7 @@ class SeedingService
                 $locations[0]['isNext']
             ) {
                 $playerId = $locations[0]['playerId'];
-                $houseNumber = intval(str_replace('kampong_', '', $locations[0]['location']));
+                $houseNumber = Board::houseNumber($locations[0]['location']);
 
                 $this->actPlayersSeeding($playerId, $houseNumber, $player['player_id']);
             } else {
@@ -283,7 +225,7 @@ class SeedingService
 
             if (count($locations) == 1 && $locations[0]['isNext']) {
                 $playerId = $locations[0]['playerId'];
-                $houseNumber = intval(str_replace('kampong_', '', $locations[0]['location']));
+                $houseNumber = Board::houseNumber($locations[0]['location']);
 
                 $this->actPlayerSeeding($playerId, $houseNumber);
             }

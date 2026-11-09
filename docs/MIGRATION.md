@@ -1,0 +1,152 @@
+# Plano de migração para a nova forma de programar do BGA
+
+Criado em 2026-11-09. Complementa o [PLAN.md](PLAN.md) (estado e pendências) e segue o roteiro de migração do BGA (`BGA_Studio_Migration_Guide`) e as convenções dos jogos recentes (trucomineiro, trucopaulista, buraco). As decisões do André de 2026-11-09 estão na seção "Decisões". A Fase 0 está feita, e a Fase 1 foi a primeira a começar.
+
+## Regras do processo
+
+- **Uma fase por vez, um commit por fase** (Conventional Commits, só quando o André pedir).
+- **Entre fases:** deploy, "Reload" no Studio quando mexer em configuração, **encerrar todas as mesas e abrir uma nova** (mesas em andamento guardam o estado antigo), jogar uma rodada inteira, olhar o log do Studio (`exception_on_warning` está ligado: qualquer aviso de PHP vira erro).
+- **O jogo tem que continuar jogável ao fim de cada fase.** Se uma fase quebrar, voltar o commit e dividir a fase.
+- Comportamento de regra **não muda** na migração. Qualquer mudança de regra é decisão à parte, com data no RULES.md.
+- Antes de cada fase, rodar `wc -l` nos arquivos que ela toca (regra dos 250 e 300 linhas).
+
+## Onde estamos
+
+**Já no estilo novo (Fase 0, feita em 2026-11-09, jogo inicia e joga no Studio):**
+
+- `Game` estende `Bga\GameFramework\Table`, sem `require_once`, sem `getGameName`.
+- Sem os estados 1 e 99 no `states.inc.php`; `setupNewGame` devolve o primeiro estado (2).
+- Serviços sem `APP_GameClass`.
+- Pontuação por `$this->bga->playerScore->set()`.
+- HTML da mesa montado em `setup()` (sem `.tpl`), painel de jogador por `bga.playerPanels`.
+- `is_beta` fora do arquivo, `exception_on_warning` ligado.
+
+**Ainda no estilo antigo:**
+
+| Área | Hoje | Tamanho do trabalho |
+|---|---|---|
+| Estados | `states.inc.php` com 5 estados (`newRound` 2, `playersSeeding` 10, `playerSeeding` 11, `nextMultiplayers` 20, `nextPlayer` 21), e `st*`/`act*`/`arg*` espalhados em `Game.php` e nos serviços | grande |
+| Chamadas de servidor | 17 `notifyAllPlayers`, 7 `getGameStateValue` (5 opções via `initGameStateLabels`), 27 `globals->`, 14 chamadas de estatística, 2 `BgaUserException`, `zombieTurn` | médio, mecânico |
+| Regras | misturadas com banco e notificação em `SeedingService`, `StepService`, `HouseService` | médio |
+| Arquivos de configuração | `gameinfos.inc.php`, `gameoptions.json`, `gamepreferences.json`, `stats.json` | pequeno |
+| Cliente | classe Dojo (`declare`, `define.ts`), `dojo.subscribe`, `simplePause` no servidor, `tsc` para um único `congkak.js` em ES5 que embute `bga-animations` e `bga-zoom` de `node_modules` | grande |
+| Build | `yarn` + `tsc` + `sass` | pequeno |
+| Layout | `@media` por janela, `game_interface_width.min` 740 | médio, precisa de olho |
+| Arquivos grandes | `SeedingService` 293 linhas, `HouseService` 250 | pequeno |
+
+## Fases
+
+### Fase 1: regras puras e testes (rede de segurança, sem mudar comportamento)
+
+**Feita em 2026-11-09 (código e testes); falta jogar uma rodada no Studio para confirmar que o comportamento não mudou.** O que ficou:
+
+- `modules/php/Rules/`: `Board`, `SowingPath`, `Sowing`, `SowingEnding`, `SowingTurn` (uma semeadura, ou as duas da abertura), `Choices` (o que cada um pode escolher), `Opening` (quem segue depois da abertura), `Reseed`, `RoundResult`, `GameEnd`, `Scoring`.
+- `tests/`: `SowingPathTest`, `SowingEndingTest`, `OpeningTest` (inclui os 49 pares da primeira abertura: 37 com os dois jogando, 12 com um, nenhum com ninguém, e as sementes sempre somam 98), `ReseedTest`, `RoundResultTest`. 145 verificações, todas passando. Rodar: `for t in tests/*Test.php; do php "$t" || exit 1; done`.
+- `HouseService`, `SeedingService`, `StepService` e `PlayerService` agora só leem o banco, gravam (`HouseService::save` grava só as casas que mudaram), mandam as notificações e respondem aos estados. A ordem das notificações e das gravações foi mantida.
+- `SeedingService` caiu de 293 para 234 linhas e `HouseService` ficou com 219.
+
+O plano original da fase continua abaixo, como referência.
+
+Fazer **primeiro**, porque os testes seguram as fases seguintes.
+
+1. Criar `modules/php/Rules/`, sem framework e sem banco, cada uma com um teste de PHP puro em `tests/` (`for t in tests/*Test.php; do php "$t"; done`):
+   - `SowingPath`: o caminho da semeadura de um jogador (as suas 7 casas, o seu armazém, as 7 do adversário, pulando o armazém do adversário e as casas queimadas) e a próxima casa.
+   - `SowingEnding`: dados a contagem da última casa e o lado, devolve um dos quatro finais (armazém, casa com sementes, captura, casa vazia do adversário).
+   - `Opening`: a semeadura simultânea de dois jogadores, passo a passo, e quem pode jogar de novo. O teste inclui a invariante já simulada em 2026-11-09: **nos 49 pares de casas da primeira abertura, ninguém fica sem jogar** (37 pares com os dois, 12 com um).
+   - `Reseed`: a partir do armazém e das casas já queimadas, quantas sementes vão a cada casa, quais queimam e quantas saem do jogo.
+   - `RoundResult` (vencedor, empate dá vitória aos dois) e `EndOfGame` (7 queimadas, ou 6 e a sétima com 1 semente), mais a pontuação de cada modo de vitória.
+2. `SeedingService`, `StepService`, `HouseService` e `PlayerService` passam a **chamar** essas regras e ficam só com banco, notificação e transição.
+3. Pronto quando: todos os testes passam e uma rodada no Studio se comporta como antes.
+
+Divide de quebra os dois arquivos grandes. Cada caso de teste ancora uma frase do [RULES.md](RULES.md).
+
+### Fase 2: chamadas de servidor para a API nova (estados ainda legados)
+
+Mecânico, em um commit:
+
+- `initGameStateLabels` e `getGameStateValue` das 5 opções para `$this->bga->tableOptions->get($id)`, e a preferência para `$this->bga->userPreferences->get($playerId, $id)`.
+- `$this->game->globals->...` para `$this->bga->globals->...`.
+- `notifyAllPlayers` para `$this->bga->notify->all(...)`.
+- Estatísticas para `$this->bga->tableStats` e `$this->bga->playerStats` (atenção: `playerStats->init` não recebe o id do jogador).
+- `BgaUserException` para `\Bga\GameFramework\UserException`.
+- `getPlayerNameById` e afins ficam; trocar `getActivePlayerName` e parecidos se aparecerem.
+
+Pronto quando: nada de chamada antiga sobra por `grep`, e o jogo joga igual.
+
+### Fase 3: estados como classes (`modules/php/States/`)
+
+Um estado por vez, jogando uma rodada depois de cada um. Ordem sugerida do mais simples ao mais delicado:
+
+1. `NextPlayer` (21, GAME): `giveExtraTime`, confere fim de rodada, `activeNextPlayer`.
+2. `NewRound` (2, GAME): hoje é o maior `st*` (reabastecimento, queima, fim de partida).
+3. `PlayerSeeding` (11, ACTIVE_PLAYER): `actPlayerSeeding(int $house, ..., int $activePlayerId)`, `getArgs`, `zombie`.
+4. `PlayersSeeding` (10, MULTIPLE_ACTIVE_PLAYER) e `NextMultiplayers` (20, GAME): a abertura simultânea e o desempate quando ninguém joga de novo.
+
+Pontos de atenção:
+
+- O construtor do estado leva **só** `id` e `type`; as transições viram o `return NextState::class` das ações.
+- **`setPlayerNonMultiactive($id, 'nextMultiplayers')` deixa de existir**: a ação devolve a classe do próximo estado.
+- Em estado multiativo **não** existe `$activePlayerId`: usar `getCurrentPlayerId()` na ação, e fazer o `zombie` chamar uma função auxiliar que recebe o jogador (o `ZombieService` de hoje já passa o jogador).
+- O zombie hoje escolhe sempre a primeira casa. Decidido: **nível 1** (uma casa legal ao acaso com `bga_rand`), declarado no Game Metadata Manager e igual em todos os estados.
+- O que o próximo estado lê em `getArgs()` é gravado na ação, antes do `return`, não no `onEnteringState` (erro clássico "errado no primeiro desenho, certo depois do F5").
+- Mudar o jogador ativo só em estado GAME, seguido de transição.
+- Ao fim: apagar `states.inc.php`, `stNewRound`, `stNextPlayer`, `actPlayerSeeding` e afins de `Game.php`.
+
+Pronto quando: `states.inc.php` não existe mais e a partida roda de ponta a ponta (rodada única, rodadas fixas, queima total).
+
+### Fase 4: arquivos de configuração e nomes
+
+- `gameinfos.inc.php` para `gameinfos.jsonc`, `gameoptions.json` e `gamepreferences.json` para `.jsonc`, `stats.json` para `stats.jsonc`, copiando o formato do buraco. `designer`, `artist`, `year`, `tags`, `complexity` e afins vão para o Game Metadata Manager do Studio, não para o arquivo.
+- Recarregar informações, opções, preferências e estatísticas no Studio.
+- Renomear `modules/php/services/` para `Managers/` (`SeedingService` para `SeedingManager` e assim por diante), como nos outros jogos. É só nome, deixar por último.
+- Apagar `Constants.php` se sobrar só o que o framework já dá (`getLocalCurrentPlayerId`, `localActiveNextPlayer`).
+
+### Fase 5: build do cliente (sem mudar o código do jogo)
+
+- `pnpm` + `rollup` + `typescript` como no trucomineiro: `package.json`, `rollup.config.mjs`, `tsconfig.json`, `pnpm-workspace.yaml`, saída em `modules/js/Game.js` e `congkak.css` (`sass` com `src/scss/Game.scss`).
+- Trocar a pasta `src/sass` por `src/scss` com um parcial por família (`Board.scss`, `Seeds.scss`, `Houses.scss`, `Table.scss`, `Constants.scss`).
+- Pronto quando: `pnpm run build` gera os dois arquivos e o jogo abre.
+
+Esta fase só faz sentido **junto** com a seguinte (o `Game.js` novo é uma classe ES6, não uma classe Dojo).
+
+### Fase 6: cliente na classe `Game` (ES6) com notificações por promessa
+
+Hoje o cliente é `declare('bgagame.congkak', ebg.core.gamegui, new Congkak())`, com `dojo.subscribe` e pausas do servidor (`simplePause`). **Não misturar os dois estilos**, então a migração do cliente é inteira:
+
+1. `src/ts/Game.ts` com `export class Game`, `setup(gamedatas)`, `onEnteringState`, `onLeavingState`, `onUpdateActionButtons`, só ligando as peças.
+2. Bibliotecas por `globalThis.importEsmLib('bga-animations', '1.x')` em `libs.ts`, em vez de compilar `bga-animations` e `bga-zoom` de `node_modules`. O `BgaLocalAnimation` (o embrulho de `animation.ts`) é reescrito em cima do `Manager` da biblioteca. `bga-zoom` está no build mas não é usado: conferir e tirar.
+3. Notificações viram `async notif_xxx(args)`, cada uma **aguardando** as animações que dispara (as sementes saindo de uma casa para outra, a captura, o reabastecimento). O contador muda **depois** do `await` do que ele conta.
+4. **Sai o `simplePause` do servidor** (5 pontos hoje), porque com promessas ele soma ao tempo que o cliente já espera. A exceção legítima é uma pausa sem animação própria (fim da rodada, para ler o placar).
+5. Troca de chamadas: `dojo.connect` por `addEventListener`, `dojo.destroy` por `remove()`, `addActionButton` por `this.bga.statusBar.addActionButton`, `bgaPerformAction` por `this.bga.actions.performAction`, `isCurrentPlayerActive` e afins por `this.bga.*`.
+6. Um gerenciador por área da tela em `src/ts/Managers/` (casas, sementes, armazéns, caixa de rodada), um arquivo por estado em `src/ts/States/` e `Constants.ts` espelhando `Constants.scss`.
+7. `bgaFormatText` em `FormatStrings.ts` (hoje vazio).
+8. Pré-carregar as três imagens (`bga.images.preloadImages`).
+
+Pronto quando: abertura simultânea, captura, fim de rodada, reabastecimento com queima e fim de partida funcionam e animam, sem erro no console.
+
+### Fase 7: layout para celular (cancelada)
+
+**Decisão do André em 2026-11-09: a responsividade está boa, não mexer.** `game_interface_width.min` continua em 740 e o `@media` por janela continua. O `@container` fica como diferença conhecida em relação aos jogos recentes (o `review_checks.py` vai continuar apontando um `[GAP]`).
+
+### Fase 8: fechamento
+
+- Rodar `scripts/review_checks.py` da skill `andre-bga` e o "Project code checks" do Studio: sem `[GAP]` nem aviso.
+- Atualizar o CLAUDE.md (estrutura nova, comando de build, testes), o PLAN.md e o ASSETS.md.
+- Zombie e metadados conferidos no Game Metadata Manager.
+- Variações do manual do André (J no RULES.md) só depois de tudo estável.
+
+## Decisões
+
+Respondidas pelo André em 2026-11-09:
+
+1. **Ordem:** a recomendada. Fase 1 (testes), depois 2 e 3 (servidor inteiro), e só então o cliente.
+2. **Cliente:** migrar inteiro para promessas (Fases 5 e 6, sai o `simplePause`).
+3. **Zombie:** nível 1 (jogada legal aleatória, com `bga_rand`). Declarar "1" no Game Metadata Manager e fazer todos os estados cumprirem.
+4. **Celular:** não mexer (Fase 7 cancelada).
+5. **Nomes:** renomear `services` para `Managers` (Fase 4).
+
+## Risco e o que se perde se parar no meio
+
+- Parar depois da **Fase 3**: servidor no estilo novo, cliente no antigo. Funciona, e o resultado já passa nas verificações de PHP do Studio. É um bom ponto de parada.
+- Parar depois da **Fase 4**: igual, com configuração nova.
+- As Fases 5 e 6 são **uma só** na prática, e a Fase 7 depende delas.
