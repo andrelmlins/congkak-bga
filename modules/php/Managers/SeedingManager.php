@@ -1,6 +1,6 @@
 <?php
 
-namespace Bga\Games\congkak\services;
+namespace Bga\Games\congkak\Managers;
 
 use Bga\GameFramework\UserException;
 use Bga\Games\congkak\entities\Messages;
@@ -17,7 +17,7 @@ use Bga\Games\congkak\States\PlayerSeeding;
  * The sowing turns (docs/RULES.md, sections 5 and 6): the rules are in modules/php/Rules/, this class reads the board, saves the result, sends the
  * notifications and answers the states.
  */
-class SeedingService
+class SeedingManager
 {
     public Game $game;
 
@@ -34,12 +34,12 @@ class SeedingService
      */
     public function resolve(array $picks): array
     {
-        $houses = $this->game->houseService->list();
-        $locked = $this->game->houseService->listLockeds();
+        $houses = $this->game->houseManager->list();
+        $locked = $this->game->houseManager->listLockeds();
 
-        $result = SowingTurn::resolve($houses, $locked, $this->game->playerService->opponentMap(), $picks);
+        $result = SowingTurn::resolve($houses, $locked, $this->game->playerManager->opponentMap(), $picks);
 
-        $this->game->houseService->save($houses, $result['houses']);
+        $this->game->houseManager->save($houses, $result['houses']);
 
         return $result;
     }
@@ -65,7 +65,7 @@ class SeedingService
             case SowingEnding::CAPTURE:
                 $capture = $ending['capture'];
 
-                $this->game->statsService->incSeedsMyHouse($capture['total'], $playerId);
+                $this->game->statsManager->incSeedsMyHouse($capture['total'], $playerId);
 
                 $this->game->bga->notify->all('moveAllToRumah', Messages::$EndSeeding, [
                     'player_name' => $playerName,
@@ -78,7 +78,7 @@ class SeedingService
                 break;
 
             case SowingEnding::OPPONENT:
-                $this->game->statsService->incSowingsOpponentHouse($playerId);
+                $this->game->statsManager->incSowingsOpponentHouse($playerId);
 
                 $this->game->bga->notify->all('endSeedingInOpponent', Messages::$EndSeedingInOpponent, [
                     'player_name' => $playerName
@@ -91,14 +91,14 @@ class SeedingService
     public function availableLocations($playerId)
     {
         $globals = $this->game->bga->globals;
-        $opponentId = $this->game->playerService->getOpponnetId($playerId);
+        $opponentId = $this->game->playerManager->getOpponnetId($playerId);
 
         $nextHouseKey = "seeding:next:house:{$playerId}";
 
         return Choices::simultaneous(
             $playerId,
-            $this->game->houseService->list(),
-            $this->game->houseService->listLockeds(),
+            $this->game->houseManager->list(),
+            $this->game->houseManager->listLockeds(),
             $globals->has($nextHouseKey) ? $globals->get($nextHouseKey) : null,
             $globals->get("seeding:next:player:{$playerId}"),
             $globals->get("seeding:next:house:{$opponentId}"),
@@ -113,7 +113,7 @@ class SeedingService
 
         $locations = Choices::single(
             $activePlayerId,
-            $this->game->houseService->list(),
+            $this->game->houseManager->list(),
             $globals->has('seeding:next:house') ? $globals->get('seeding:next:house') : null,
             $globals->get('seeding:next:player')
         );
@@ -142,7 +142,7 @@ class SeedingService
      */
     public function actPlayerSeeding(int $playerId, int $house, int $activePlayerId): string
     {
-        $houses = $this->game->houseService->list();
+        $houses = $this->game->houseManager->list();
 
         if ($houses[$playerId]['kampong'][$house] == 0) {
             throw new UserException(Messages::$InvalidAction);
@@ -162,7 +162,7 @@ class SeedingService
 
         $this->announceEnding($activePlayerId, $ending);
 
-        $this->game->statsService->incSowings($activePlayerId);
+        $this->game->statsManager->incSowings($activePlayerId);
 
         $this->game->bga->globals->delete("seeding:next:house");
         $this->game->bga->globals->delete("seeding:next:player");
@@ -171,7 +171,7 @@ class SeedingService
             return NextPlayer::class;
         }
 
-        if ($this->game->houseService->isNewRound()) {
+        if ($this->game->houseManager->isNewRound()) {
             return NewRound::class;
         }
 
@@ -185,14 +185,14 @@ class SeedingService
 
     /**
      * One of the two players chooses, at the same time as the other, the house to sow. Only the choice is kept: the sowing happens when both chose
-     * (see StepService::nextMultiplayers).
+     * (see StepManager::nextMultiplayers).
      *
      * @param int $playerId the player that chooses
      * @param int $ownerId the owner of the house
      */
     public function recordPick(int $playerId, int $ownerId, int $house): void
     {
-        $houses = $this->game->houseService->list();
+        $houses = $this->game->houseManager->list();
 
         if ($houses[$ownerId]['kampong'][$house] == 0) {
             throw new UserException(Messages::$InvalidAction);
@@ -216,7 +216,7 @@ class SeedingService
             $playerId = (int) $player['player_id'];
             $choices = $locations[$playerId];
 
-            if ($this->game->optionsService->isAutomaticSeeding($playerId) && count($choices) == 1 && $choices[0]['isNext']) {
+            if ($this->game->optionsManager->isAutomaticSeeding($playerId) && count($choices) == 1 && $choices[0]['isNext']) {
                 $this->recordPick($playerId, (int) $choices[0]['playerId'], Board::houseNumber($choices[0]['location']));
             } else {
                 $manual[] = $playerId;
@@ -231,7 +231,7 @@ class SeedingService
      */
     public function automaticPick(int $activePlayerId): ?array
     {
-        if (!$this->game->optionsService->isAutomaticSeeding($activePlayerId)) {
+        if (!$this->game->optionsManager->isAutomaticSeeding($activePlayerId)) {
             return null;
         }
 

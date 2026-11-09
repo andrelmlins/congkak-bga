@@ -29,13 +29,13 @@ class PlayersSeeding extends GameState
     /** @return array{locations: array} per player, the houses they may choose */
     function getArgs(): array
     {
-        return $this->game->seedingService->argPlayersSeeding();
+        return $this->game->seedingManager->argPlayersSeeding();
     }
 
     /** Players with a forced house and automatic seeding on are recorded at once, the others are asked. */
     function onEnteringState()
     {
-        $manual = $this->game->seedingService->recordAutomaticPicks();
+        $manual = $this->game->seedingManager->recordAutomaticPicks();
 
         $this->game->gamestate->setPlayersMultiactive($manual, NextMultiplayers::class, true);
     }
@@ -44,7 +44,7 @@ class PlayersSeeding extends GameState
     #[PossibleAction]
     function actPlayersSeeding(int $playerId, int $house)
     {
-        $this->game->seedingService->recordPick((int) $this->game->getCurrentPlayerId(), $playerId, $house);
+        $this->game->seedingManager->recordPick((int) $this->game->getCurrentPlayerId(), $playerId, $house);
 
         return NextMultiplayers::class;
     }
@@ -52,10 +52,10 @@ class PlayersSeeding extends GameState
     /** Zombie level 1: chooses a random house among the allowed ones. */
     function zombie(int $playerId)
     {
-        $locations = $this->game->seedingService->availableLocations($playerId);
+        $locations = $this->game->seedingManager->availableLocations($playerId);
         $choice = $locations[bga_rand(0, count($locations) - 1)];
 
-        $this->game->seedingService->recordPick($playerId, (int) $choice['playerId'], Board::houseNumber($choice['location']));
+        $this->game->seedingManager->recordPick($playerId, (int) $choice['playerId'], Board::houseNumber($choice['location']));
 
         return NextMultiplayers::class;
     }

@@ -1,3 +1,6 @@
+// Table options of docs/RULES.md, section 2. Option ids are between 100 and 199.
+// See https://en.doc.boardgamearena.com/Options_and_preferences:_gameoptions.json,_gamepreferences.json
+// Value ids are stable: never renumber them once a table can have used them.
 {
   "100": {
     "name": "Game mode",
@@ -45,7 +48,9 @@
       {
         "type": "otheroption",
         "id": 100,
-        "value": [2]
+        "value": [
+          2
+        ]
       }
     ],
     "default": 3
@@ -79,7 +84,9 @@
       {
         "type": "otheroption",
         "id": 100,
-        "value": [2]
+        "value": [
+          2
+        ]
       }
     ],
     "default": 1
@@ -100,7 +107,10 @@
       {
         "type": "otheroption",
         "id": 100,
-        "value": [2, 3]
+        "value": [
+          2,
+          3
+        ]
       }
     ],
     "default": 2

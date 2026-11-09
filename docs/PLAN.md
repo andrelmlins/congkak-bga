@@ -15,7 +15,7 @@ Arquivo de trabalho interno. As regras ficam em [RULES.md](RULES.md), a arte em 
 
 ## Não testado
 
-Nesta sessão **nada foi rodado**: não houve build, nem deploy, nem partida no Studio. O RULES.md vem só da leitura do código (`modules/php/services/`, `src/states/sowing.ts`) e das duas páginas da internet citadas nele. Pode haver caso que o código trata de um jeito que a leitura não pegou.
+Nesta sessão **nada foi rodado**: não houve build, nem deploy, nem partida no Studio. O RULES.md vem só da leitura do código (`modules/php/Managers/`, `src/states/sowing.ts`) e das duas páginas da internet citadas nele. Pode haver caso que o código trata de um jeito que a leitura não pegou.
 
 O PDF de regras da IIUM (`centre.iium.edu.my`, tabela de regras de torneio) não pôde ser lido, então não foi usado.
 
@@ -41,23 +41,23 @@ Resultado de rodar o `review_checks.py` da skill `andre-bga` e de ler o projeto.
 
 **Estrutura**
 
-- [ ] Scaffold novo: classes de estado em `modules/php/States/`, `gameinfos.jsonc`, `gameoptions.jsonc`, `gamepreferences.jsonc`, `stats.jsonc` no lugar de `states.inc.php`, `gameinfos.inc.php` e dos `.json` de hoje. É a maior mudança e mexe em tudo, então só com decisão do André.
+- [~] Scaffold novo: classes de estado (Fase 3) e arquivos `.jsonc` e `Managers/` (Fase 4) feitos em 2026-11-09, **não testados no Studio**. Falta o cliente (Fases 5 e 6), ver docs/MIGRATION.md.
 - [x] Regras puras em `modules/php/Rules/` com testes em `tests/`: **feito em 2026-11-09** (Fase 1 de [MIGRATION.md](MIGRATION.md)), 145 verificações passando. **Não confirmado no Studio**: falta jogar uma rodada (abertura, captura, reabastecimento) para ver que nada mudou.
 - [ ] Build com pnpm e rollup, como os outros. Hoje é `tsc && sass`, com `yarn.lock`.
-- [x] `SeedingService.php` (agora 234 linhas) e `HouseService.php` (219) saíram do limite ao passar as regras para `Rules/`.
+- [x] `SeedingManager.php` (agora 234 linhas) e `HouseManager.php` (219) saíram do limite ao passar as regras para `Rules/`.
 - [ ] `src/utils.ts` tem nome genérico: renomear por domínio.
 
 **Cliente e layout**
 
 - [x] `@font-face` do Google: **feito em 2026-11-09**. O símbolo de infinito (total de rodadas na Queima total) agora é o caractere `&infin;`, sem fonte nenhuma, e o `@font-face` e a classe `.material-symbols-outlined` saíram do SCSS. Não visto na tela.
 - [ ] Layout com `@media` (740 px da janela): trocar por `@container` só faz sentido junto com baixar `game_interface_width.min` para 320 (item abaixo). Com o mínimo em 740 o BGA nunca deixa a caixa do jogo mais estreita que isso, e a consulta de container nunca dispararia. Precisa de teste visual no celular, por isso ficou.
-- [ ] `game_interface_width.min` está em 740 em `gameinfos.inc.php`; os recentes usam 320 para funcionar no celular. Só mexer se o layout for refeito para isso.
+- [ ] `game_interface_width.min` está em 740 em `gameinfos.jsonc`; os recentes usam 320 para funcionar no celular. Só mexer se o layout for refeito para isso.
 - [ ] Sem chamada de `preloadImages` para as três imagens.
 
 **Bugs vistos na leitura**
 
-- [x] **Corrigido em 2026-11-09:** `HouseService::isGameEnd()` tinha um `echo json_encode($item);` esquecido no ramo de 6 casas queimadas, que estraga a resposta do servidor. Removido.
-- [x] **Corrigido em 2026-11-09:** `StepService::stNewRound()` testava `$lockeds > 0` com um array (sempre verdadeiro). Agora `count($lockeds) > 0`. O resultado na prática é o mesmo, porque só entra no laço quando há casas para queimar.
+- [x] **Corrigido em 2026-11-09:** `HouseManager::isGameEnd()` tinha um `echo json_encode($item);` esquecido no ramo de 6 casas queimadas, que estraga a resposta do servidor. Removido.
+- [x] **Corrigido em 2026-11-09:** `StepManager::stNewRound()` testava `$lockeds > 0` com um array (sempre verdadeiro). Agora `count($lockeds) > 0`. O resultado na prática é o mesmo, porque só entra no laço quando há casas para queimar.
 - Texto do log "Players finished seeding in the same hole, one player will be randomly chosen" mas o código escolhe o jogador 1 da mesa (que é sorteado pelo BGA, mas não é um sorteio novo).
 - O zombie agora escolhe uma casa permitida ao acaso (`bga_rand`), nível 1 do `Zombie Mode` (feito na Fase 3 da migração, 2026-11-09, não testado no Studio). O nível declarado nos metadados deve ser 1.
 
@@ -70,7 +70,7 @@ Saída do "Project code checks" depois do deploy. Imagens, SQL e CSS passaram ("
 - [x] Estados 1 e 99 saíram do `states.inc.php` e `setupNewGame` termina com `return NewRound::class;`. As transições para `gameEnd` (99) continuam, o framework fornece esse estado. Feito em 2026-11-09, **não testado no Studio**: é o que decide se a partida começa e termina, então é a primeira coisa a olhar.
 - [x] `congkak_congkak.tpl` removido em 2026-11-09 e o HTML da mesa (caixa, rodada, tabuleiro e grade) agora é montado em `setup()` por `setupGameArea()` em `src/congkak.ts`, com `bga.gameArea.getElement()`. **Não testado no Studio.** Não existe `congkak.view.php` no repositório: se ele existir no servidor, apagar lá por SFTP.
 - [x] `this.scoreCtrl` e `overall_player_board`: o código de pontuação do cliente (inscrição `score`, `scoreNotif`, `ScoreNotif`) foi apagado, e a animação das sementes que saem do jogo agora vai para `bga.playerPanels.getElement(playerId)`. Feito em 2026-11-09, **não testado no Studio**.
-- [x] `PlayerService::updateScore` agora usa `$this->bga->playerScore->set()`, que manda a notificação de pontuação sozinho (a notificação `score` própria deixou de existir). Feito em 2026-11-09, **não testado no Studio**. Conferir que o placar do painel muda ao fim de cada rodada, e que o fim da partida mostra as pontuações certas.
+- [x] `PlayerManager::updateScore` agora usa `$this->bga->playerScore->set()`, que manda a notificação de pontuação sozinho (a notificação `score` própria deixou de existir). Feito em 2026-11-09, **não testado no Studio**. Conferir que o placar do painel muda ao fim de cada rodada, e que o fim da partida mostra as pontuações certas.
 - [x] `is_beta` em `gameinfos.inc.php`: chave removida do arquivo em 2026-11-09 (o valor fica no Game Metadata Manager do Studio, que já tinha o `gameinfos.json` novo no servidor).
 - [x] `exception_on_warning`: ligado em `gameinfos.inc.php` em 2026-11-09, para ver os avisos de PHP que hoje passam. **Não testado no Studio**: se algum aviso virar erro numa partida, o log do Studio mostra onde. Não há mais `static::` nem `self::` no PHP.
 
@@ -82,4 +82,4 @@ Saída do "Project code checks" depois do deploy. Imagens, SQL e CSS passaram ("
 
 ## Estatísticas (para a ajuda e o log)
 
-Sete por jogador, definidas em `stats.json`: `seedsStorehouse`, `sowings`, `seedsMyHouse`, `sowingsOpponentHouse`, `seedsGameEnd`, `roundsWon` e `averageSeedsRound`.
+Sete por jogador, definidas em `stats.jsonc`: `seedsStorehouse`, `sowings`, `seedsMyHouse`, `sowingsOpponentHouse`, `seedsGameEnd`, `roundsWon` e `averageSeedsRound`.

@@ -23,68 +23,65 @@ namespace Bga\Games\congkak;
 use Bga\GameFramework\Table;
 use Bga\Games\congkak\entities\GameMode;
 use Bga\Games\congkak\entities\Messages;
-use Bga\Games\congkak\services\HouseService;
-use Bga\Games\congkak\services\PlayerService;
-use Bga\Games\congkak\services\StatsService;
-use Bga\Games\congkak\services\StepService;
-use Bga\Games\congkak\services\OptionsService;
-use Bga\Games\congkak\services\SeedingService;
+use Bga\Games\congkak\Managers\HouseManager;
+use Bga\Games\congkak\Managers\PlayerManager;
+use Bga\Games\congkak\Managers\StatsManager;
+use Bga\Games\congkak\Managers\StepManager;
+use Bga\Games\congkak\Managers\OptionsManager;
+use Bga\Games\congkak\Managers\SeedingManager;
 use Bga\Games\congkak\States\NewRound;
 
 class Game extends Table
 {
-    use Constants;
-
     /** The reserved state that ends the game. */
     public const ST_END_GAME = 99;
 
-    public HouseService $houseService;
+    public HouseManager $houseManager;
 
-    public PlayerService $playerService;
+    public PlayerManager $playerManager;
 
-    public StepService $stepService;
+    public StepManager $stepManager;
 
-    public StatsService $statsService;
+    public StatsManager $statsManager;
 
-    public OptionsService $optionsService;
+    public OptionsManager $optionsManager;
 
-    public SeedingService $seedingService;
+    public SeedingManager $seedingManager;
 
     public function __construct()
     {
         parent::__construct();
 
         Messages::initMessages();
-        $this->startConstants();
 
-        $this->houseService = new HouseService($this);
+        $this->houseManager = new HouseManager($this);
 
-        $this->playerService = new PlayerService($this);
+        $this->playerManager = new PlayerManager($this);
 
-        $this->stepService = new StepService($this);
+        $this->stepManager = new StepManager($this);
 
-        $this->statsService = new StatsService($this);
+        $this->statsManager = new StatsManager($this);
 
-        $this->optionsService = new OptionsService($this);
+        $this->optionsManager = new OptionsManager($this);
 
-        $this->seedingService = new SeedingService($this);
+        $this->seedingManager = new SeedingManager($this);
     }
 
     public function getGameProgression()
     {
-        $gameMode = $this->optionsService->getGameMode();
-        $roundSettings = $this->optionsService->getRoundSettings();
+        $gameMode = $this->optionsManager->getGameMode();
+        $roundSettings = $this->optionsManager->getRoundSettings();
 
         if ($gameMode != GameMode::TotalBurn) {
             $total = 98;
-            $current = $total - $this->houseService->countAllSeedsInKampong();
+            $current = $total - $this->houseManager->countAllSeedsInKampong();
             $percentBase = (1 / $roundSettings['total']) * 100;
             $percentCurrent = (($roundSettings['current'] - 1) / $roundSettings['total']) * 100;
 
             return round($percentCurrent + (($percentBase * $current) / $total));
         } else {
             $total = 7;
-            $current = $this->houseService->countMaxLockeds();
+            $current = $this->houseManager->countMaxLockeds();
 
             return round((100 * $current) / $total);
         }
@@ -127,12 +124,12 @@ class Game extends Table
 
         $result = [];
         $result["players"] = $this->getCollectionFromDb("SELECT `player_id` `id`, `player_score` `score` FROM `player`");
-        $result["houseSequence"] = $this->houseService->sequence($currentPlayerId);
-        $result["houseList"] = $this->houseService->list();
-        $result["playerPosition"] = $this->playerService->getPlayerOrder($currentPlayerId);
-        $result["opponentPlayerId"] = $this->playerService->getOpponnetId($currentPlayerId);
-        $result["houseListLockeds"] = $this->houseService->listLockeds();
-        $result["roundDetails"] = $this->optionsService->getRoundSettings();
+        $result["houseSequence"] = $this->houseManager->sequence($currentPlayerId);
+        $result["houseList"] = $this->houseManager->list();
+        $result["playerPosition"] = $this->playerManager->getPlayerOrder($currentPlayerId);
+        $result["opponentPlayerId"] = $this->playerManager->getOpponnetId($currentPlayerId);
+        $result["houseListLockeds"] = $this->houseManager->listLockeds();
+        $result["roundDetails"] = $this->optionsManager->getRoundSettings();
 
         return $result;
     }
@@ -162,8 +159,8 @@ class Game extends Table
         $this->reattributeColorsBasedOnPreferences($players, $gameinfos["player_colors"]);
         $this->reloadPlayersBasicInfos();
 
-        $this->statsService->setup($players);
-        $this->houseService->create();
+        $this->statsManager->setup($players);
+        $this->houseManager->create();
 
         $this->activeNextPlayer();
 

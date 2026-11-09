@@ -28,6 +28,6 @@ class NewRound extends GameState
 
     function onEnteringState()
     {
-        return $this->game->stepService->newRound();
+        return $this->game->stepManager->newRound();
     }
 }

@@ -1,10 +1,10 @@
 <?php
 
-namespace Bga\Games\congkak\services;
+namespace Bga\Games\congkak\Managers;
 
 use Bga\Games\congkak\Game;
 
-class StatsService
+class StatsManager
 {
     private Game $game;
 
@@ -28,7 +28,7 @@ class StatsService
 
     public function setSeedsStorehouse()
     {
-        $houses = $this->game->houseService->list();
+        $houses = $this->game->houseManager->list();
 
         foreach ($houses as $playerId => $house) {
             $this->game->bga->playerStats->set('seedsStorehouse', $house['rumah'], (int) $playerId);
@@ -64,7 +64,7 @@ class StatsService
     public function setAverageSeedsRound()
     {
         $players = $this->game->loadPlayersBasicInfos();
-        $roundSettings = $this->game->optionsService->getRoundSettings();
+        $roundSettings = $this->game->optionsManager->getRoundSettings();
 
         foreach ($players as $player) {
             $playerId = (int) $player['player_id'];

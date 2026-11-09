@@ -1,6 +1,6 @@
 <?php
 
-namespace Bga\Games\congkak\services;
+namespace Bga\Games\congkak\Managers;
 
 use Bga\Games\congkak\entities\Messages;
 use Bga\Games\congkak\Game;
@@ -10,7 +10,7 @@ use Bga\Games\congkak\States\NewRound;
 use Bga\Games\congkak\States\PlayerSeeding;
 use Bga\Games\congkak\States\PlayersSeeding;
 
-class StepService
+class StepManager
 {
     public Game $game;
 
@@ -21,7 +21,7 @@ class StepService
 
     public function moveRemainingSeeds()
     {
-        $houses = $this->game->houseService->list();
+        $houses = $this->game->houseManager->list();
 
         foreach ($houses as $playerId => $house) {
             $total = 0;
@@ -29,12 +29,12 @@ class StepService
             foreach ($house['kampong'] as $number => $seeds) {
                 $total += $seeds;
 
-                $this->game->houseService->update($playerId, "kampong_{$number}", 0);
+                $this->game->houseManager->update($playerId, "kampong_{$number}", 0);
             }
 
             if ($total > 0) {
-                $this->game->houseService->updateInc($playerId, 'rumah', $total);
-                $this->game->statsService->setSeedsGameEnd($total, $playerId);
+                $this->game->houseManager->updateInc($playerId, 'rumah', $total);
+                $this->game->statsManager->setSeedsGameEnd($total, $playerId);
 
                 $this->game->bga->notify->all('moveRemainingSeeds', Messages::$MoveRemainingSeeds, [
                     'player_name' => $this->game->getPlayerNameById($playerId),
@@ -63,7 +63,7 @@ class StepService
             ];
         }
 
-        $result = $this->game->seedingService->resolve($picks);
+        $result = $this->game->seedingManager->resolve($picks);
 
         $this->game->bga->notify->all('playersSeeding', Messages::$PlayersSeeding, [
             'movements' => $result['movements'],
@@ -81,7 +81,7 @@ class StepService
             $this->game->bga->globals->delete("seeding:house:{$playerId}");
             $this->game->bga->globals->delete("seeding:player:{$playerId}");
 
-            $this->game->seedingService->announceEnding($playerId, $ending);
+            $this->game->seedingManager->announceEnding($playerId, $ending);
 
             if ($ending['active']) {
                 $actives[] = $playerId;
@@ -90,7 +90,7 @@ class StepService
             $this->game->bga->globals->set("seeding:next:house:{$playerId}", $ending['next']['location']);
             $this->game->bga->globals->set("seeding:next:player:{$playerId}", $ending['next']['playerId']);
 
-            $this->game->statsService->incSowings($playerId);
+            $this->game->statsManager->incSowings($playerId);
         }
 
         $sameChoices = false;
@@ -98,8 +98,8 @@ class StepService
         if (count($actives) == 2) {
             $lastPlayerId = array_key_last($result['endings']);
 
-            $sameChoices = $this->game->seedingService->availableLocations($lastPlayerId) ==
-                $this->game->seedingService->availableLocations($this->game->playerService->getOpponnetId($lastPlayerId));
+            $sameChoices = $this->game->seedingManager->availableLocations($lastPlayerId) ==
+                $this->game->seedingManager->availableLocations($this->game->playerManager->getOpponnetId($lastPlayerId));
         }
 
         $next = Opening::next($actives, $sameChoices);
@@ -130,7 +130,7 @@ class StepService
         $playerId = $this->game->getActivePlayerId();
         $this->game->giveExtraTime($playerId);
 
-        if ($this->game->houseService->isNewRound()) {
+        if ($this->game->houseManager->isNewRound()) {
             return NewRound::class;
         }
 
@@ -149,16 +149,16 @@ class StepService
         }
 
         $this->moveRemainingSeeds();
-        $this->game->statsService->setSeedsStorehouse();
-        $this->game->playerService->setRoundWin();
+        $this->game->statsManager->setSeedsStorehouse();
+        $this->game->playerManager->setRoundWin();
 
         $players = $this->game->loadPlayersBasicInfos();
         foreach ($players as $player) {
-            $this->game->playerService->updateScore($player['player_id']);
+            $this->game->playerManager->updateScore($player['player_id']);
         }
 
-        if ($this->game->houseService->isRoundGameEnd()) {
-            $this->game->statsService->setAverageSeedsRound();
+        if ($this->game->houseManager->isRoundGameEnd()) {
+            $this->game->statsManager->setAverageSeedsRound();
 
             return Game::ST_END_GAME;
         }
@@ -166,8 +166,8 @@ class StepService
         $this->game->bga->globals->inc('round', 1);
         $this->game->bga->notify->all('newRound', Messages::$NewRound, ['round' => $this->game->bga->globals->get('round')]);
 
-        $list = $this->game->houseService->list();
-        $burnt = $this->game->houseService->listLockeds();
+        $list = $this->game->houseManager->list();
+        $burnt = $this->game->houseManager->listLockeds();
 
         foreach ($list as $playerId => $houses) {
             $reseed = Reseed::compute($houses['rumah'], $burnt[$playerId] ?? []);
@@ -177,10 +177,10 @@ class StepService
             $outwardMovementsCount = $reseed['outward'];
 
             foreach ($movements as $location => $count) {
-                $this->game->houseService->update($playerId, $location, $count);
+                $this->game->houseManager->update($playerId, $location, $count);
             }
 
-            $this->game->houseService->update($playerId, 'rumah', $reseed['rumah']);
+            $this->game->houseManager->update($playerId, 'rumah', $reseed['rumah']);
 
             $this->game->bga->notify->all('moveStorehouseSeeds', Messages::$MoveStorehouseSeeds, [
                 'player_name' => $this->game->getPlayerNameById($playerId),
@@ -190,9 +190,9 @@ class StepService
             ]);
             $this->game->bga->notify->all('simplePause', '', ['time' => (count($movements) + 1) * 800]);
 
-            if (count($lockeds) > 0 && $this->game->optionsService->isBurnt()) {
+            if (count($lockeds) > 0 && $this->game->optionsManager->isBurnt()) {
                 foreach ($lockeds as $location) {
-                    $this->game->houseService->locked($playerId, $location);
+                    $this->game->houseManager->locked($playerId, $location);
                 }
 
                 $this->game->bga->notify->all('lockedHouses', Messages::$LockedHouses, [
@@ -203,16 +203,16 @@ class StepService
                 ]);
             }
 
-            $this->game->playerService->updateScore($playerId);
+            $this->game->playerManager->updateScore($playerId);
         }
 
-        if ($this->game->houseService->isGameEnd()) {
-            $this->game->statsService->setAverageSeedsRound();
+        if ($this->game->houseManager->isGameEnd()) {
+            $this->game->statsManager->setAverageSeedsRound();
 
             return Game::ST_END_GAME;
         }
 
-        $this->game->gamestate->changeActivePlayer((int) $this->game->houseService->lowestSeededPlayer());
+        $this->game->gamestate->changeActivePlayer((int) $this->game->houseManager->lowestSeededPlayer());
 
         return PlayerSeeding::class;
     }

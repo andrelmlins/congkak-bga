@@ -25,6 +25,6 @@ class NextMultiplayers extends GameState
 
     function onEnteringState()
     {
-        return $this->game->stepService->nextMultiplayers();
+        return $this->game->stepManager->nextMultiplayers();
     }
 }

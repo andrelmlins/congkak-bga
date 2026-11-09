@@ -1,0 +1,16 @@
+// User preferences, ids between 100 and 199. The server reads preference 100 in OptionsService::isAutomaticSeeding.
+// See https://en.doc.boardgamearena.com/Options_and_preferences:_gameoptions.json,_gamepreferences.json
+{
+  "100": {
+    "name": "Automatic seeding",
+    "values": {
+      "1": {
+        "name": "Enabled"
+      },
+      "2": {
+        "name": "Disabled"
+      }
+    },
+    "default": 2
+  }
+}

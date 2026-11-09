@@ -1,3 +1,5 @@
+// Statistics of the game (the ids are read by StatsService).
+// See https://en.doc.boardgamearena.com/Game_statistics:_stats.json
 {
   "player": {
     "seedsStorehouse": {

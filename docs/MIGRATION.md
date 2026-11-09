@@ -27,12 +27,12 @@ Criado em 2026-11-09. Complementa o [PLAN.md](PLAN.md) (estado e pendências) e 
 |---|---|---|
 | Estados | `states.inc.php` com 5 estados (`newRound` 2, `playersSeeding` 10, `playerSeeding` 11, `nextMultiplayers` 20, `nextPlayer` 21), e `st*`/`act*`/`arg*` espalhados em `Game.php` e nos serviços | grande |
 | Chamadas de servidor | 17 `notifyAllPlayers`, 7 `getGameStateValue` (5 opções via `initGameStateLabels`), 27 `globals->`, 14 chamadas de estatística, 2 `BgaUserException`, `zombieTurn` | médio, mecânico |
-| Regras | misturadas com banco e notificação em `SeedingService`, `StepService`, `HouseService` | médio |
+| Regras | misturadas com banco e notificação em `SeedingManager`, `StepManager`, `HouseManager` | médio |
 | Arquivos de configuração | `gameinfos.inc.php`, `gameoptions.json`, `gamepreferences.json`, `stats.json` | pequeno |
 | Cliente | classe Dojo (`declare`, `define.ts`), `dojo.subscribe`, `simplePause` no servidor, `tsc` para um único `congkak.js` em ES5 que embute `bga-animations` e `bga-zoom` de `node_modules` | grande |
 | Build | `yarn` + `tsc` + `sass` | pequeno |
 | Layout | `@media` por janela, `game_interface_width.min` 740 | médio, precisa de olho |
-| Arquivos grandes | `SeedingService` 293 linhas, `HouseService` 250 | pequeno |
+| Arquivos grandes | `SeedingManager` 293 linhas, `HouseManager` 250 | pequeno |
 
 ## Fases
 
@@ -42,8 +42,8 @@ Criado em 2026-11-09. Complementa o [PLAN.md](PLAN.md) (estado e pendências) e 
 
 - `modules/php/Rules/`: `Board`, `SowingPath`, `Sowing`, `SowingEnding`, `SowingTurn` (uma semeadura, ou as duas da abertura), `Choices` (o que cada um pode escolher), `Opening` (quem segue depois da abertura), `Reseed`, `RoundResult`, `GameEnd`, `Scoring`.
 - `tests/`: `SowingPathTest`, `SowingEndingTest`, `OpeningTest` (inclui os 49 pares da primeira abertura: 37 com os dois jogando, 12 com um, nenhum com ninguém, e as sementes sempre somam 98), `ReseedTest`, `RoundResultTest`. 145 verificações, todas passando. Rodar: `for t in tests/*Test.php; do php "$t" || exit 1; done`.
-- `HouseService`, `SeedingService`, `StepService` e `PlayerService` agora só leem o banco, gravam (`HouseService::save` grava só as casas que mudaram), mandam as notificações e respondem aos estados. A ordem das notificações e das gravações foi mantida.
-- `SeedingService` caiu de 293 para 234 linhas e `HouseService` ficou com 219.
+- `HouseManager`, `SeedingManager`, `StepManager` e `PlayerManager` agora só leem o banco, gravam (`HouseManager::save` grava só as casas que mudaram), mandam as notificações e respondem aos estados. A ordem das notificações e das gravações foi mantida.
+- `SeedingManager` caiu de 293 para 234 linhas e `HouseManager` ficou com 219.
 
 O plano original da fase continua abaixo, como referência.
 
@@ -55,14 +55,14 @@ Fazer **primeiro**, porque os testes seguram as fases seguintes.
    - `Opening`: a semeadura simultânea de dois jogadores, passo a passo, e quem pode jogar de novo. O teste inclui a invariante já simulada em 2026-11-09: **nos 49 pares de casas da primeira abertura, ninguém fica sem jogar** (37 pares com os dois, 12 com um).
    - `Reseed`: a partir do armazém e das casas já queimadas, quantas sementes vão a cada casa, quais queimam e quantas saem do jogo.
    - `RoundResult` (vencedor, empate dá vitória aos dois) e `EndOfGame` (7 queimadas, ou 6 e a sétima com 1 semente), mais a pontuação de cada modo de vitória.
-2. `SeedingService`, `StepService`, `HouseService` e `PlayerService` passam a **chamar** essas regras e ficam só com banco, notificação e transição.
+2. `SeedingManager`, `StepManager`, `HouseManager` e `PlayerManager` passam a **chamar** essas regras e ficam só com banco, notificação e transição.
 3. Pronto quando: todos os testes passam e uma rodada no Studio se comporta como antes.
 
 Divide de quebra os dois arquivos grandes. Cada caso de teste ancora uma frase do [RULES.md](RULES.md).
 
 ### Fase 2: chamadas de servidor para a API nova (estados ainda legados)
 
-**Feita em 2026-11-09, não testada no Studio.** O que mudou: `notifyAllPlayers` para `$this->bga->notify->all`, `globals->` para `$this->bga->globals->`, as 5 opções para `$this->bga->tableOptions->get($id)` (com o padrão de cada opção do `gameoptions.json`, em `OptionsService`) e a preferência para `$this->bga->userPreferences`, estatísticas para `$this->bga->playerStats` (`init` de todas de uma vez, e `averageSeedsRound`, que nunca era inicializada, agora também é), `BgaUserException` para `\Bga\GameFramework\UserException` (sem o código 9000), e o `initGameStateLabels` saiu do `Game.php`. Sobrou de propósito: `giveExtraTime`, `getPlayerNameById`, `activeNextPlayer` e `gamestate->` (não estão obsoletos ou ficam para a Fase 3).
+**Feita em 2026-11-09, não testada no Studio.** O que mudou: `notifyAllPlayers` para `$this->bga->notify->all`, `globals->` para `$this->bga->globals->`, as 5 opções para `$this->bga->tableOptions->get($id)` (com o padrão de cada opção do `gameoptions.json`, em `OptionsManager`) e a preferência para `$this->bga->userPreferences`, estatísticas para `$this->bga->playerStats` (`init` de todas de uma vez, e `averageSeedsRound`, que nunca era inicializada, agora também é), `BgaUserException` para `\Bga\GameFramework\UserException` (sem o código 9000), e o `initGameStateLabels` saiu do `Game.php`. Sobrou de propósito: `giveExtraTime`, `getPlayerNameById`, `activeNextPlayer` e `gamestate->` (não estão obsoletos ou ficam para a Fase 3).
 
 O plano original da fase continua abaixo.
 
@@ -98,7 +98,7 @@ Pontos de atenção:
 
 Pronto quando: `states.inc.php` não existe mais e a partida roda de ponta a ponta (rodada única, rodadas fixas, queima total).
 
-**Feita em 2026-11-09, não testada no Studio** (só `php -l` e os testes de `tests/`). O que mudou: os 5 estados viraram classes em `modules/php/States/` (`NewRound` 2, `PlayersSeeding` 10, `PlayerSeeding` 11, `NextMultiplayers` 20, `NextPlayer` 21), com os nomes antigos passados em `name:` para o cliente não mudar. As classes só delegam: `StepService::newRound/nextMultiplayers/nextPlayer` e `SeedingService::actPlayerSeeding/recordPick/recordAutomaticPicks/automaticPick` devolvem a classe do próximo estado (ou `Game::ST_END_GAME`). O `states.inc.php`, o `ZombieService` e os wrappers do `Game.php` foram apagados. O zombie agora é nível 1 (casa permitida ao acaso com `bga_rand`) nos dois estados de escolha. A semeadura automática no estado multiativo grava a escolha sem `setPlayerNonMultiactive` e chama `setPlayersMultiactive($manuais, NextMultiplayers::class, true)`.
+**Feita em 2026-11-09, não testada no Studio** (só `php -l` e os testes de `tests/`). O que mudou: os 5 estados viraram classes em `modules/php/States/` (`NewRound` 2, `PlayersSeeding` 10, `PlayerSeeding` 11, `NextMultiplayers` 20, `NextPlayer` 21), com os nomes antigos passados em `name:` para o cliente não mudar. As classes só delegam: `StepManager::newRound/nextMultiplayers/nextPlayer` e `SeedingManager::actPlayerSeeding/recordPick/recordAutomaticPicks/automaticPick` devolvem a classe do próximo estado (ou `Game::ST_END_GAME`). O `states.inc.php`, o `ZombieService` e os wrappers do `Game.php` foram apagados. O zombie agora é nível 1 (casa permitida ao acaso com `bga_rand`) nos dois estados de escolha. A semeadura automática no estado multiativo grava a escolha sem `setPlayerNonMultiactive` e chama `setPlayersMultiactive($manuais, NextMultiplayers::class, true)`.
 
 O que olhar no Studio: se a partida começa (`setupNewGame` devolve `NewRound::class`), se a abertura simultânea fecha sozinha quando os dois escolhem, se a semeadura automática funciona nas duas telas (inclusive quando os dois jogadores têm casa forçada e `$manuais` fica vazio), se o fim de partida chega ao estado 99 e se `globals->get` de uma chave inexistente devolve nulo (o código antigo dependia disso).
 
@@ -108,6 +108,8 @@ O que olhar no Studio: se a partida começa (`setupNewGame` devolve `NewRound::c
 - Recarregar informações, opções, preferências e estatísticas no Studio.
 - Renomear `modules/php/services/` para `Managers/` (`SeedingService` para `SeedingManager` e assim por diante), como nos outros jogos. É só nome, deixar por último.
 - Apagar `Constants.php` se sobrar só o que o framework já dá (`getLocalCurrentPlayerId`, `localActiveNextPlayer`).
+
+**Feita em 2026-11-09, não testada no Studio.** `gameinfos.inc.php`, `gameoptions.json`, `gamepreferences.json` e `stats.json` viraram `.jsonc` (mesmo conteúdo, com cabeçalho de comentário; `game_interface_width.min` continua 740 por decisão do André). `modules/php/services/` virou `modules/php/Managers/` (`HouseManager`, `PlayerManager`, `StepManager`, `StatsManager`, `OptionsManager`, `SeedingManager`, e as propriedades de `Game` com o mesmo nome) e `Constants.php` foi apagado (nada o usava). No Studio é preciso recarregar informações, opções, preferências e estatísticas, e conferir se o `gameinfos.jsonc` não conflita com o que está no Game Metadata Manager.
 
 ### Fase 5: build do cliente (sem mudar o código do jogo)
 

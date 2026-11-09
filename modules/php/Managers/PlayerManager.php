@@ -1,6 +1,6 @@
 <?php
 
-namespace Bga\Games\congkak\services;
+namespace Bga\Games\congkak\Managers;
 
 use Bga\Games\congkak\entities\Messages;
 use Bga\Games\congkak\entities\VictoryMode;
@@ -8,7 +8,7 @@ use Bga\Games\congkak\Game;
 use Bga\Games\congkak\Rules\RoundResult;
 use Bga\Games\congkak\Rules\Scoring;
 
-class PlayerService
+class PlayerManager
 {
     public Game $game;
 
@@ -69,13 +69,13 @@ class PlayerService
 
     function updateScore($playerId)
     {
-        $victoryMode = $this->game->optionsService->getVictoryMode();
+        $victoryMode = $this->game->optionsManager->getVictoryMode();
         $rumah = 0;
         $roundWins = 0;
         $lockeds = 0;
 
         if ($victoryMode == VictoryMode::NumberOfSeeds) {
-            $seeds = $this->game->houseService->list();
+            $seeds = $this->game->houseManager->list();
             $rumah = $seeds[$playerId]['rumah'];
         } else if ($victoryMode == VictoryMode::NumberOfRounds) {
             $sql = "SELECT player_round_wins FROM player WHERE player_id = '%s'";
@@ -96,7 +96,7 @@ class PlayerService
     {
         $rumah = [];
 
-        foreach ($this->game->houseService->list() as $playerId => $house) {
+        foreach ($this->game->houseManager->list() as $playerId => $house) {
             $rumah[$playerId] = $house['rumah'];
         }
 
@@ -108,7 +108,7 @@ class PlayerService
                 'player_name' => $this->game->getPlayerNameById($playerId)
             ]);
 
-            $this->game->statsService->incRoundsWon($playerId);
+            $this->game->statsManager->incRoundsWon($playerId);
         }
     }
 }

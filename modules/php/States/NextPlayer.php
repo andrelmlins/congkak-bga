@@ -25,6 +25,6 @@ class NextPlayer extends GameState
 
     function onEnteringState()
     {
-        return $this->game->stepService->nextPlayer();
+        return $this->game->stepManager->nextPlayer();
     }
 }

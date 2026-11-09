@@ -1,0 +1,39 @@
+/*
+ * Meta-information of the game.
+ * See http://en.doc.boardgamearena.com/Game_meta-information:_gameinfos.inc.php
+ * Designer, artist, year, tags and the other descriptive fields live in the Game Metadata Manager of the Studio, not here.
+ */
+{
+  "game_name": "Congkak",
+  "publisher": "Public Domain",
+  "publisher_website": "",
+  "publisher_bgg_id": null,
+  "bgg_id": 255613,
+
+  // 2 players only (docs/RULES.md, section 1).
+  "players": [2],
+  "suggest_player_number": 2,
+  "not_recommend_player_number": null,
+
+  "estimated_duration": 15,
+  "fast_additional_time": 30,
+  "medium_additional_time": 40,
+  "slow_additional_time": 50,
+
+  "tie_breaker_description": "",
+  "losers_not_ranked": false,
+  "solo_mode_ranked": false,
+  "is_coop": 0,
+  "language_dependency": false,
+
+  "player_colors": ["ff0000", "008000", "0000ff", "ffa500", "773300"],
+  "favorite_colors_support": true,
+  "disable_player_order_swap_on_rematch": false,
+
+  // Decided on 2026-11-09: the layout stays as it is, with 740.
+  "game_interface_width": {
+    "min": 740,
+  },
+
+  "exception_on_warning": true,
+}

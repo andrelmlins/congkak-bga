@@ -1,6 +1,6 @@
 <?php
 
-namespace Bga\Games\congkak\services;
+namespace Bga\Games\congkak\Managers;
 
 use Bga\Games\congkak\Game;
 use Bga\Games\congkak\Rules\Board;
@@ -11,7 +11,7 @@ use Bga\Games\congkak\Rules\SowingPath;
 /**
  * The houses in the database (table `house`). The rules about them live in modules/php/Rules/, this class only reads and writes.
  */
-class HouseService
+class HouseManager
 {
     public Game $game;
 
@@ -124,7 +124,7 @@ class HouseService
 
     public function sequence($playerId)
     {
-        return SowingPath::sequence($playerId, $this->game->playerService->getOpponnetId($playerId));
+        return SowingPath::sequence($playerId, $this->game->playerManager->getOpponnetId($playerId));
     }
 
     public function countAllSeedsInKampong()
@@ -174,7 +174,7 @@ class HouseService
 
     public function isRoundGameEnd()
     {
-        $roundSettings = $this->game->optionsService->getRoundSettings();
+        $roundSettings = $this->game->optionsManager->getRoundSettings();
 
         if (is_null($roundSettings['total'])) return false;
 

@@ -30,13 +30,13 @@ class PlayerSeeding extends GameState
     /** @return array{locations: array} the houses the active player may choose */
     function getArgs(): array
     {
-        return $this->game->seedingService->argPlayerSeeding();
+        return $this->game->seedingManager->argPlayerSeeding();
     }
 
     /** With automatic seeding on, a forced house is sown without asking. */
     function onEnteringState(int $activePlayerId)
     {
-        $pick = $this->game->seedingService->automaticPick($activePlayerId);
+        $pick = $this->game->seedingManager->automaticPick($activePlayerId);
 
         if ($pick !== null) {
             return $this->actPlayerSeeding($pick['playerId'], $pick['house'], $activePlayerId);
@@ -49,13 +49,13 @@ class PlayerSeeding extends GameState
     #[PossibleAction]
     function actPlayerSeeding(int $playerId, int $house, int $activePlayerId)
     {
-        return $this->game->seedingService->actPlayerSeeding($playerId, $house, $activePlayerId);
+        return $this->game->seedingManager->actPlayerSeeding($playerId, $house, $activePlayerId);
     }
 
     /** Zombie level 1: sows a random house among the allowed ones. */
     function zombie(int $playerId)
     {
-        $locations = $this->game->seedingService->argPlayerSeeding()['locations'];
+        $locations = $this->game->seedingManager->argPlayerSeeding()['locations'];
         $choice = $locations[bga_rand(0, count($locations) - 1)];
 
         return $this->actPlayerSeeding((int) $choice['playerId'], Board::houseNumber($choice['location']), $playerId);

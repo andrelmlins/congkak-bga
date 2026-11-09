@@ -1,6 +1,6 @@
 <?php
 
-namespace Bga\Games\congkak\services;
+namespace Bga\Games\congkak\Managers;
 
 use Bga\Games\congkak\entities\GameMode;
 use Bga\Games\congkak\entities\VictoryMode;
@@ -9,7 +9,7 @@ use Bga\Games\congkak\Game;
 /**
  * The table options (gameoptions.json) and the player preference (gamepreferences.json). Each default is the one of the option file.
  */
-class OptionsService
+class OptionsManager
 {
     private const GAME_MODE = 100;
     private const NUMBER_OF_ROUNDS = 101;

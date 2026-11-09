@@ -10,7 +10,7 @@ The art (board, seeds, background) is described in [docs/ASSETS.md](docs/ASSETS.
 
 ## Older scaffold
 
-This game predates the newer ones (trucomineiro, trucopaulista, buraco): its game states are classes in `modules/php/States/`, but it still has a `Game` class extending `\Table`, plain `.json` config files and a `tsc` and `sass` build with yarn. Do not copy the structure of the newer games here without asking, and do not migrate it on your own: the phased plan for that is in [docs/MIGRATION.md](docs/MIGRATION.md) (inventory in docs/PLAN.md).
+This game predates the newer ones (trucomineiro, trucopaulista, buraco): its game states are classes in `modules/php/States/`, but it still has a `Game` class extending `\Table` and a `tsc` and `sass` build with yarn. Do not copy the structure of the newer games here without asking, and do not migrate it on your own: the phased plan for that is in [docs/MIGRATION.md](docs/MIGRATION.md) (inventory in docs/PLAN.md).
 
 ## Build
 
@@ -24,9 +24,9 @@ yarn build
 
 ## Code map
 
-- `modules/php/Game.php`: thin entry point, delegates to the services.
-- `modules/php/services/`: `SeedingService` (sowing, the four endings, the opening), `StepService` (rounds, who plays next, reseeding), `HouseService` (houses, path, burnt houses), `PlayerService` (opponent, score, round wins), `OptionsService` (table options), `StatsService`.
-- `modules/php/States/`: one class per state (`NewRound`, `PlayersSeeding`, `PlayerSeeding`, `NextMultiplayers`, `NextPlayer`), they only delegate to the services.
+- `modules/php/Game.php`: thin entry point, delegates to the managers.
+- `modules/php/Managers/`: `SeedingManager` (sowing, the four endings, the opening), `StepManager` (rounds, who plays next, reseeding), `HouseManager` (houses, path, burnt houses), `PlayerManager` (opponent, score, round wins), `OptionsManager` (table options), `StatsManager`.
+- `modules/php/States/`: one class per state (`NewRound`, `PlayersSeeding`, `PlayerSeeding`, `NextMultiplayers`, `NextPlayer`), they only delegate to the managers.
 - `modules/php/Rules/`: the pure rules (see Rules and tests).
 - `modules/php/entities/`: `GameMode`, `VictoryMode`, `Messages` (all log strings).
 - `src/states/sowing.ts`: selection and animations. `src/congkak.ts`: setup, the game area HTML (no `.tpl`) and the houses.
@@ -39,7 +39,7 @@ The pure rules (sowing path, the four endings of a sowing, the simultaneous open
 for t in tests/*Test.php; do php "$t" || exit 1; done
 ```
 
-The services in `modules/php/services/` only read the database, save, notify and answer the states. A change to a rule goes in `Rules/` with a test, and its section in docs/RULES.md changes in the same commit.
+The managers in `modules/php/Managers/` only read the database, save, notify and answer the states. A change to a rule goes in `Rules/` with a test, and its section in docs/RULES.md changes in the same commit.
 
 ## Secrets
 
