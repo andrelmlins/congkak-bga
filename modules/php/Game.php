@@ -29,11 +29,14 @@ use Bga\Games\congkak\services\StatsService;
 use Bga\Games\congkak\services\StepService;
 use Bga\Games\congkak\services\OptionsService;
 use Bga\Games\congkak\services\SeedingService;
-use Bga\Games\congkak\services\ZombieService;
+use Bga\Games\congkak\States\NewRound;
 
 class Game extends Table
 {
     use Constants;
+
+    /** The reserved state that ends the game. */
+    public const ST_END_GAME = 99;
 
     public HouseService $houseService;
 
@@ -65,51 +68,6 @@ class Game extends Table
         $this->optionsService = new OptionsService($this);
 
         $this->seedingService = new SeedingService($this);
-    }
-
-    public function argPlayersSeeding()
-    {
-        return $this->seedingService->argPlayersSeeding();
-    }
-
-    public function argPlayerSeeding()
-    {
-        return $this->seedingService->argPlayerSeeding();
-    }
-
-    public function actPlayersSeeding(string $playerId, int $house)
-    {
-        $this->seedingService->actPlayersSeeding($playerId, $house, null);
-    }
-
-    public function actPlayerSeeding(string $playerId, int $house)
-    {
-        $this->seedingService->actPlayerSeeding($playerId, $house);
-    }
-
-    public function stNewRound()
-    {
-        $this->stepService->stNewRound();
-    }
-
-    public function stPlayersSeeding()
-    {
-        $this->seedingService->stPlayersSeeding();
-    }
-
-    public function stNextMultiplayers()
-    {
-        $this->stepService->stNextMultiplayers();
-    }
-
-    public function stNextPlayer(): void
-    {
-        $this->stepService->stNextPlayer();
-    }
-
-    public function stPlayerSeeding()
-    {
-        $this->seedingService->stPlayerSeeding();
     }
 
     public function getGameProgression()
@@ -209,12 +167,6 @@ class Game extends Table
 
         $this->activeNextPlayer();
 
-        return 2;
-    }
-
-    protected function zombieTurn(array $state, int $activePlayerId): void
-    {
-        $service = new ZombieService($this);
-        $service->run($state, $activePlayerId);
+        return NewRound::class;
     }
 }

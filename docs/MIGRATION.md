@@ -98,6 +98,10 @@ Pontos de atenção:
 
 Pronto quando: `states.inc.php` não existe mais e a partida roda de ponta a ponta (rodada única, rodadas fixas, queima total).
 
+**Feita em 2026-11-09, não testada no Studio** (só `php -l` e os testes de `tests/`). O que mudou: os 5 estados viraram classes em `modules/php/States/` (`NewRound` 2, `PlayersSeeding` 10, `PlayerSeeding` 11, `NextMultiplayers` 20, `NextPlayer` 21), com os nomes antigos passados em `name:` para o cliente não mudar. As classes só delegam: `StepService::newRound/nextMultiplayers/nextPlayer` e `SeedingService::actPlayerSeeding/recordPick/recordAutomaticPicks/automaticPick` devolvem a classe do próximo estado (ou `Game::ST_END_GAME`). O `states.inc.php`, o `ZombieService` e os wrappers do `Game.php` foram apagados. O zombie agora é nível 1 (casa permitida ao acaso com `bga_rand`) nos dois estados de escolha. A semeadura automática no estado multiativo grava a escolha sem `setPlayerNonMultiactive` e chama `setPlayersMultiactive($manuais, NextMultiplayers::class, true)`.
+
+O que olhar no Studio: se a partida começa (`setupNewGame` devolve `NewRound::class`), se a abertura simultânea fecha sozinha quando os dois escolhem, se a semeadura automática funciona nas duas telas (inclusive quando os dois jogadores têm casa forçada e `$manuais` fica vazio), se o fim de partida chega ao estado 99 e se `globals->get` de uma chave inexistente devolve nulo (o código antigo dependia disso).
+
 ### Fase 4: arquivos de configuração e nomes
 
 - `gameinfos.inc.php` para `gameinfos.jsonc`, `gameoptions.json` e `gamepreferences.json` para `.jsonc`, `stats.json` para `stats.jsonc`, copiando o formato do buraco. `designer`, `artist`, `year`, `tags`, `complexity` e afins vão para o Game Metadata Manager do Studio, não para o arquivo.

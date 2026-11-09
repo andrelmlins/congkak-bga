@@ -59,7 +59,7 @@ Resultado de rodar o `review_checks.py` da skill `andre-bga` e de ler o projeto.
 - [x] **Corrigido em 2026-11-09:** `HouseService::isGameEnd()` tinha um `echo json_encode($item);` esquecido no ramo de 6 casas queimadas, que estraga a resposta do servidor. Removido.
 - [x] **Corrigido em 2026-11-09:** `StepService::stNewRound()` testava `$lockeds > 0` com um array (sempre verdadeiro). Agora `count($lockeds) > 0`. O resultado na prática é o mesmo, porque só entra no laço quando há casas para queimar.
 - Texto do log "Players finished seeding in the same hole, one player will be randomly chosen" mas o código escolhe o jogador 1 da mesa (que é sorteado pelo BGA, mas não é um sorteio novo).
-- O zombie escolhe sempre a primeira casa possível, sem sorteio: é nível 0 a 1 no `Zombie Mode`, e o nível declarado nos metadados deve bater com isso.
+- O zombie agora escolhe uma casa permitida ao acaso (`bga_rand`), nível 1 do `Zombie Mode` (feito na Fase 3 da migração, 2026-11-09, não testado no Studio). O nível declarado nos metadados deve ser 1.
 
 **Avisos das verificações do Studio (2026-11-09)**
 
@@ -67,7 +67,7 @@ Saída do "Project code checks" depois do deploy. Imagens, SQL e CSS passaram ("
 
 - [x] `extends \APP_GameClass` nos 5 serviços: removido (eles só usam `$this->game->...`, nunca as próprias funções de banco). Feito em 2026-11-09, **não testado no Studio**.
 - [x] `require_once(.../table.game.php)`, `extends \Table` e `getGameName()` em `Game.php`: agora `use Bga\GameFramework\Table;`, `class Game extends Table`, sem o `require_once` e sem `getGameName`. Também troquei `static::DbQuery` por `$this->DbQuery` (o aviso do PHP 8.4). Feito em 2026-11-09, **não testado no Studio**.
-- [x] Estados 1 e 99 saíram do `states.inc.php` e `setupNewGame` termina com `return 2;` (o `newRound`). As transições para `gameEnd` (99) continuam, o framework fornece esse estado. Feito em 2026-11-09, **não testado no Studio**: é o que decide se a partida começa e termina, então é a primeira coisa a olhar.
+- [x] Estados 1 e 99 saíram do `states.inc.php` e `setupNewGame` termina com `return NewRound::class;`. As transições para `gameEnd` (99) continuam, o framework fornece esse estado. Feito em 2026-11-09, **não testado no Studio**: é o que decide se a partida começa e termina, então é a primeira coisa a olhar.
 - [x] `congkak_congkak.tpl` removido em 2026-11-09 e o HTML da mesa (caixa, rodada, tabuleiro e grade) agora é montado em `setup()` por `setupGameArea()` em `src/congkak.ts`, com `bga.gameArea.getElement()`. **Não testado no Studio.** Não existe `congkak.view.php` no repositório: se ele existir no servidor, apagar lá por SFTP.
 - [x] `this.scoreCtrl` e `overall_player_board`: o código de pontuação do cliente (inscrição `score`, `scoreNotif`, `ScoreNotif`) foi apagado, e a animação das sementes que saem do jogo agora vai para `bga.playerPanels.getElement(playerId)`. Feito em 2026-11-09, **não testado no Studio**.
 - [x] `PlayerService::updateScore` agora usa `$this->bga->playerScore->set()`, que manda a notificação de pontuação sozinho (a notificação `score` própria deixou de existir). Feito em 2026-11-09, **não testado no Studio**. Conferir que o placar do painel muda ao fim de cada rodada, e que o fim da partida mostra as pontuações certas.

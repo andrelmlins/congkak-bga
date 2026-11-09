@@ -10,7 +10,7 @@ The art (board, seeds, background) is described in [docs/ASSETS.md](docs/ASSETS.
 
 ## Older scaffold
 
-This game predates the newer ones (trucomineiro, trucopaulista, buraco): it still uses `states.inc.php`, a `Game` class extending `\Table`, plain `.json` config files and a `tsc` and `sass` build with yarn. Do not copy the structure of the newer games here without asking, and do not migrate it on your own: the phased plan for that is in [docs/MIGRATION.md](docs/MIGRATION.md) (inventory in docs/PLAN.md).
+This game predates the newer ones (trucomineiro, trucopaulista, buraco): its game states are classes in `modules/php/States/`, but it still has a `Game` class extending `\Table`, plain `.json` config files and a `tsc` and `sass` build with yarn. Do not copy the structure of the newer games here without asking, and do not migrate it on your own: the phased plan for that is in [docs/MIGRATION.md](docs/MIGRATION.md) (inventory in docs/PLAN.md).
 
 ## Build
 
@@ -25,7 +25,8 @@ yarn build
 ## Code map
 
 - `modules/php/Game.php`: thin entry point, delegates to the services.
-- `modules/php/services/`: `SeedingService` (sowing, the four endings, the opening), `StepService` (rounds, who plays next, reseeding), `HouseService` (houses, path, burnt houses), `PlayerService` (opponent, score, round wins), `OptionsService` (table options), `StatsService`, `ZombieService`.
+- `modules/php/services/`: `SeedingService` (sowing, the four endings, the opening), `StepService` (rounds, who plays next, reseeding), `HouseService` (houses, path, burnt houses), `PlayerService` (opponent, score, round wins), `OptionsService` (table options), `StatsService`.
+- `modules/php/States/`: one class per state (`NewRound`, `PlayersSeeding`, `PlayerSeeding`, `NextMultiplayers`, `NextPlayer`), they only delegate to the services.
 - `modules/php/Rules/`: the pure rules (see Rules and tests).
 - `modules/php/entities/`: `GameMode`, `VictoryMode`, `Messages` (all log strings).
 - `src/states/sowing.ts`: selection and animations. `src/congkak.ts`: setup, the game area HTML (no `.tpl`) and the houses.

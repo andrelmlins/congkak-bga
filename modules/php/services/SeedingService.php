@@ -9,6 +9,9 @@ use Bga\Games\congkak\Rules\Board;
 use Bga\Games\congkak\Rules\Choices;
 use Bga\Games\congkak\Rules\SowingEnding;
 use Bga\Games\congkak\Rules\SowingTurn;
+use Bga\Games\congkak\States\NewRound;
+use Bga\Games\congkak\States\NextPlayer;
+use Bga\Games\congkak\States\PlayerSeeding;
 
 /**
  * The sowing turns (docs/RULES.md, sections 5 and 6): the rules are in modules/php/Rules/, this class reads the board, saves the result, sends the
@@ -87,7 +90,7 @@ class SeedingService
     /** What a player may choose when both choose at the same time. */
     public function availableLocations($playerId)
     {
-        $globals = $this->game->globals;
+        $globals = $this->game->bga->globals;
         $opponentId = $this->game->playerService->getOpponnetId($playerId);
 
         $nextHouseKey = "seeding:next:house:{$playerId}";
@@ -105,7 +108,7 @@ class SeedingService
 
     public function argPlayerSeeding()
     {
-        $globals = $this->game->globals;
+        $globals = $this->game->bga->globals;
         $activePlayerId = $this->game->getActivePlayerId();
 
         $locations = Choices::single(
@@ -131,10 +134,14 @@ class SeedingService
         return ['locations' => $result];
     }
 
-    public function actPlayerSeeding(string $playerId, int $house)
+    /**
+     * The active player sows a house (docs/RULES.md, section 6): a free choice, or the house they were forced to go on from.
+     *
+     * @param int $playerId the owner of the house
+     * @return string the next state: the same player goes on, the next player, or a new round
+     */
+    public function actPlayerSeeding(int $playerId, int $house, int $activePlayerId): string
     {
-        $activePlayerId = $this->game->getActivePlayerId();
-
         $houses = $this->game->houseService->list();
 
         if ($houses[$playerId]['kampong'][$house] == 0) {
@@ -160,76 +167,80 @@ class SeedingService
         $this->game->bga->globals->delete("seeding:next:house");
         $this->game->bga->globals->delete("seeding:next:player");
 
-        if ($ending['active']) {
-            if ($this->game->houseService->isNewRound()) {
-                return $this->game->gamestate->nextState("newRound");
-            }
-
-            $this->game->bga->globals->set("seeding:next:house", $ending['next']['location']);
-            $this->game->bga->globals->set("seeding:next:player", $ending['next']['playerId']);
-
-            $this->game->giveExtraTime($activePlayerId);
-            $this->game->gamestate->nextState('playerSeeding');
-        } else {
-            $this->game->gamestate->nextState('nextPlayer');
+        if (!$ending['active']) {
+            return NextPlayer::class;
         }
+
+        if ($this->game->houseService->isNewRound()) {
+            return NewRound::class;
+        }
+
+        $this->game->bga->globals->set("seeding:next:house", $ending['next']['location']);
+        $this->game->bga->globals->set("seeding:next:player", $ending['next']['playerId']);
+
+        $this->game->giveExtraTime($activePlayerId);
+
+        return PlayerSeeding::class;
     }
 
-    public function actPlayersSeeding(string $playerId, int $house, ?string $localPlayerId)
+    /**
+     * One of the two players chooses, at the same time as the other, the house to sow. Only the choice is kept: the sowing happens when both chose
+     * (see StepService::nextMultiplayers).
+     *
+     * @param int $playerId the player that chooses
+     * @param int $ownerId the owner of the house
+     */
+    public function recordPick(int $playerId, int $ownerId, int $house): void
     {
-        $activePlayerId = $localPlayerId ?? $this->game->getLocalCurrentPlayerId();
-
         $houses = $this->game->houseService->list();
 
-        if ($houses[$playerId]['kampong'][$house] == 0) {
+        if ($houses[$ownerId]['kampong'][$house] == 0) {
             throw new UserException(Messages::$InvalidAction);
         }
 
-        $this->game->bga->globals->set("seeding:house:{$activePlayerId}", $house);
-        $this->game->bga->globals->set("seeding:player:{$activePlayerId}", $playerId);
-
-        $this->game->gamestate->setPlayerNonMultiactive($activePlayerId, 'nextMultiplayers');
+        $this->game->bga->globals->set("seeding:house:{$playerId}", $house);
+        $this->game->bga->globals->set("seeding:player:{$playerId}", $ownerId);
     }
 
-    public function stPlayersSeeding()
+    /**
+     * When the choice of a player is forced (they must go on from a house) and they asked for automatic seeding, records it for them.
+     *
+     * @return int[] the players that still have to choose
+     */
+    public function recordAutomaticPicks(): array
     {
-        $players = $this->game->loadPlayersBasicInfos();
-        $playersLocations = $this->argPlayersSeeding()['locations'];
-        $result = [];
+        $locations = $this->argPlayersSeeding()['locations'];
+        $manual = [];
 
-        foreach ($players as $player) {
-            $locations = $playersLocations[$player['player_id']];
+        foreach ($this->game->loadPlayersBasicInfos() as $player) {
+            $playerId = (int) $player['player_id'];
+            $choices = $locations[$playerId];
 
-            if (
-                $this->game->optionsService->isAutomaticSeeding($player['player_id']) &&
-                count($locations) == 1 &&
-                $locations[0]['isNext']
-            ) {
-                $playerId = $locations[0]['playerId'];
-                $houseNumber = Board::houseNumber($locations[0]['location']);
-
-                $this->actPlayersSeeding($playerId, $houseNumber, $player['player_id']);
+            if ($this->game->optionsService->isAutomaticSeeding($playerId) && count($choices) == 1 && $choices[0]['isNext']) {
+                $this->recordPick($playerId, (int) $choices[0]['playerId'], Board::houseNumber($choices[0]['location']));
             } else {
-                $result[] = $player['player_id'];
+                $manual[] = $playerId;
             }
         }
 
-        $this->game->gamestate->setPlayersMultiactive($result, 'nextMultiplayers');
+        return $manual;
     }
 
-    public function stPlayerSeeding()
+    /**
+     * @return ?array{playerId: int, house: int} the forced house of the active player when they asked for automatic seeding, null when they choose
+     */
+    public function automaticPick(int $activePlayerId): ?array
     {
-        $activePlayerId = $this->game->getActivePlayerId();
-
-        if ($this->game->optionsService->isAutomaticSeeding($activePlayerId)) {
-            $locations = $this->argPlayerSeeding()['locations'];
-
-            if (count($locations) == 1 && $locations[0]['isNext']) {
-                $playerId = $locations[0]['playerId'];
-                $houseNumber = Board::houseNumber($locations[0]['location']);
-
-                $this->actPlayerSeeding($playerId, $houseNumber);
-            }
+        if (!$this->game->optionsService->isAutomaticSeeding($activePlayerId)) {
+            return null;
         }
+
+        $locations = $this->argPlayerSeeding()['locations'];
+
+        if (count($locations) != 1 || !$locations[0]['isNext']) {
+            return null;
+        }
+
+        return ['playerId' => (int) $locations[0]['playerId'], 'house' => Board::houseNumber($locations[0]['location'])];
     }
 }

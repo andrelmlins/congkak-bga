@@ -6,6 +6,9 @@ use Bga\Games\congkak\entities\Messages;
 use Bga\Games\congkak\Game;
 use Bga\Games\congkak\Rules\Opening;
 use Bga\Games\congkak\Rules\Reseed;
+use Bga\Games\congkak\States\NewRound;
+use Bga\Games\congkak\States\PlayerSeeding;
+use Bga\Games\congkak\States\PlayersSeeding;
 
 class StepService
 {
@@ -42,7 +45,8 @@ class StepService
         }
     }
 
-    public function stNextMultiplayers()
+    /** After both players sowed at the same time (docs/RULES.md, section 5): settles the endings and says who goes on. @return string the next state */
+    public function nextMultiplayers(): string
     {
         $players = $this->game->loadPlayersBasicInfos();
 
@@ -101,42 +105,47 @@ class StepService
         $next = Opening::next($actives, $sameChoices);
 
         if ($next == Opening::SINGLE) {
-            $this->game->gamestate->changeActivePlayer($actives[0]);
-            $this->game->gamestate->nextState('playerSeeding');
-        } else if ($next == Opening::BOTH) {
-            $this->game->gamestate->nextState('playersSeeding');
-        } else {
-            $first = $this->game->getObjectFromDB("SELECT player_id id FROM player WHERE player_no = 1");
-            $this->game->gamestate->changeActivePlayer($first['id']);
+            $this->game->gamestate->changeActivePlayer((int) $actives[0]);
 
-            if ($next == Opening::SAME_HOLE) {
-                $this->game->bga->notify->all('endSeedingSamePosition', Messages::$EndSeedingSamePosition, []);
-            }
-
-            $this->game->gamestate->nextState('playerSeeding');
+            return PlayerSeeding::class;
         }
+
+        if ($next == Opening::BOTH) {
+            return PlayersSeeding::class;
+        }
+
+        $first = $this->game->getObjectFromDB("SELECT player_id id FROM player WHERE player_no = 1");
+        $this->game->gamestate->changeActivePlayer((int) $first['id']);
+
+        if ($next == Opening::SAME_HOLE) {
+            $this->game->bga->notify->all('endSeedingSamePosition', Messages::$EndSeedingSamePosition, []);
+        }
+
+        return PlayerSeeding::class;
     }
 
-    public function stNextPlayer()
+    /** After a turn ends: a new round when a side is empty, else the other player. @return string the next state */
+    public function nextPlayer(): string
     {
         $playerId = $this->game->getActivePlayerId();
         $this->game->giveExtraTime($playerId);
 
         if ($this->game->houseService->isNewRound()) {
-            return $this->game->gamestate->nextState("newRound");
+            return NewRound::class;
         }
 
-        $this->game->localActiveNextPlayer();
+        $this->game->activeNextPlayer();
 
-        $this->game->gamestate->nextState("playerSeeding");
+        return PlayerSeeding::class;
     }
 
-    public function stNewRound()
+    /** The first call starts the game, the next ones close a round and open the next (docs/RULES.md, section 8). @return string|int the next state, or the end of the game */
+    public function newRound(): string|int
     {
         if (!$this->game->bga->globals->has('round')) {
             $this->game->bga->globals->set('round', 1);
 
-            return $this->game->gamestate->nextState('playersSeeding');
+            return PlayersSeeding::class;
         }
 
         $this->moveRemainingSeeds();
@@ -150,7 +159,8 @@ class StepService
 
         if ($this->game->houseService->isRoundGameEnd()) {
             $this->game->statsService->setAverageSeedsRound();
-            return $this->game->gamestate->nextState('gameEnd');
+
+            return Game::ST_END_GAME;
         }
 
         $this->game->bga->globals->inc('round', 1);
@@ -198,10 +208,12 @@ class StepService
 
         if ($this->game->houseService->isGameEnd()) {
             $this->game->statsService->setAverageSeedsRound();
-            return $this->game->gamestate->nextState('gameEnd');
+
+            return Game::ST_END_GAME;
         }
 
-        $this->game->gamestate->changeActivePlayer($this->game->houseService->lowestSeededPlayer());
-        $this->game->gamestate->nextState('playerSeeding');
+        $this->game->gamestate->changeActivePlayer((int) $this->game->houseService->lowestSeededPlayer());
+
+        return PlayerSeeding::class;
     }
 }
