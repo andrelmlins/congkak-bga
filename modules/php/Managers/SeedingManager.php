@@ -173,12 +173,22 @@ class SeedingManager
             return NewRound::class;
         }
 
-        $this->game->bga->globals->set("seeding:next:house", $ending['next']['location']);
-        $this->game->bga->globals->set("seeding:next:player", $ending['next']['playerId']);
+        $this->forceNext($ending['next']);
 
         $this->game->giveExtraTime($activePlayerId);
 
         return PlayerSeeding::class;
+    }
+
+    /**
+     * What the active player has to sow next (docs/RULES.md, section 6): the house they must go on from, or `initial` for a free choice.
+     *
+     * @param array{location: string, playerId: mixed} $next see SowingEnding::next
+     */
+    public function forceNext(array $next): void
+    {
+        $this->game->bga->globals->set('seeding:next:house', $next['location']);
+        $this->game->bga->globals->set('seeding:next:player', $next['playerId']);
     }
 
     /**

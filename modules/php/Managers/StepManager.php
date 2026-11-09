@@ -104,6 +104,8 @@ class StepManager
 
         if ($next == Opening::SINGLE) {
             $this->game->gamestate->changeActivePlayer((int) $actives[0]);
+            // The one that goes on alone keeps the obligation of their ending (a house with seeds: they sow it again, a rumah: they choose).
+            $this->game->seedingManager->forceNext($result['endings'][$actives[0]]['next']);
 
             return PlayerSeeding::class;
         }
