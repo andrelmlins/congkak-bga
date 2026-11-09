@@ -98,6 +98,24 @@ check('nobody goes on: the first player of the table', Opening::next([], false) 
 check('both, with different choices: together', Opening::next(['1', '2'], false) === Opening::BOTH);
 check('both, forced into the same house: the first player of the table', Opening::next(['1', '2'], true) === Opening::SAME_HOLE);
 
+// What the player that sows alone has to sow (decided 2026-11-09): the house of their own ending when it had seeds, also when both were forced into
+// the same house, and a free choice after a rumah or when nobody went on.
+checkSame('alone after a house with seeds: sows that house', ['location' => 'kampong_3', 'playerId' => '2'], Opening::soloNext(['location' => 'kampong_3', 'playerId' => '2']));
+checkSame('alone after a rumah: free', ['location' => 'initial', 'playerId' => ''], Opening::soloNext(['location' => 'initial', 'playerId' => '']));
+checkSame('nobody went on: the first player is free', ['location' => 'initial', 'playerId' => ''], Opening::soloNext(['location' => '', 'playerId' => '']));
+
+// The same hole: both endings point at the same house, so whoever plays alone sows it.
+// Player 1 sows one seed from the kampong 2 into their kampong 1, and player 2 sows 8 seeds from their kampong 1 (their rumah, then the kampongs 7 to 1
+// of player 1): both last seeds fall in the kampong 1 of player 1.
+$houses = board(['1' => [0, 1, 0, 0, 0, 0, 0], '2' => [8, 0, 0, 0, 0, 0, 0]]);
+$result = SowingTurn::resolve($houses, $none, $opponentOf, [
+    '1' => ['location' => 'kampong_2', 'playerId' => '1'],
+    '2' => ['location' => 'kampong_1', 'playerId' => '2'],
+]);
+checkSame('both forced into the same house: the same next for both', ['location' => 'kampong_1', 'playerId' => '1'], $result['endings']['1']['next']);
+checkSame('the other one has the same next', $result['endings']['1']['next'], $result['endings']['2']['next']);
+checkSame('so the first player sows that house', ['location' => 'kampong_1', 'playerId' => '1'], Opening::soloNext($result['endings']['2']['next']));
+
 // What each may choose when both go on at the same time (docs/RULES.md section 5).
 $houses = board(['1' => [5, 0, 3, 3, 3, 3, 3], '2' => [4, 4, 4, 4, 4, 4, 4]]);
 $locked = ['1' => ['kampong_6' => true]];

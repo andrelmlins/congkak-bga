@@ -79,13 +79,13 @@ Cada jogador **pula o armazém do adversário**: nunca deixa uma semente lá. Ca
 
 | Quantos podem jogar de novo | O que acontece |
 |---|---|
-| Só um | Esse jogador continua sozinho. Depois os turnos se alternam. |
+| Só um | Esse jogador continua sozinho. Se terminou numa casa com sementes, é **obrigado a semear essa casa** (seção 6, caso 2). Se terminou no armazém, escolhe livremente. Depois os turnos se alternam. |
 | Nenhum | O primeiro jogador da ordem da mesa (que o BGA sorteia) joga primeiro. Na **primeira** abertura isso nunca acontece (ver a nota abaixo). |
 | Os dois | Os dois continuam ao mesmo tempo, mais uma rodada simultânea (veja abaixo). |
 
 **Ninguém joga de novo.** Na primeira abertura é impossível: todas as casas têm 7 sementes, então a última semente de cada um só cai numa casa vazia se for a casa que o adversário escolheu, e isso só vale para um dos dois ao mesmo tempo. Uma simulação dos 49 pares de escolhas possíveis (feita em 2026-11-09 seguindo a lógica de `SeedingManager`) deu 37 pares em que os dois continuam e 12 em que só um continua, nenhum em que ninguém continua. Nas rodadas simultâneas seguintes (quando os dois continuaram), as casas já têm quantidades diferentes e os dois podem terminar em casa vazia: aí vale a linha "Nenhum" da tabela.
 
-**Os dois continuam ao mesmo tempo:** quem acabou em armazém escolhe livremente uma das suas casas com sementes, mas **não pode escolher a casa de onde o adversário vai continuar**. Quem acabou numa casa com sementes é obrigado a continuar dela. Se os dois ficaram obrigados a continuar **da mesma casa**, não há como semear os dois ao mesmo tempo: o jogo avisa ("Players finished seeding in the same hole") e o primeiro jogador da ordem da mesa joga sozinho.
+**Os dois continuam ao mesmo tempo:** quem acabou em armazém escolhe livremente uma das suas casas com sementes, mas **não pode escolher a casa de onde o adversário vai continuar**. Quem acabou numa casa com sementes é obrigado a continuar dela. Se os dois ficaram obrigados a continuar **da mesma casa**, não há como semear os dois ao mesmo tempo: o jogo avisa ("Players finished seeding in the same hole") e o primeiro jogador da ordem da mesa joga sozinho, **obrigado a semear essa casa**, como em qualquer final numa casa com sementes (seção 6, caso 2). O outro espera. **[Decidido em 2026-11-09: obrigado, não escolha livre.]**
 
 Depois da abertura, o jogo é **por turnos** até o fim da rodada.
 
@@ -179,6 +179,7 @@ Tudo que o código faz e que o manual acima assume, mas que a internet não conf
 8. **Quem começa a rodada seguinte.** Hoje é quem tem menos sementes no total depois do reabastecimento, em empate o primeiro da mesa (seção 8). A fonte diz "o perdedor da rodada anterior começa". A diferença só aparece quando o vencedor da rodada perde sementes no reabastecimento. **[Decidido em 2026-11-09: manter como está por enquanto.]**
 9. **Fim da partida por casas queimadas** (7, ou 6 mais uma casa com 1 semente): regra do jogo, sem fonte na internet. **[Decidido em 2026-11-09: manter, sem comparar o depósito.]**
 10. **Fim da rodada.** Hoje a rodada acaba quando um lado fica sem sementes nas casas. A Wikipédia diz o mesmo.
+11. **Os dois obrigados a continuar da mesma casa na abertura.** **[Decidido em 2026-11-09: o primeiro da mesa joga sozinho e é obrigado a semear essa casa.]** A seção 5 não dizia como ele jogava, e o código dava escolha livre por um erro de gravação (corrigido no mesmo dia).
 
 ## 13. O manual do André contra o jogo
 

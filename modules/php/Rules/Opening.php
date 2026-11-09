@@ -34,4 +34,20 @@ final class Opening
 
         return $sameChoices ? self::SAME_HOLE : self::BOTH;
     }
+
+    /**
+     * What the player that sows alone after the opening has to sow (docs/RULES.md, sections 5 and 6): the house their own sowing ended in when it had
+     * seeds (also when both were forced into the same house: decided 2026-11-09), a free choice after a rumah, and a free choice when nobody went on.
+     *
+     * @param array{location: string, playerId: mixed} $next the `next` of that player's ending (see SowingEnding::next), empty when the turn ended
+     * @return array{location: string, playerId: mixed} the house to go on from, or `initial` for a free choice
+     */
+    public static function soloNext(array $next): array
+    {
+        if ($next['location'] === '') {
+            return ['location' => 'initial', 'playerId' => ''];
+        }
+
+        return $next;
+    }
 }

@@ -102,20 +102,20 @@ class StepManager
 
         $next = Opening::next($actives, $sameChoices);
 
-        if ($next == Opening::SINGLE) {
-            $this->game->gamestate->changeActivePlayer((int) $actives[0]);
-            // The one that goes on alone keeps the obligation of their ending (a house with seeds: they sow it again, a rumah: they choose).
-            $this->game->seedingManager->forceNext($result['endings'][$actives[0]]['next']);
-
-            return PlayerSeeding::class;
-        }
-
         if ($next == Opening::BOTH) {
             return PlayersSeeding::class;
         }
 
-        $first = $this->game->getObjectFromDB("SELECT player_id id FROM player WHERE player_no = 1");
-        $this->game->gamestate->changeActivePlayer((int) $first['id']);
+        if ($next == Opening::SINGLE) {
+            $soloId = $actives[0];
+        } else {
+            $first = $this->game->getObjectFromDB("SELECT player_id id FROM player WHERE player_no = 1");
+            $soloId = $first['id'];
+        }
+
+        $this->game->gamestate->changeActivePlayer((int) $soloId);
+        // The one that sows alone keeps the obligation of their ending (docs/RULES.md, section 5): a house with seeds is sown again, a rumah is a free choice.
+        $this->game->seedingManager->forceNext(Opening::soloNext($result['endings'][$soloId]['next']));
 
         if ($next == Opening::SAME_HOLE) {
             $this->game->bga->notify->all('endSeedingSamePosition', Messages::$EndSeedingSamePosition, []);
