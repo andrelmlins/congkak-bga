@@ -73,64 +73,64 @@
 
 .congkak-box .congkak-table .congkak-grid .congkak-kampong {
   position: absolute;
-  width: 7.1671195652%;
+  width: 7.6086956522%;
   aspect-ratio: 1/1;
 }
 .congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(1) {
-  left: 21.6202445652%;
-  top: 7.8216374269%;
+  left: 21.3994565217%;
+  top: 6.7251461988%;
 }
 .congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(8) {
-  left: 21.6202445652%;
-  top: 45.6871345029%;
+  left: 21.3994565217%;
+  top: 44.7368421053%;
 }
 .congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(2) {
-  left: 30.1460597826%;
-  top: 7.8216374269%;
+  left: 29.9252717391%;
+  top: 6.7251461988%;
 }
 .congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(9) {
-  left: 30.1120923913%;
-  top: 45.6871345029%;
+  left: 29.8913043478%;
+  top: 44.7368421053%;
 }
 .congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(3) {
-  left: 38.6379076087%;
-  top: 7.8216374269%;
+  left: 38.4171195652%;
+  top: 6.7251461988%;
 }
 .congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(10) {
-  left: 38.6039402174%;
-  top: 45.6871345029%;
+  left: 38.3831521739%;
+  top: 44.7368421053%;
 }
 .congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(4) {
-  left: 46.8580163043%;
-  top: 7.8216374269%;
+  left: 46.6372282609%;
+  top: 6.7251461988%;
 }
 .congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(11) {
-  left: 46.8580163043%;
-  top: 45.6871345029%;
+  left: 46.6372282609%;
+  top: 44.7368421053%;
 }
 .congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(5) {
-  left: 55.2819293478%;
-  top: 7.8216374269%;
+  left: 55.0611413043%;
+  top: 6.7251461988%;
 }
 .congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(12) {
-  left: 55.2819293478%;
-  top: 45.6871345029%;
+  left: 55.0611413043%;
+  top: 44.7368421053%;
 }
 .congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(6) {
-  left: 63.671875%;
-  top: 7.8216374269%;
+  left: 63.4510869565%;
+  top: 6.7251461988%;
 }
 .congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(13) {
-  left: 63.7058423913%;
-  top: 45.6871345029%;
+  left: 63.4850543478%;
+  top: 44.7368421053%;
 }
 .congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(7) {
-  left: 72.0618206522%;
-  top: 7.8216374269%;
+  left: 71.8410326087%;
+  top: 6.7251461988%;
 }
 .congkak-box .congkak-table .congkak-grid .congkak-kampong:nth-child(14) {
-  left: 72.1637228261%;
-  top: 45.6871345029%;
+  left: 71.9429347826%;
+  top: 44.7368421053%;
 }
 .congkak-box .congkak-table .congkak-kampong.selectable::before {
   content: "";
@@ -165,16 +165,16 @@
   position: absolute;
 }
 .congkak-box .congkak-table .congkak-rumah:nth-child(2) {
-  left: 9.8505434783%;
-  top: 14.0350877193%;
-  width: 10.6657608696%;
-  height: 55.8479532164%;
+  left: 9.7486413043%;
+  top: 13.5964912281%;
+  width: 10.9375%;
+  height: 56.7251461988%;
 }
 .congkak-box .congkak-table .congkak-rumah:nth-child(3) {
-  left: 80.5706521739%;
-  top: 14.3274853801%;
-  width: 9.375%;
-  height: 55.701754386%;
+  left: 80.4008152174%;
+  top: 13.8888888889%;
+  width: 9.714673913%;
+  height: 56.432748538%;
 }
 .congkak-box .congkak-table .congkak-counter {
   position: absolute;

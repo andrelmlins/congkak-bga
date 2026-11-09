@@ -1,7 +1,7 @@
 // The houses over the board: 7 kampongs per player (selectable, selected, burnt) and the rumah (storehouse), each with its counter of seeds.
 //
 // Each house is placed by hand over its hole in img/table.png (1472 x 342 px), in percentages of the board so it scales. The holes of the image are not
-// on an even grid, so the measures were taken from the image itself (the edge of each hole, found by its sharp change of brightness; docs/ASSETS.md).
+// on an even grid, so the measures were taken from the image itself (the outer edge of each hole, found by its sharpest change of brightness; docs/ASSETS.md).
 // The 14 kampongs are the children of the grid, in the order they are built (see TableManager): the top row left to right (the opponent, 7 to 1), then
 // the bottom row (the player looking at the game, 1 to 7).
 
@@ -10,15 +10,15 @@
 
 $TABLE_WIDTH: 1472;
 $TABLE_HEIGHT: 342;
-$HOLE: 105.5; // the diameter of a kampong hole, in px of the image
+$HOLE: 112; // the outer diameter of a kampong hole (up to the edge where the wood starts), in px of the image
 $TOP_ROW_X: (371, 496.5, 621.5, 742.5, 866.5, 990, 1113.5); // the center of each hole of the top row
 $BOTTOM_ROW_X: (371, 496, 621, 742.5, 866.5, 990.5, 1115);
-$TOP_ROW_Y: 79.5;
+$TOP_ROW_Y: 79;
 $BOTTOM_ROW_Y: 209;
 
 // The rumahs (the storehouses) are ovals: left, top, width and height of the hole, in px of the image.
-$RUMAH_LEFT: (145, 48, 157, 191);
-$RUMAH_RIGHT: (1186, 49, 138, 190.5);
+$RUMAH_LEFT: (143.5, 46.5, 161, 194);
+$RUMAH_RIGHT: (1183.5, 47.5, 143, 193);
 
 @function x-percent($px) {
   @return math.div($px, $TABLE_WIDTH) * 100%;
